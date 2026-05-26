@@ -1,0 +1,20 @@
+---
+title: "Vector Databases in Production"
+description: "Lessons learned deploying pgvector at scale"
+date: "2024-01-12"
+---
+
+# Vector Databases in Production
+
+Running vector databases in production requires careful consideration of performance and reliability.
+
+## Key Learnings
+
+- Index strategy impacts query performance significantly
+- Batch operations are more efficient than individual inserts
+- Monitor disk I/O closely
+- Backup vectors regularly
+
+## Recommendations
+
+Use pgvector for PostgreSQL integration when you need ACID guarantees with vector operations.
