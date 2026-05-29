@@ -1,35 +1,42 @@
-import Link from 'next/link';
-import { getContentFiles } from '@/lib/content';
+"use client"
 
-export default async function HomePage() {
-  const projects = await getContentFiles('projects');
+import { AuroraBackground } from "@/components/ui/aurora-background"
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect"
+import { motion } from "framer-motion"
+import Link from "next/link"
 
+export default function Home() {
   return (
-    <div className="space-y-12">
-      <section>
-        <h1 className="text-4xl font-bold mb-4">Lakshyaraj</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          Full-stack engineer building scalable systems and developer tools.
-        </p>
-      </section>
-
-      <section>
-        <h2 className="text-3xl font-bold mb-8">Featured Projects</h2>
-        <div className="grid gap-6">
-          {projects.map((project) => (
-            <Link
-              key={project.slug}
-              href={`/projects/${project.slug}`}
-              className="block p-6 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition group"
-            >
-              <h3 className="text-xl font-bold mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-                {project.metadata.title}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">{project.metadata.description}</p>
-            </Link>
-          ))}
+    <AuroraBackground>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+        className="relative flex flex-col items-center justify-center min-h-screen px-4"
+      >
+        <h1 className="text-5xl md:text-7xl font-bold text-center mb-6 tracking-tight text-white">
+          Lakshyaraj Singh Rao
+        </h1>
+        <TextGenerateEffect
+          words="Full-Stack Engineer. AI Systems. Backend. DevOps."
+          className="text-xl md:text-2xl text-zinc-400 text-center mb-12 max-w-2xl"
+          delay={0.5}
+        />
+        <div className="flex gap-4">
+          <Link
+            href="/projects"
+            className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 transition font-medium text-white"
+          >
+            See projects
+          </Link>
+          <Link
+            href="mailto:raolakshyaraj@gmail.com"
+            className="px-6 py-3 rounded-lg border border-zinc-700 hover:border-zinc-500 transition font-medium text-zinc-300"
+          >
+            Get in touch
+          </Link>
         </div>
-      </section>
-    </div>
-  );
+      </motion.div>
+    </AuroraBackground>
+  )
 }

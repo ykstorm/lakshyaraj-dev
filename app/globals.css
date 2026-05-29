@@ -6,7 +6,11 @@
   }
 
   body {
-    @apply bg-white dark:bg-slate-950 text-gray-900 dark:text-white;
+    @apply bg-[#0a0a0a] text-[#e6e6e6];
+  }
+
+  :root {
+    --color-blue: #2563eb;
   }
 }
 
@@ -48,14 +52,14 @@
   }
 
   .prose code {
-    @apply bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono text-sm;
+    @apply bg-gray-800 px-2 py-1 rounded font-mono text-sm;
   }
 
   .prose pre {
-    @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto mb-4;
+    @apply bg-gray-800 p-4 rounded-lg overflow-x-auto mb-4;
   }
 
   .prose blockquote {
-    @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic my-4;
+    @apply border-l-4 border-gray-600 pl-4 italic my-4;
   }
 }
