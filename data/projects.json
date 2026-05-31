@@ -1,0 +1,62 @@
+[
+  {
+    "id": "anchor",
+    "name": "Anchor",
+    "tagline": "Provenance-first RAG that refuses to hallucinate.",
+    "description": "Cosine-floor retrieval that returns chunks when similarity is high, refuses when it isn't. Postgres + pgvector + Next.js. Live playground at anchor-iota-ten.vercel.app/playground.",
+    "stack": ["Next.js", "Postgres", "pgvector", "Prisma", "OpenAI"],
+    "demo": "https://anchor-iota-ten.vercel.app",
+    "playground": "https://anchor-iota-ten.vercel.app/playground",
+    "code": "https://github.com/ykstorm/anchor",
+    "color": "cyan"
+  },
+  {
+    "id": "tripwire",
+    "name": "Tripwire",
+    "tagline": "Mid-stream LLM safety. Catch the lie before the user finishes reading it.",
+    "description": "Pattern engine that watches LLM streams token-by-token, aborts on rule trip. Sub-millisecond decision latency.",
+    "stack": ["TypeScript", "Node", "Streams"],
+    "code": "https://github.com/ykstorm/tripwire",
+    "npm": "@ykstormsorg/tripwire",
+    "color": "red"
+  },
+  {
+    "id": "goldset",
+    "name": "Goldset",
+    "tagline": "Golden datasets + LLM-as-judge + structural assertions, as a GitHub Action.",
+    "description": "Three eval runners (golden, judge, structural). PR comment with delta + structural assertions block merge on regression.",
+    "stack": ["TypeScript", "GitHub Actions", "OpenAI"],
+    "code": "https://github.com/ykstorm/goldset",
+    "npm": "@ykstormsorg/goldset",
+    "action": "uses: ykstorm/goldset@v0.2.0",
+    "color": "green"
+  },
+  {
+    "id": "quickdraw",
+    "name": "Quickdraw",
+    "tagline": "Benchmark LLM streaming. TTFT, TPS, $/1K tokens.",
+    "description": "CLI that runs prompt sets against models, captures TTFT + tokens/sec, diffs against baseline. Nightly bench wired.",
+    "stack": ["TypeScript", "Node", "OpenAI", "Anthropic"],
+    "code": "https://github.com/ykstorm/quickdraw",
+    "npm": "@ykstormsorg/quickdraw",
+    "color": "amber"
+  },
+  {
+    "id": "stackup",
+    "name": "Stackup",
+    "tagline": "Production Kubernetes locally in 10 minutes. ArgoCD + Argo Rollouts + Grafana.",
+    "description": "make up bootstraps a kind cluster with ArgoCD, Argo Rollouts, and Grafana/Prometheus. For learning real k8s without a cloud bill.",
+    "stack": ["Kubernetes", "ArgoCD", "Helm", "kind"],
+    "code": "https://github.com/ykstorm/stackup",
+    "color": "purple"
+  },
+  {
+    "id": "codecraft",
+    "name": "Codecraft",
+    "tagline": "Real Node.js in your browser. Monaco + WebContainers + Ollama.",
+    "description": "In-browser IDE with WebContainers running a real Node process, Monaco for editing, local Ollama for AI completions.",
+    "stack": ["WebContainers", "Monaco", "Ollama", "Next.js"],
+    "code": "https://github.com/ykstorm/codecraft-ai",
+    "color": "pink"
+  }
+]

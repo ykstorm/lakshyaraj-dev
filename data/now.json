@@ -1,0 +1,16 @@
+{
+  "currently": "Direction A — BullMQ-backed jobs + idempotent webhooks + Terraform module",
+  "shipped_this_week": [
+    "Anchor (provenance-first RAG) — live at anchor-iota-ten.vercel.app",
+    "@ykstormsorg/goldset v0.2.0 with public GitHub Action",
+    "@ykstormsorg/quickdraw + @ykstormsorg/tripwire on npm",
+    "Polished READMEs across 6 portfolio repos"
+  ],
+  "next_up": [
+    "Direction A: BullMQ + idempotent webhook + Terraform",
+    "Blog posts: Tripwire / Anchor / Quickdraw deep-dives"
+  ],
+  "open_to": ["Backend platform roles", "AI infra contracts"],
+  "location": "Mumbai → Remote",
+  "updated_at": "2026-05-31"
+}
