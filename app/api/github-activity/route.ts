@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server';
 
-export const revalidate = 21600;
-
 export async function GET() {
   try {
     const res = await fetch(
-      'https://github-contributions-api.deno.dev/ykstorm.json'
+      'https://github-contributions-api.deno.dev/ykstorm.json',
+      { next: { revalidate: 1800 } }
     );
-    if (!res.ok) return NextResponse.json({ error: 'Failed to fetch' }, { status: 502 });
+    if (!res.ok) return NextResponse.json({ contributions: 0 });
     const data = await res.json();
-    // API returns { contributions: [[week1_day1, ...], [week2_day1, ...]], totalContributions: N }
-    const flat = (data.contributions as unknown[][]).flat() as { date: string; contributionCount: number }[];
-    const last30 = flat.slice(-30);
-    return NextResponse.json({ total: data.totalContributions ?? 0, contributions: last30 });
+
+    // Sum last 30 days
+    const last30 = (data.contributions || []).slice(-30);
+    const total = last30.reduce((sum: number, d: { count: number }) => sum + (d.count || 0), 0);
+
+    return NextResponse.json({ total, last30 });
   } catch {
-    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
+    return NextResponse.json({ contributions: 0 });
   }
 }

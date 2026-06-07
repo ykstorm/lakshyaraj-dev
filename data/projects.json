@@ -1,9 +1,20 @@
 [
   {
+    "id": "homesty",
+    "name": "Homesty.ai",
+    "tagline": "Live commission-driven AI real-estate advisor.",
+    "description": "Production AI advisor on Next.js 15 + pgvector + GPT-4o + Claude. Solo-built. 207 unit tests. 5-layer anti-hallucination architecture. Same engine powering Anchor + Tripwire.",
+    "stack": ["Next.js 15", "Postgres", "pgvector", "Prisma 7", "GPT-4o", "Claude"],
+    "demo": "https://homesty.ai",
+    "code": "https://github.com/ykstorm/buyerchat",
+    "flagship": true,
+    "color": "cyan"
+  },
+  {
     "id": "anchor",
     "name": "Anchor",
     "tagline": "Provenance-first RAG that refuses to hallucinate.",
-    "description": "Cosine-floor retrieval that returns chunks when similarity is high, refuses when it isn't. Postgres + pgvector + Next.js. Live playground at anchor-iota-ten.vercel.app/playground.",
+    "description": "Cosine-floor retrieval returns chunks when similarity is high, refuses when it isn't. Postgres + pgvector + Next.js. Live playground available.",
     "stack": ["Next.js", "Postgres", "pgvector", "Prisma", "OpenAI"],
     "demo": "https://anchor-iota-ten.vercel.app",
     "playground": "https://anchor-iota-ten.vercel.app/playground",
@@ -14,7 +25,7 @@
     "id": "tripwire",
     "name": "Tripwire",
     "tagline": "Mid-stream LLM safety. Catch the lie before the user finishes reading it.",
-    "description": "Pattern engine that watches LLM streams token-by-token, aborts on rule trip. Sub-millisecond decision latency.",
+    "description": "Pattern engine watches LLM streams token-by-token, aborts on rule trip. Sub-millisecond decision latency.",
     "stack": ["TypeScript", "Node", "Streams"],
     "code": "https://github.com/ykstorm/tripwire",
     "npm": "@ykstormsorg/tripwire",
@@ -35,7 +46,7 @@
     "id": "quickdraw",
     "name": "Quickdraw",
     "tagline": "Benchmark LLM streaming. TTFT, TPS, $/1K tokens.",
-    "description": "CLI that runs prompt sets against models, captures TTFT + tokens/sec, diffs against baseline. Nightly bench wired.",
+    "description": "CLI runs prompt sets against models, captures TTFT + tokens/sec, diffs against baseline. Nightly bench wired.",
     "stack": ["TypeScript", "Node", "OpenAI", "Anthropic"],
     "code": "https://github.com/ykstorm/quickdraw",
     "npm": "@ykstormsorg/quickdraw",
@@ -49,14 +60,5 @@
     "stack": ["Kubernetes", "ArgoCD", "Helm", "kind"],
     "code": "https://github.com/ykstorm/stackup",
     "color": "purple"
-  },
-  {
-    "id": "codecraft",
-    "name": "Codecraft",
-    "tagline": "Real Node.js in your browser. Monaco + WebContainers + Ollama.",
-    "description": "In-browser IDE with WebContainers running a real Node process, Monaco for editing, local Ollama for AI completions.",
-    "stack": ["WebContainers", "Monaco", "Ollama", "Next.js"],
-    "code": "https://github.com/ykstorm/codecraft-ai",
-    "color": "pink"
   }
 ]

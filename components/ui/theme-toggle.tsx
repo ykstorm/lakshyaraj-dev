@@ -9,7 +9,7 @@ export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  if (!mounted) return <div className="w-[68px] h-[28px]" />;
 
   const items = [
     { value: 'light', label: 'Light', icon: Sun },
@@ -18,19 +18,19 @@ export function ThemeToggle() {
   ];
 
   return (
-    <div className="flex gap-1 border border-gray-300 dark:border-gray-700 rounded-lg p-0.5">
+    <div className="flex gap-0.5 border border-zinc-700 dark:border-zinc-700 rounded-lg p-0.5 bg-zinc-900/50">
       {items.map(({ value, label, icon: Icon }) => (
         <button
           key={value}
           onClick={() => setTheme(value)}
           title={label}
-          className={`p-1.5 rounded transition-colors ${
+          className={`p-1.5 rounded transition-all duration-150 ${
             theme === value
-              ? 'bg-blue-600 text-white'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              ? 'bg-cyan-500 text-black'
+              : 'text-zinc-500 hover:text-zinc-200'
           }`}
         >
-          <Icon size={14} />
+          <Icon size={13} />
         </button>
       ))}
     </div>

@@ -1,16 +1,17 @@
 {
-  "currently": "Direction A — BullMQ-backed jobs + idempotent webhooks + Terraform module",
+  "currently": "Building Anvil — idempotent webhook→worker pipeline",
   "shipped_this_week": [
-    "Anchor (provenance-first RAG) — live at anchor-iota-ten.vercel.app",
-    "@ykstormsorg/goldset v0.2.0 with public GitHub Action",
-    "@ykstormsorg/quickdraw + @ykstormsorg/tripwire on npm",
-    "Polished READMEs across 6 portfolio repos"
+    "Homesty.ai — live AI real-estate advisor at homesty.ai",
+    "@ykstormsorg/goldset v0.2.0 — LLM eval GitHub Action on npm",
+    "@ykstormsorg/quickdraw v0.1.0 — streaming benchmark CLI on npm",
+    "Portfolio v2 — Teerth-grade systems aesthetic rebuild"
   ],
   "next_up": [
-    "Direction A: BullMQ + idempotent webhook + Terraform",
-    "Blog posts: Tripwire / Anchor / Quickdraw deep-dives"
+    "Anvil: BullMQ + idempotent webhook pipeline",
+    "Blog post: Tripwire — mid-stream LLM safety deep-dive",
+    "Blog post: Anchor — provenance-first RAG architecture"
   ],
   "open_to": ["Backend platform roles", "AI infra contracts"],
-  "location": "Mumbai → Remote",
-  "updated_at": "2026-05-31"
+  "location": "Remote · IST",
+  "updated_at": "2026-06-07"
 }
