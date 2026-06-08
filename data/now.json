@@ -1,17 +1,20 @@
 {
-  "currently": "Building Anvil — idempotent webhook→worker pipeline",
+  "currently": "Building Anvil \u2014 idempotent webhook\u2192worker pipeline",
   "shipped_this_week": [
-    "Homesty.ai — live AI real-estate advisor at homesty.ai",
-    "@ykstormsorg/goldset v0.2.0 — LLM eval GitHub Action on npm",
-    "@ykstormsorg/quickdraw v0.1.0 — streaming benchmark CLI on npm",
-    "Portfolio v2 — Teerth-grade systems aesthetic rebuild"
+    "Homesty.ai \u2014 live AI real-estate advisor at homesty.ai",
+    "@ykstormsorg/goldset v0.2.0 \u2014 LLM eval GitHub Action on npm",
+    "@ykstormsorg/quickdraw v0.1.0 \u2014 streaming benchmark CLI on npm",
+    "Portfolio v2 \u2014 Teerth-grade systems aesthetic rebuild"
   ],
   "next_up": [
     "Anvil: BullMQ + idempotent webhook pipeline",
-    "Blog post: Tripwire — mid-stream LLM safety deep-dive",
-    "Blog post: Anchor — provenance-first RAG architecture"
+    "Blog post: Tripwire \u2014 mid-stream LLM safety deep-dive",
+    "Blog post: Anchor \u2014 provenance-first RAG architecture"
   ],
-  "open_to": ["Backend platform roles", "AI infra contracts"],
-  "location": "Remote · IST",
-  "updated_at": "2026-06-07"
+  "open_to": [
+    "Backend platform roles",
+    "AI infra contracts"
+  ],
+  "location": "Remote \u00b7 IST",
+  "updated_at": "2026-06-08"
 }
