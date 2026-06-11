@@ -19,7 +19,18 @@
     "demo": "https://anchor-iota-ten.vercel.app",
     "playground": "https://anchor-iota-ten.vercel.app/playground",
     "code": "https://github.com/ykstorm/anchor",
+    "npm": "@ykstorm/anchor",
     "color": "cyan"
+  },
+  {
+    "id": "codecraft-ai",
+    "name": "Codecraft AI",
+    "tagline": "In-browser AI IDE. WebContainer-backed live coding playground.",
+    "description": "Self-contained browser IDE that boots a live Next.js starter in a WebContainer — edit, run, and preview without a backend. Built on Next.js + WebContainer API.",
+    "stack": ["Next.js", "WebContainer", "TypeScript", "Monaco"],
+    "demo": "https://codecraft-ai-tau.vercel.app",
+    "code": "https://github.com/ykstorm/codecraft-ai",
+    "color": "amber"
   },
   {
     "id": "tripwire",

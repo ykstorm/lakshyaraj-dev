@@ -1,0 +1,18 @@
+---
+title: "Anchor"
+description: "Provenance-first RAG that refuses to hallucinate."
+date: "2026-05-20"
+---
+
+# Anchor
+
+Provenance-first retrieval-augmented generation. A cosine-similarity floor gates
+every answer: chunks are returned only when retrieval confidence clears the
+threshold, and the system refuses rather than guesses when it doesn't.
+
+Postgres + pgvector for storage and similarity search, idempotent upsert for
+ingestion, and a Next.js playground for inspecting retrieval decisions.
+
+- npm: `@ykstorm/anchor` v0.1.0
+- Code: https://github.com/ykstorm/anchor
+- Live: https://anchor-iota-ten.vercel.app
