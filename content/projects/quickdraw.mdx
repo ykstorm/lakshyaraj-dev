@@ -4,11 +4,26 @@ description: "Benchmark LLM streaming — TTFT, TPS, $/1K tokens."
 date: "2026-05-08"
 ---
 
-# Quickdraw
+## What it does
 
-A CLI for benchmarking LLM streaming performance. It runs prompt sets against
-any model, captures time-to-first-token and tokens-per-second, computes cost per
-1K tokens, and diffs every run against a saved baseline.
+Quickdraw is a CLI that measures how an LLM actually streams for you. It records time-to-first-token, tokens per second, total latency, and cost, then writes the results to CSV and JSON. It runs nightly in CI so the numbers track over time. The output is meant to be diffed and charted, not just read once.
 
-- npm: `@ykstormsorg/quickdraw` v1.0.1
-- Code: https://github.com/ykstorm/quickdraw
+## Why this approach
+
+Every "fast model" claim comes from a benchmark run in someone else's lab, on their network, with their prompts. I wanted the numbers from my own network and my own prompt shapes, because those are what my apps actually hit. Running it nightly turns a one-off measurement into a trend. The trade-off is that these numbers describe my setup, not a universal ranking.
+
+## How it's built
+
+A single-process CLI that fires requests at a model, times the stream token by token, and computes the metrics from those timings. Pricing for the cost column comes from a table of public per-token rates. Results go to CSV and JSON; a CI job runs it on a schedule and keeps the history.
+
+## Known limitations
+
+- Single requester. It doesn't simulate concurrent load, so it won't show queueing behavior.
+- Cold-start and warm-start latency aren't separated; an unlucky first call skews a run.
+- Cost assumes public list pricing and ignores any committed-use or volume discount.
+- Numbers are tied to my network and prompts, so they don't transfer cleanly to yours.
+
+## Where it runs
+
+- GitHub: github.com/ykstorm/quickdraw
+- npm: @ykstormsorg/quickdraw

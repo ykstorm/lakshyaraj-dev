@@ -4,10 +4,25 @@ description: "Production Kubernetes locally in 10 minutes. ArgoCD + Argo Rollout
 date: "2026-05-02"
 ---
 
-# Stackup
+## What it does
 
-A local Kubernetes lab. `make up` bootstraps a kind cluster preloaded with
-ArgoCD, Argo Rollouts, and the Grafana/Prometheus stack — a way to learn real
-production k8s and GitOps without a cloud bill.
+Stackup stands up a production-shaped Kubernetes cluster on a laptop in about ten minutes. It uses kind for the cluster and layers on ArgoCD, Argo Rollouts, Prometheus, Grafana, Loki, and Tempo. Everything is wired through GitOps from the first commit, so the cluster state is whatever the repo says it is. The goal is to practice the real moving parts without a cloud bill.
 
-- Code: https://github.com/ykstorm/stackup
+## Why this approach
+
+Most Kubernetes tutorials stop at `kubectl run nginx` and call it a day. But canary rollouts, metrics, traces, logs, and GitOps only make sense together — you can't learn how a bad rollout shows up in Grafana if you never wired Grafana in. Bundling them means you see the whole loop. The trade-off is that kind fakes some of what a real cloud cluster does, so a few lessons don't carry over unchanged.
+
+## How it's built
+
+A Makefile bootstraps a kind cluster, then ArgoCD takes over and syncs the rest from the repo: Argo Rollouts for canary deploys, Prometheus and Grafana for metrics, Loki for logs, Tempo for traces. After bootstrap, changes go through git and ArgoCD reconciles them, the same way you'd run it for real.
+
+## Known limitations
+
+- kind can't do real autoscaling, so the cluster-autoscaler lessons are simulated.
+- Persistent volumes are local-only; there's no cloud storage class to practice against.
+- The ArgoCD repo URL is hard-coded, so using your own fork means editing it first.
+- It's a single-node setup, so node-failure and scheduling-across-nodes scenarios don't apply.
+
+## Where it runs
+
+- GitHub: github.com/ykstorm/stackup

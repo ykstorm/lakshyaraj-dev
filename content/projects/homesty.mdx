@@ -4,11 +4,25 @@ description: "Live commission-driven real-estate AI assistant, serving real traf
 date: "2026-06-01"
 ---
 
-# Homesty.ai
+## What it does
 
-The flagship. A production AI real-estate assistant live at homesty.ai, serving
-real user traffic since November 2025. Built solo on Next.js 15 + pgvector +
-GPT-4o with a 5-layer anti-hallucination architecture and 207 unit tests — the
-same engine whose patterns were extracted into Anchor and Tripwire.
+Homesty is a live real-estate AI running on Next.js 15. Buyers chat directly with a listing — asking about specs, location, and price — and the AI answers from the property data. Agents get qualified leads out the other end. The AI handles the repetitive property-spec questions so the human agent only spends time on buyers who are actually serious.
 
-- Live: https://homesty.ai
+## Why this approach
+
+The easy version replaces the agent. This one keeps the human in the loop on purpose. The AI's job is to filter tire-kickers and field the same five questions every listing gets, not to close the deal. That's the trade-off: it's deliberately not autonomous, because in a commission business the agent relationship is the product.
+
+## How it's built
+
+Next.js 15 on the front, Postgres with pgvector for listing retrieval, and a mix of GPT-4o and Claude for the chat. Buyer questions hit the property data through vector search, and qualified conversations get routed to the listing's agent as a lead. Sentry and Upstash Redis sit behind it for error tracking and rate limiting.
+
+## Known limitations
+
+- Coverage is Bombay and Pune listings only. Other cities aren't in the index yet.
+- RERA lookup is best-effort against a scraped index, not the live regulator API, so it can lag.
+- Voice input falls back to keyboard on Safari iOS, where the speech API isn't reliable.
+- It depends on listing data quality; a thin or stale listing gives the AI little to answer from.
+
+## Where it runs
+
+- Demo: homesty.ai

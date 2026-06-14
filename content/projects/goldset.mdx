@@ -4,13 +4,26 @@ description: "Golden datasets + LLM-as-judge + structural assertions, as a GitHu
 date: "2026-05-12"
 ---
 
-# Goldset
+## What it does
 
-An LLM evaluation harness that runs as a GitHub Action. Three runners — golden
-datasets, LLM-as-judge, and structural assertions — score every pull request,
-post a delta comment, and block merge on regression.
+Goldset locks an AI app's behavior so a pull request can't quietly change it. You define golden examples of what good output looks like, and an LLM judge scores the current output against them on every PR. It ships as a GitHub Action, so the check runs in CI and comments the result on the PR. A regression blocks the merge instead of slipping through review.
 
-- npm: `@ykstormsorg/goldset` v0.2.0
-- Action: `uses: ykstorm/goldset@v0.2.0`
-- Code: https://github.com/ykstorm/goldset
-- Marketplace: https://github.com/marketplace/actions/goldset
+## Why this approach
+
+Snapshot tests assume deterministic output, which LLM responses aren't, so a byte-for-byte diff fails on every harmless rewording. The alternative — a human eyeballing output diffs — works fine until you pass about twenty examples, then nobody reads them carefully. An LLM judge scoring against golden examples scales past that point without pretending the output is deterministic.
+
+## How it's built
+
+A GitHub Action that loads your golden dataset, runs the app's current output through a judge model, and posts the scores back to the PR. The judge prompt and the pass threshold are yours to configure. The dataset is plain files in the repo, so it versions alongside the code it guards.
+
+## Known limitations
+
+- The judge is a model, so it has its own bias and can drift between provider updates.
+- No multi-turn examples yet. Each golden case is a single exchange.
+- Cost scales linearly with the dataset; every example is a judge call per run.
+- A vague judge prompt gives noisy scores, and writing a sharp one takes iteration.
+
+## Where it runs
+
+- GitHub: github.com/ykstorm/goldset
+- npm: @ykstormsorg/goldset

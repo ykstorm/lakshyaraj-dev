@@ -4,12 +4,26 @@ description: "Mid-stream LLM safety — catch the lie before the user finishes r
 date: "2026-05-18"
 ---
 
-# Tripwire
+## What it does
 
-A mid-stream guardrail for LLM output. A pattern engine watches the token stream
-as it generates and aborts the moment a rule trips, with sub-millisecond
-decision latency — so unsafe completions are killed before they finish
-rendering.
+Tripwire is a wrapper that watches an LLM's tokens as they stream and aborts the moment a rule trips. The point is to catch banned content while it's still arriving, before the reader has finished the sentence. It sits between your model call and your UI, passing tokens through until a rule says stop. When that happens, the stream is cut and the partial output never lands on screen.
 
-- npm: `@ykstormsorg/tripwire` v1.0.1
-- Code: https://github.com/ykstorm/tripwire
+## Why this approach
+
+The usual answer is post-hoc moderation: generate the whole response, score it, then decide. By then the text is already rendered and the user has read it. Watching the stream means the abort happens mid-flight instead of after the fact. The trade-off is that rules run on every chunk, so they have to be cheap, which rules out calling a second model inline.
+
+## How it's built
+
+The rules are regex and structural checks, not a classifier model. Each streamed chunk is tested as it passes through, and a match throws an abort that tears down the stream. Keeping the checks to pattern matching is what holds the per-chunk cost low enough to run inline.
+
+## Known limitations
+
+- Rules are regex and structural only. There's no semantic model in the loop.
+- On long streams the per-chunk checks add roughly 8-15ms each, which accumulates.
+- It catches banned content, not hallucination. A confident wrong answer sails through.
+- Complex rules are easy to write badly; a sloppy regex can false-positive on safe text.
+
+## Where it runs
+
+- GitHub: github.com/ykstorm/tripwire
+- npm: @ykstormsorg/tripwire

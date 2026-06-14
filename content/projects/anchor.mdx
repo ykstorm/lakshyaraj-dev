@@ -4,15 +4,27 @@ description: "Provenance-first RAG that refuses to hallucinate."
 date: "2026-05-20"
 ---
 
-# Anchor
+## What it does
 
-Provenance-first retrieval-augmented generation. A cosine-similarity floor gates
-every answer: chunks are returned only when retrieval confidence clears the
-threshold, and the system refuses rather than guesses when it doesn't.
+Anchor is a RAG library that refuses to answer when it has no source to stand on. Every query runs a cosine-similarity search; if nothing clears the configured floor, it returns `{ answer: null, reason: "no_match" }` instead of guessing. Retrieval and storage sit on Postgres with pgvector. Ingestion is an idempotent upsert keyed on a content hash, so re-running the same documents doesn't duplicate rows.
 
-Postgres + pgvector for storage and similarity search, idempotent upsert for
-ingestion, and a Next.js playground for inspecting retrieval decisions.
+## Why this approach
 
-- npm: `@ykstorm/anchor` v0.1.0
-- Code: https://github.com/ykstorm/anchor
-- Live: https://anchor-iota-ten.vercel.app
+Most RAG demos quietly paper over the no-source case and let the model improvise. In real estate that improvisation is a legal problem, not a UX wrinkle. So the floor is a config value you set per index, not a heuristic the model talks itself out of. The trade-off is that a too-high floor makes Anchor look ignorant on questions it could half-answer, and tuning that number is on you.
+
+## How it's built
+
+A thin TypeScript layer over pgvector: embed the query, run a similarity search, compare the top hit against the floor, and either return the chunks or return the refusal. Ingestion hashes each chunk's content and upserts on that hash. A small Next.js playground lets you watch the retrieval decision for a given query.
+
+## Known limitations
+
+- One cosine threshold per index. There's no per-query re-ranking or hybrid keyword pass.
+- The embedding model is locked per index. Switching models means a full re-embed.
+- Re-indexing on a schema change is a script you run by hand, not a migration.
+- The floor is a blunt instrument: it can't tell "no source" from "source exists but embeds poorly."
+
+## Where it runs
+
+- GitHub: github.com/ykstorm/anchor
+- Demo: anchor-iota-ten.vercel.app/playground
+- npm: @ykstorm/anchor
