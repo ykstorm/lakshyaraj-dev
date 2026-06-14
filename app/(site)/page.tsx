@@ -389,28 +389,26 @@ function Nav() {
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function HomePage() {
-  const [booted, setBooted] = useState(false);
-
+  // Boot animation is a fixed full-screen overlay (AsciiBoot, z-100) that fades
+  // out on its own. Sections render unconditionally so all content is present in
+  // the server-rendered HTML — crawlers, link unfurls, and no-JS visitors see the
+  // projects instead of a blank boot screen.
   return (
     <div className="min-h-screen bg-[#050505] dark:bg-[#050505] text-zinc-100">
       <Nav />
       <main className="pt-14">
-        <Hero onBootDone={() => setBooted(true)} />
-        {booted && (
-          <>
-            <NowSection />
-            <ProjectsSection />
-            <StackSection />
-            <TelemetrySection />
-            <FieldNotesSection />
-            <ContactSection />
-            <footer className="border-t border-zinc-800/60 py-8 text-center">
-              <p className="font-mono text-[11px] text-zinc-600">
-                © {new Date().getFullYear()} Lakshyaraj Singh Rao · Apache 2.0
-              </p>
-            </footer>
-          </>
-        )}
+        <Hero onBootDone={() => {}} />
+        <NowSection />
+        <ProjectsSection />
+        <StackSection />
+        <TelemetrySection />
+        <FieldNotesSection />
+        <ContactSection />
+        <footer className="border-t border-zinc-800/60 py-8 text-center">
+          <p className="font-mono text-[11px] text-zinc-600">
+            © {new Date().getFullYear()} Lakshyaraj Singh Rao · Apache 2.0
+          </p>
+        </footer>
       </main>
     </div>
   );
