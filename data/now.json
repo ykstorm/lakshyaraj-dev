@@ -1,20 +1,27 @@
 {
-  "currently": "Building Anvil \u2014 idempotent webhook\u2192worker pipeline",
+  "currently": "Anvil — idempotent webhook to BullMQ worker pipeline. HMAC-SHA256, exponential backoff, dead-letter replay.",
+  "current": "Anvil — idempotent webhook to BullMQ worker pipeline. HMAC-SHA256, exponential backoff, dead-letter replay.",
   "shipped_this_week": [
-    "Homesty.ai \u2014 live AI real-estate advisor at homesty.ai",
-    "@ykstormsorg/goldset v0.2.0 \u2014 LLM eval GitHub Action on npm",
-    "@ykstormsorg/quickdraw v1.0.1 \u2014 streaming benchmark CLI on npm",
-    "Portfolio v2 \u2014 Teerth-grade systems aesthetic rebuild"
+    "tripwire v1.0.1 — mid-stream LLM guardrail",
+    "quickdraw v1.0.1 — LLM streaming benchmark",
+    "codecraft-ai live at codecraft-ai-tau.vercel.app",
+    "stackup canary rollout chart"
+  ],
+  "shipped": [
+    "tripwire v1.0.1 — mid-stream LLM guardrail",
+    "quickdraw v1.0.1 — LLM streaming benchmark",
+    "codecraft-ai live at codecraft-ai-tau.vercel.app",
+    "stackup canary rollout chart"
   ],
   "next_up": [
-    "Anvil: BullMQ + idempotent webhook pipeline",
-    "Blog post: Tripwire \u2014 mid-stream LLM safety deep-dive",
-    "Blog post: Anchor \u2014 provenance-first RAG architecture"
+    "Anvil 0.1 — server + worker + SDK"
   ],
+  "next": "Anvil 0.1 — server + worker + SDK",
   "open_to": [
-    "Backend platform roles",
-    "AI infra contracts"
+    "backend / AI infra roles at Mumbai or Bangalore startups",
+    "YC seed founding-engineer roles",
+    "contract work on RAG, streaming LLM, queue/webhook reliability"
   ],
-  "location": "Remote \u00b7 IST",
-  "updated_at": "2026-06-08"
+  "location": "Remote · IST",
+  "updated_at": "2026-06-15"
 }
