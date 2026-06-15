@@ -6,7 +6,7 @@ import { Mail, Globe } from 'lucide-react';
 
 const PROTOCOLS = [
   { id: 1, label: 'Email', value: 'raolakshyaraj@gmail.com', href: 'mailto:raolakshyaraj@gmail.com', icon: Mail },
-  { id: 2, label: 'LinkedIn', value: 'linkedin.com/in/lakshyaraj', href: 'https://linkedin.com/in/lakshyaraj', icon: IconBrandLinkedin },
+  { id: 2, label: 'LinkedIn', value: 'linkedin.com/in/lakshyaraj-singh-rao-840273152', href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', icon: IconBrandLinkedin },
   { id: 3, label: 'GitHub', value: 'github.com/ykstorm', href: 'https://github.com/ykstorm', icon: IconBrandGithub },
   { id: 4, label: 'npm', value: 'npmjs.com/~ykstormsorg', href: 'https://npmjs.com/~ykstormsorg', icon: Globe },
 ];

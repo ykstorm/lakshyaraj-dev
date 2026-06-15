@@ -104,7 +104,7 @@ function Hero({ onBootDone }: { onBootDone: () => void }) {
             {[
               { href: 'mailto:raolakshyaraj@gmail.com', label: 'email', icon: Mail },
               { href: 'https://github.com/ykstorm', label: 'github', icon: IconBrandGithub },
-              { href: 'https://linkedin.com/in/lakshyaraj', label: 'linkedin', icon: IconBrandLinkedin },
+              { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', label: 'linkedin', icon: IconBrandLinkedin },
               { href: 'https://npmjs.com/~ykstormsorg', label: 'npm', icon: IconBrandNpm },
               { href: '/Lakshyaraj_Singh_Rao_Resume.pdf', label: 'resume', icon: ExternalLink, isResume: true },
             ].map(({ href, label, icon: Icon, isResume }) => (
