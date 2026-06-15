@@ -19,7 +19,6 @@
     "demo": "https://anchor-iota-ten.vercel.app",
     "playground": "https://anchor-iota-ten.vercel.app/playground",
     "code": "https://github.com/ykstorm/anchor",
-    "npm": "@ykstorm/anchor",
     "color": "cyan"
   },
   {
