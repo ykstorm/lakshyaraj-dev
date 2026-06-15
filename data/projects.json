@@ -3,7 +3,7 @@
     "id": "homesty",
     "name": "Homesty.ai",
     "tagline": "Live commission-driven AI real-estate advisor.",
-    "description": "Production AI advisor on Next.js 15 + pgvector + GPT-4o + Claude. Solo-built. 207 unit tests. 5-layer anti-hallucination architecture. Same engine powering Anchor + Tripwire.",
+    "description": "Production AI advisor on Next.js 15 + pgvector + GPT-4o + Claude. Solo-built. Refusal-first retrieval and mid-stream guardrails were extracted from this work into Anchor and Tripwire — same engine, both public.",
     "stack": ["Next.js 15", "Postgres", "pgvector", "Prisma 7", "GPT-4o", "Claude"],
     "demo": "https://homesty.ai",
     "code": "https://github.com/ykstorm/buyerchat",
