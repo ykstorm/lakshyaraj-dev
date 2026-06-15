@@ -71,5 +71,14 @@
     "stack": ["Kubernetes", "ArgoCD", "Helm", "kind"],
     "code": "https://github.com/ykstorm/stackup",
     "color": "purple"
+  },
+  {
+    "id": "anvil",
+    "name": "Anvil",
+    "tagline": "Idempotent webhook → BullMQ pipeline. HMAC-SHA256, backoff, dead-letter replay.",
+    "description": "Verify (constant-time HMAC) → dedupe → enqueue → retry [1s, 5s, 30s, 5m] → dead-letter → replay. pnpm workspace; 5 design contracts proven by tests in CI. v0.0.1.",
+    "stack": ["TypeScript", "Express", "BullMQ", "Redis", "Vitest"],
+    "code": "https://github.com/ykstorm/anvil",
+    "color": "green"
   }
 ]

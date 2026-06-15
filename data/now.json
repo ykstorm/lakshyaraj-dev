@@ -1,27 +1,27 @@
 {
-  "currently": "Anvil — idempotent webhook to BullMQ worker pipeline. HMAC-SHA256, exponential backoff, dead-letter replay.",
-  "current": "Anvil — idempotent webhook to BullMQ worker pipeline. HMAC-SHA256, exponential backoff, dead-letter replay.",
+  "currently": "Anvil v0.0.1 — webhook → BullMQ pipeline. 5 design contracts green in CI. HMAC-SHA256 constant-time verify, backoff [1s, 5s, 30s, 5m], dead-letter replay.",
+  "current": "Anvil v0.0.1 — webhook → BullMQ pipeline. 5 design contracts green in CI. HMAC-SHA256 constant-time verify, backoff [1s, 5s, 30s, 5m], dead-letter replay.",
   "shipped_this_week": [
+    "anvil v0.0.1 — webhook→BullMQ pipeline, 5 contracts green in CI",
     "tripwire v1.0.1 — mid-stream LLM guardrail",
     "quickdraw v1.0.1 — LLM streaming benchmark",
-    "codecraft-ai live at codecraft-ai-tau.vercel.app",
-    "stackup canary rollout chart"
+    "codecraft-ai live at codecraft-ai-tau.vercel.app"
   ],
   "shipped": [
+    "anvil v0.0.1 — webhook→BullMQ pipeline, 5 contracts green in CI",
     "tripwire v1.0.1 — mid-stream LLM guardrail",
     "quickdraw v1.0.1 — LLM streaming benchmark",
-    "codecraft-ai live at codecraft-ai-tau.vercel.app",
-    "stackup canary rollout chart"
+    "codecraft-ai live at codecraft-ai-tau.vercel.app"
   ],
   "next_up": [
-    "Anvil 0.1 — server + worker + SDK"
+    "anvil — examples/stripe + examples/github, publish @ykstormsorg/anvil to npm"
   ],
-  "next": "Anvil 0.1 — server + worker + SDK",
+  "next": "anvil — examples/stripe + examples/github, publish @ykstormsorg/anvil to npm",
   "open_to": [
     "backend / AI infra roles at Mumbai or Bangalore startups",
     "YC seed founding-engineer roles",
     "contract work on RAG, streaming LLM, queue/webhook reliability"
   ],
-  "location": "Remote · IST",
+  "location": "Jaipur, India · Remote",
   "updated_at": "2026-06-15"
 }
