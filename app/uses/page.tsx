@@ -90,18 +90,18 @@ const SECTIONS: { label: string; items: string[] }[] = [
 
 export default function UsesPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-zinc-100">
+    <div className="min-h-screen bg-white dark:bg-[#050505] text-zinc-800 dark:text-zinc-100">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <Link
           href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-cyan-400 transition-colors tracking-wide"
+          className="text-[12px] font-mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
         >
           ← back
         </Link>
 
         <div className="mt-8 mb-10">
           <span className="section-label">// Uses</span>
-          <h1 className="mt-3 text-3xl font-bold text-white tracking-tight">What I use</h1>
+          <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">What I use</h1>
           <p className="mt-2 text-[13px] text-zinc-500 font-mono">
             The actual stack, not an aspirational one.
           </p>
@@ -113,8 +113,8 @@ export default function UsesPage() {
               <span className="section-label text-[10px]">{section.label}</span>
               <ul className="space-y-2">
                 {section.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-400">
-                    <span className="text-cyan-400 mt-0.5">›</span>
+                  <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
+                    <span className="text-cyan-600 dark:text-cyan-400 mt-0.5">›</span>
                     <span>{item}</span>
                   </li>
                 ))}

@@ -52,10 +52,24 @@
     color: #050505;
   }
 
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72px, -62px) scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
+
   ::-webkit-scrollbar {
     width: 6px;
   }
   ::-webkit-scrollbar-track {
+    background: #f4f4f5;
+  }
+  .dark ::-webkit-scrollbar-track {
     background: #050505;
   }
   ::-webkit-scrollbar-thumb {
@@ -82,9 +96,13 @@
   }
 
   .telemetry-card {
-    border: 1px solid #27272a;
+    border: 1px solid #e4e4e7;
     border-radius: 0.5rem;
     padding: 1rem;
+    background-color: rgba(250, 250, 250, 0.6);
+  }
+  .dark .telemetry-card {
+    border-color: #27272a;
     background-color: rgba(12, 12, 12, 0.4);
   }
 }
