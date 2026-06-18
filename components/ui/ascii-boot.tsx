@@ -42,12 +42,12 @@ export function AsciiBoot({ onDone }: { onDone: () => void }) {
           className="fixed inset-0 z-[100] bg-[#050505] flex items-center justify-center"
         >
           <div className="font-mono text-sm text-cyan-400 leading-relaxed space-y-0.5">
-            {lines.map((line, i) => (
+            {lines.filter(Boolean).map((line, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                className={line.endsWith('[OK]') ? 'text-green-400' : 'text-cyan-400'}
+                className={line?.endsWith('[OK]') ? 'text-green-400' : 'text-cyan-400'}
               >
                 {line}
               </motion.div>
