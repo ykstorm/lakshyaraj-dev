@@ -22,6 +22,13 @@
     --glow: rgba(14, 116, 144, 0.10);
     --scan: rgba(27, 26, 23, 0.018);
 
+    /* contribution-graph scale (teal/emerald ink on paper) */
+    --cal-0: #e6e1d2;
+    --cal-1: #b8e3d6;
+    --cal-2: #6fccbb;
+    --cal-3: #1f9e96;
+    --cal-4: #0e7490;
+
     /* --ff-sans / --ff-mono / --ff-display come from next/font (layout.tsx).
        Re-point Tailwind's theme tokens at the webfonts so font-sans/font-mono
        utilities resolve to them too (defined after the shadcn import → wins). */
@@ -44,6 +51,13 @@
     --grid: rgba(52, 211, 153, 0.055);
     --glow: rgba(34, 211, 238, 0.12);
     --scan: rgba(0, 0, 0, 0.22);
+
+    /* contribution-graph scale (phosphor emerald on black) */
+    --cal-0: #14201a;
+    --cal-1: #143b2e;
+    --cal-2: #1c6b4f;
+    --cal-3: #25a06f;
+    --cal-4: #34d399;
   }
 
   html {
@@ -205,6 +219,15 @@
     background-color: color-mix(in srgb, var(--muted) 70%, transparent);
   }
   .term-dot { width: 0.6rem; height: 0.6rem; border-radius: 9999px; }
+
+  /* contribution graph scrolls horizontally on narrow screens without an ugly bar */
+  .cal-grid {
+    scrollbar-width: none;
+  }
+  .cal-grid::-webkit-scrollbar {
+    display: none;
+    height: 0;
+  }
 
   /* corner brackets used on project cards */
   .corner {

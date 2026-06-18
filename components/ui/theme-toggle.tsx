@@ -1,38 +1,28 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { Moon, Sun, Monitor } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+// Single light⇄dark button. The old 3-segment control (light/dark/system) was
+// wider than the mobile nav allowed, so it clipped off-screen; one icon button
+// always fits and reads unambiguously.
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => setMounted(true), []);
-  if (!mounted) return <div className="w-[68px] h-[28px]" />;
 
-  const items = [
-    { value: 'light', label: 'Light', icon: Sun },
-    { value: 'dark', label: 'Dark', icon: Moon },
-    { value: 'system', label: 'System', icon: Monitor },
-  ];
+  if (!mounted) return <div className="w-8 h-8" />;
 
+  const isDark = resolvedTheme === 'dark';
   return (
-    <div className="flex gap-0.5 border border-zinc-700 dark:border-zinc-700 rounded-lg p-0.5 bg-zinc-900/50">
-      {items.map(({ value, label, icon: Icon }) => (
-        <button
-          key={value}
-          onClick={() => setTheme(value)}
-          title={label}
-          className={`p-1.5 rounded transition-all duration-150 ${
-            theme === value
-              ? 'bg-cyan-500 text-black'
-              : 'text-zinc-500 hover:text-zinc-200'
-          }`}
-        >
-          <Icon size={13} />
-        </button>
-      ))}
-    </div>
+    <button
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      title={isDark ? 'Switch to light' : 'Switch to dark'}
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className="grid place-items-center w-8 h-8 rounded-md border border-[var(--border)] text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500/50 transition-colors"
+    >
+      {isDark ? <Sun size={14} /> : <Moon size={14} />}
+    </button>
   );
 }

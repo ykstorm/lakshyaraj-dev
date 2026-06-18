@@ -11,6 +11,7 @@ import { TechBadge } from '@/components/ui/tech-badge';
 import { TerminalContact } from '@/components/ui/terminal-contact';
 import { ResumeButton } from '@/components/ui/resume-button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { GithubContributions } from '@/components/ui/github-contributions';
 import { IconBrandGithub, IconBrandLinkedin, IconBrandNpm } from '@tabler/icons-react';
 import { Mail, ExternalLink } from 'lucide-react';
 import projectsData from '@/data/projects.json';
@@ -124,29 +125,11 @@ function Hero() {
   );
 }
 
-// ── About ─────────────────────────────────────────────────────────────────────
-function AboutSection() {
+// ── Activity (GitHub contribution graph) ──────────────────────────────────────
+function ActivitySection() {
   return (
-    <Section id="about" label="// About">
-      <div className="max-w-2xl space-y-4 text-[15px] leading-relaxed text-zinc-700 dark:text-zinc-300">
-        <p>
-          I build backend and AI-infrastructure systems and ship them to production. Right now I&apos;m solo on{' '}
-          <a href="https://homesty.ai" target="_blank" rel="noopener" className="text-cyan-700 dark:text-cyan-400 hover:underline">
-            homesty.ai
-          </a>
-          , a commission-driven real-estate advisor running on Next.js, pgvector, and a refusal-first retrieval layer.
-        </p>
-        <p>
-          The reliability patterns I needed there became open source: Anchor (RAG that refuses instead of hallucinating),
-          Tripwire (mid-stream LLM guardrails), and Anvil (an idempotent webhook → BullMQ pipeline with dead-letter replay).
-          Same engine, made public.
-        </p>
-        <p>
-          I care about the unglamorous parts — constant-time HMAC verification, backoff schedules, golden-dataset evals
-          that block a merge on regression. I&apos;m open to backend / AI-infra roles and contract work on RAG, streaming
-          LLMs, and queue/webhook reliability.
-        </p>
-      </div>
+    <Section id="activity" label="// Commit Activity">
+      <GithubContributions />
     </Section>
   );
 }
@@ -238,7 +221,7 @@ function ProjectsSection() {
 const STACK = {
   Languages: ['TypeScript', 'Python', 'SQL', 'Bash', 'YAML', 'Go (learning)'],
   'Backend/Data': ['Node.js', 'Next.js 15', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
-  'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'GPT-4o', 'Claude', 'Ollama', 'vLLM'],
+  'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'Terraform', 'Ollama', 'vLLM', 'RAG'],
 };
 
 function StackSection() {
@@ -308,10 +291,10 @@ function ContactSection() {
 // ── Navigation ────────────────────────────────────────────────────────────────
 function Nav() {
   const links = [
-    { href: '/#about', label: 'About' },
     { href: '/#now', label: 'Now' },
     { href: '/#projects', label: 'Projects' },
     { href: '/#stack', label: 'Stack' },
+    { href: '/#activity', label: 'Activity' },
     { href: '/#contact', label: 'Contact' },
   ];
 
@@ -322,15 +305,18 @@ function Nav() {
           lakshyaraj<span className="text-cyan-600 dark:text-cyan-400">/</span>
         </Link>
         <div className="flex items-center gap-5 sm:gap-6">
-          {links.map(({ href, label }) => (
-            <Link
-              key={label}
-              href={href}
-              className="text-[11px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
-            >
-              {label}
-            </Link>
-          ))}
+          {/* links collapse under sm so the theme toggle is always reachable on mobile */}
+          <div className="hidden sm:flex items-center gap-5 sm:gap-6">
+            {links.map(({ href, label }) => (
+              <Link
+                key={label}
+                href={href}
+                className="text-[11px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
           <ThemeToggle />
         </div>
       </div>
@@ -353,10 +339,10 @@ export default function HomePage() {
       <Nav />
       <main className="pt-14">
         <Hero />
-        <AboutSection />
         <NowSection />
         <ProjectsSection />
         <StackSection />
+        <ActivitySection />
         <TelemetrySection />
         <ContactSection />
         <footer className="border-t border-[var(--border)] py-8 text-center">
