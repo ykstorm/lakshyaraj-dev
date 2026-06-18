@@ -20,7 +20,7 @@ const COLOR_MAP: Record<string, string> = {
 export function TechBadge({ label, color = 'default' }: TechBadgeProps) {
   const cls = COLOR_MAP[color] || COLOR_MAP.default;
   return (
-    <Badge className={`font-mono text-[10px] tracking-wider border ${cls}`}>
+    <Badge className={`mono text-[10px] tracking-wider border ${cls}`}>
       {label}
     </Badge>
   );
