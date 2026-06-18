@@ -1,0 +1,79 @@
+---
+title: "Anvil: the whole webhook-to-queue chain, not one link"
+description: "Why webhook re-delivery breaks systems, and the design behind an idempotent webhook → BullMQ pipeline — HMAC verify, dedupe, backoff, dead-letter replay."
+date: "2026-06-15"
+---
+
+# Anvil: the whole webhook-to-queue chain, not one link
+
+Webhook re-delivery is a failure mode people discover in production, not in the docs. Stripe re-sends. GitHub re-sends. Your own worker crashes after it did the work but before it acked, so the provider retries and you charge the card twice. Every webhook integration eventually has to answer the same four questions: is this request real, have I seen it before, where does the work go, and what happens when the work keeps failing.
+
+Most of the open-source examples answer one of those. They show signature verification, or they show a BullMQ queue, but not the chain that connects them. I needed the chain for [Homesty](https://homesty.ai)'s webhook surface — Stripe re-deliveries and CRM callbacks — and ended up extracting it into [Anvil](https://github.com/ykstorm/anvil).
+
+## The chain
+
+```
+webhook → verify HMAC → dedupe → enqueue → 202
+                                              │
+                                       BullMQ on Redis
+                                              │
+                              worker → handler → retry → dead-letter → replay
+```
+
+Five steps, and each one has a decision in it that the obvious version gets wrong.
+
+## Verify: constant-time, over the raw body
+
+The signature check is an HMAC-SHA256 of the request body against a shared secret. Two details matter.
+
+First, you compare with `crypto.timingSafeEqual`, not `===`. A normal string compare returns as soon as two bytes differ, and that timing difference leaks how much of the signature you guessed right. Constant-time comparison removes the signal.
+
+```ts
+const expected = createHmac("sha256", secret).update(body).digest("hex");
+const a = Buffer.from(provided, "hex");
+const b = Buffer.from(expected, "hex");
+if (a.length !== b.length) return false;       // length check first — timingSafeEqual throws on mismatch
+return timingSafeEqual(a, b);
+```
+
+Second, you hash the **raw** bytes. If your framework runs `express.json()` before the verify, the body you sign is a re-serialized object — different whitespace, different key order — and the HMAC won't match. Anvil reads the raw body and verifies before anything parses it.
+
+## Dedupe: the key is `sha256(signature + payload)`, not just the signature
+
+This is the part that looks wrong until you've been burned by it.
+
+The intuitive idempotency key is the signature header — it's unique per delivery, right? It isn't. **Stripe rotates the signature on re-delivery in some test modes.** Same event, same payload, a different signature. Key on the signature alone and you enqueue the same job twice.
+
+So the key is `sha256(signatureHeader + rawPayload)`. The payload is what actually identifies the event; the signature is folded in so that a genuinely different event with a colliding payload still separates. Same signature plus a different body is a different key — two jobs. Same key, redelivered five times, is exactly one job, ever. A re-delivery returns the original job's id instead of enqueuing again.
+
+## Retry: a fixed schedule, then stop
+
+When the handler throws, the job retries on `[1s, 5s, 30s, 5m]` — four attempts, widening. After the fourth failure the job moves to a separate `webhooks.dead` queue carrying its failure context (attempt count, last error). It does not retry forever. A handler that's broken because a downstream API is down should back off and then get out of the hot path, not hammer it.
+
+## Dead-letter: the consumer is a separate process, on purpose
+
+The dead-letter queue is written to by the worker but **never consumed by it**. Replay is a separate CLI invocation — `replayDeadLetter(jobId)` moves one job back to the main queue.
+
+The separation is the point. If the main worker also drained the dead-letter queue automatically, a job that fails deterministically would loop: main queue → fail four times → dead-letter → auto-replay → main queue → fail again. A retry storm dressed up as resilience. Keeping replay manual (or behind a gated admin path) means a human or a deliberate job decides a dead letter is worth another try.
+
+## The bug I actually hit
+
+I wrote the five design contracts as failing tests first, then implemented to green. The pure tests — HMAC, the idempotency key, the SDK surface — passed locally. The Redis-backed ones only run in CI, against a real `redis:7` service. So the first green-on-my-machine push went red in CI:
+
+```
+Error: Custom Ids cannot be integers
+```
+
+The dead-letter handler was re-using the original job's id as the dead job's id: `deadQueue.add(name, data, { jobId: job.id })`. BullMQ's auto-generated ids are integers-as-strings (`"1"`, `"2"`), and BullMQ refuses a custom job id that parses as an integer. So the dead job never landed, and the test that waited for it timed out. The fix was to let the dead-letter queue assign its own id and keep the origin id in the job data for tracing. Small bug, but it's exactly the kind of thing that only shows up against a real queue — which is why those tests run in CI, not against a mock.
+
+## What's in the box
+
+- `createServer({ secret })` — the Express ingress (verify → dedupe → enqueue → 202)
+- `createWorker(handler, opts)` — the worker with the backoff schedule and dead-letter
+- `replayDeadLetter(jobId)` — the separate replay path
+- A Terraform module (Hetzner: Redis + server + worker pool) and a Helm chart
+- Published as [`@ykstormsorg/anvil`](https://www.npmjs.com/package/@ykstormsorg/anvil) with npm build provenance — the package is signed by the GitHub Actions run that built it, so you can verify it came from the source you're reading.
+
+It's a 0.1, not a finished library: you map the provider's signature header yourself, replay is one job at a time, and BullMQ + Redis is the only backend. But the chain is real and the contracts are tested.
+
+Code: [github.com/ykstorm/anvil](https://github.com/ykstorm/anvil)
