@@ -129,7 +129,7 @@ function Hero({ onBootDone }: { onBootDone: () => void }) {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-cyan-500/30 rounded-full text-[11px] font-mono text-cyan-400/70">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-              Remote · IST · Open to opportunities
+              Mumbai · Remote · Open to opportunities
             </div>
           </motion.div>
         </div>
