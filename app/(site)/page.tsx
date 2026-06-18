@@ -361,7 +361,7 @@ export default function HomePage() {
         <ContactSection />
         <footer className="border-t border-[var(--border)] py-8 text-center">
           <p className="mono text-[11px] text-zinc-500 dark:text-zinc-600">
-            © {new Date().getFullYear()} Lakshyaraj Singh Rao · Apache 2.0
+            © {new Date().getFullYear()} Lakshyaraj Singh Rao
           </p>
         </footer>
       </main>
