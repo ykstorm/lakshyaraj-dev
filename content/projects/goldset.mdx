@@ -6,7 +6,7 @@ date: "2026-05-12"
 
 ## What it does
 
-Goldset locks an AI app's behavior so a pull request can't quietly change it. You define golden examples of what good output looks like, and an LLM judge scores the current output against them on every PR. It ships as a GitHub Action, so the check runs in CI and comments the result on the PR. A regression blocks the merge instead of slipping through review.
+Goldset locks an AI app's behavior so a pull request can't quietly change it. Three runners cover it: a golden-dataset check, an LLM judge that scores the current output, and structural assertions on shape. It ships as a GitHub Action, so the check runs in CI on every PR and comments the delta against the base branch. A regression blocks the merge instead of slipping through review.
 
 ## Why this approach
 
@@ -14,7 +14,7 @@ Snapshot tests assume deterministic output, which LLM responses aren't, so a byt
 
 ## How it's built
 
-A GitHub Action that loads your golden dataset, runs the app's current output through a judge model, and posts the scores back to the PR. The judge prompt and the pass threshold are yours to configure. The dataset is plain files in the repo, so it versions alongside the code it guards.
+A GitHub Action that loads your golden dataset, runs the app's current output through a judge model, and posts the delta-vs-base scores back to the PR as a comment. The judge talks to a pluggable provider — OpenAI or Anthropic — so you pick the model that scores your domain best. The judge prompt and the pass threshold are yours to configure. The dataset is plain files in the repo, so it versions alongside the code it guards.
 
 ## Known limitations
 
