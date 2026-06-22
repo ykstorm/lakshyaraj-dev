@@ -16,6 +16,8 @@ The usual answer is post-hoc moderation: generate the whole response, score it, 
 
 The rules are regex and structural checks, not a classifier model. Each streamed chunk is tested as it passes through, and a match throws an abort that tears down the stream. Keeping the checks to pattern matching is what holds the per-chunk cost low enough to run inline.
 
+For apps that don't want to wrap their model call directly, Tripwire also ships an OpenAI-compatible sidecar proxy. Point your client at its `POST /v1/chat/completions` endpoint instead of the provider's, and it streams the response through the guard, aborting mid-stream the moment a rule trips. No SDK change beyond the base URL.
+
 ## Known limitations
 
 - Rules are regex and structural only. There's no semantic model in the loop.

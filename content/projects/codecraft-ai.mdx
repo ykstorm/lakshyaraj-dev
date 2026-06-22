@@ -1,12 +1,12 @@
 ---
 title: "Codecraft AI"
-description: "In-browser AI IDE. WebContainer-backed live coding playground."
+description: "In-browser AI IDE. Boots a real Vite + React dev server in the tab via WebContainers."
 date: "2026-05-25"
 ---
 
 ## What it does
 
-Codecraft AI is an IDE that runs entirely in the browser. Monaco handles editing and xterm handles the terminal, both bound to a real Node.js runtime through WebContainers. You can open a Next.js project and run it in a tab, no local install. The dev server boots inside the page itself.
+Codecraft AI is an IDE that runs entirely in the browser. Monaco handles editing and xterm handles the terminal, both bound to a real Node.js runtime through WebContainers. You can open a Vite + React project and run it in a tab, no local install. The dev server boots inside the page itself, and editing a file in Monaco hot-reloads the preview in under two seconds.
 
 ## Why this approach
 
@@ -14,7 +14,7 @@ The fastest way to lose someone trying your starter is the "first install Node" 
 
 ## How it's built
 
-Monaco for the editor, xterm for the terminal, and WebContainers underneath providing a Node.js runtime in the tab. Since WebContainers can't bind real ports, the preview is served through a service worker that intercepts requests and routes them to the in-tab server.
+Monaco for the editor, xterm for the terminal, and WebContainers underneath providing a Node.js runtime in the tab. Monaco is wired to the WebContainer filesystem with debounced writes, so edits land on disk and trigger a hot-reload. The xterm terminal runs real shell commands — npm install, ls, cat — against that same filesystem. The page is served with COOP/COEP cross-origin isolation, which is what unlocks SharedArrayBuffer and lets the runtime exist in the tab at all. Since WebContainers can't bind real ports, the preview is served through a service worker that intercepts requests and routes them to the in-tab server. An IndexedDB snapshot cache stores the booted filesystem so repeat visits skip the cold install and come up in under twenty seconds.
 
 ## Known limitations
 
