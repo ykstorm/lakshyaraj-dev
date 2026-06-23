@@ -101,7 +101,7 @@ function Hero() {
               href={href}
               target={href.startsWith('http') ? '_blank' : undefined}
               rel="noopener"
-              className="flex items-center gap-1.5 text-[12px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+              className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{label}</span>
