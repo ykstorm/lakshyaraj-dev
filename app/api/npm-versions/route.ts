@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const PACKAGES = [
+  '@ykstormsorg/anvil',
   '@ykstormsorg/tripwire',
   '@ykstormsorg/goldset',
   '@ykstormsorg/quickdraw',

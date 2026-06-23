@@ -243,33 +243,50 @@ function StackSection() {
   );
 }
 
-// ── Live Telemetry ────────────────────────────────────────────────────────────
+// ── Shipped to npm ────────────────────────────────────────────────────────────
+const NPM_PKGS = [
+  { name: '@ykstormsorg/anvil', note: 'webhook → BullMQ pipeline · SLSA provenance', slsa: true },
+  { name: '@ykstormsorg/tripwire', note: 'mid-stream guardrail + OpenAI-compatible proxy', slsa: false },
+  { name: '@ykstormsorg/goldset', note: 'eval-runner Action + PR-comment bot', slsa: false },
+  { name: '@ykstormsorg/quickdraw', note: 'LLM streaming benchmark CLI · SLSA provenance', slsa: true },
+];
+
 function TelemetrySection() {
   const [npmVersions, setNpmVersions] = useState<Record<string, string>>({});
-  const [ghContribs, setGhContribs] = useState(0);
 
   useEffect(() => {
-    fetch('/api/npm-versions').then((r) => r.json()).then((d) => setNpmVersions(d)).catch(() => {});
-    fetch('/api/github-activity').then((r) => r.json()).then((d) => setGhContribs(d.total || 0)).catch(() => {});
+    fetch('/api/npm-versions').then((r) => r.json()).then(setNpmVersions).catch(() => {});
   }, []);
 
   return (
-    <Section id="telemetry" label="// Live Telemetry">
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {[
-          { label: '@ykstormsorg/tripwire', value: npmVersions['@ykstormsorg/tripwire'] || '…' },
-          { label: '@ykstormsorg/goldset', value: npmVersions['@ykstormsorg/goldset'] || '…' },
-          { label: '@ykstormsorg/quickdraw', value: npmVersions['@ykstormsorg/quickdraw'] || '…' },
-          { label: 'GitHub contributions (30d)', value: ghContribs > 0 ? String(ghContribs) : '…' },
-          { label: 'Timezone', value: 'IST (UTC+5:30)' },
-          { label: 'Status', value: 'Available' },
-        ].map(({ label, value }) => (
-          <div key={label} className="telemetry-card">
-            <p className="mono text-[10px] text-zinc-500 dark:text-zinc-600 mb-1 truncate">{label}</p>
-            <p className="mono text-sm text-cyan-700 dark:text-cyan-400">{value}</p>
-          </div>
-        ))}
+    <Section id="telemetry" label="// Shipped to npm">
+      <div className="grid sm:grid-cols-2 gap-4">
+        {NPM_PKGS.map(({ name, note }) => {
+          const v = npmVersions[name];
+          return (
+            <a
+              key={name}
+              href={`https://npmjs.com/package/${name}`}
+              target="_blank"
+              rel="noopener"
+              className="telemetry-card group flex items-center justify-between gap-3 hover:border-cyan-500/50"
+            >
+              <div className="min-w-0">
+                <p className="mono text-[12.5px] text-zinc-800 dark:text-zinc-200 truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                  {name}
+                </p>
+                <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{note}</p>
+              </div>
+              <span className="mono text-sm text-cyan-700 dark:text-cyan-400 shrink-0">
+                {v && v !== 'N/A' ? `v${v}` : '…'}
+              </span>
+            </a>
+          );
+        })}
       </div>
+      <p className="mono text-[11px] text-zinc-500 mt-4 text-center">
+        four packages live on npm · two with SLSA build provenance · every repo green in CI
+      </p>
     </Section>
   );
 }
