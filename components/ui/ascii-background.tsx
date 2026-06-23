@@ -164,8 +164,15 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
       }
     };
 
+    // Touch / small screens have no cursor to repel and can't afford a 30fps
+    // canvas redraw — render ONE static frame, no loop, no listeners.
+    const isStatic =
+      !!reduce ||
+      window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
+      window.innerWidth < 768;
+
     resize();
-    if (reduce) {
+    if (isStatic) {
       draw();
     } else {
       raf = requestAnimationFrame(loop);

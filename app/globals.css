@@ -220,6 +220,19 @@
   }
   .term-dot { width: 0.6rem; height: 0.6rem; border-radius: 9999px; }
 
+  /* ── Mobile perf ──────────────────────────────────────────────────────────
+     backdrop-filter forces the browser to recomposite everything behind it
+     (incl. the canvas) every frame — brutal on touch GPUs. Drop it there and
+     make the surfaces opaque instead. */
+  @media (hover: none) and (pointer: coarse) {
+    .telemetry-card { backdrop-filter: none; background-color: var(--card); }
+    .term-window    { backdrop-filter: none; background-color: var(--card); }
+    .backdrop-blur, .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg {
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+  }
+
   /* contribution graph scrolls horizontally on narrow screens without an ugly bar */
   .cal-grid {
     scrollbar-width: none;
