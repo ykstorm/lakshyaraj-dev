@@ -29,7 +29,7 @@ export default function ResumePage() {
         </div>
 
         <div className="mb-6">
-          <span className="section-label">// Resume</span>
+          <span className="section-label">{'// Resume'}</span>
           <h1 className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
             Lakshyaraj Singh Rao
           </h1>

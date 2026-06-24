@@ -2,17 +2,17 @@
 
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 // Single light⇄dark button. The old 3-segment control (light/dark/system) was
 // wider than the mobile nav allowed, so it clipped off-screen; one icon button
 // always fits and reads unambiguously.
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
-  if (!mounted) return <div className="w-8 h-8" />;
+  // next-themes leaves resolvedTheme undefined until it has read the client's
+  // preference, so this doubles as the hydration guard — no mount-effect needed,
+  // which avoids a setState-in-effect cascade.
+  if (!resolvedTheme) return <div className="w-8 h-8" />;
 
   const isDark = resolvedTheme === 'dark';
   return (

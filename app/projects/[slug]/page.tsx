@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getContentBySlug, getContentFiles } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import projectsData from '@/data/projects.json';
+import type { Project } from '@/components/ui/project-card';
 
 export async function generateStaticParams() {
   const projects = await getContentFiles('projects');
@@ -16,7 +17,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  const meta = (projectsData as any[]).find((p) => p.id === slug);
+  const meta = (projectsData as Project[]).find((p) => p.id === slug);
   const live = meta?.demo || meta?.playground;
 
   return (
@@ -52,7 +53,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <article className="space-y-6">
           <header className="space-y-2">
-            <span className="section-label">// Project</span>
+            <span className="section-label">{'// Project'}</span>
             <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">
               {project.metadata.title}
             </h1>

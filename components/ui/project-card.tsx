@@ -3,7 +3,7 @@ import { IconBrandGithub, IconBrandNpm } from '@tabler/icons-react';
 import { Globe, TerminalSquare } from 'lucide-react';
 import { TechBadge } from '@/components/ui/tech-badge';
 
-interface ProjectCardProps {
+export interface Project {
   id: string;
   name: string;
   tagline: string;
@@ -16,7 +16,6 @@ interface ProjectCardProps {
   action?: string;
   color?: string;
   flagship?: boolean;
-  index: number;
 }
 
 // border + hover-border per project accent
@@ -30,7 +29,7 @@ const ACCENT: Record<string, string> = {
   default: 'hover:border-zinc-400/70',
 };
 
-function statusOf(p: ProjectCardProps): { text: string; cls: string } {
+function statusOf(p: Project): { text: string; cls: string } {
   if (p.demo || p.playground)
     return { text: '● LIVE', cls: 'text-emerald-600 dark:text-emerald-400' };
   if (p.npm) return { text: '◆ NPM', cls: 'text-amber-600 dark:text-amber-400' };
@@ -38,7 +37,7 @@ function statusOf(p: ProjectCardProps): { text: string; cls: string } {
 }
 
 // shared link row
-function Links({ p }: { p: ProjectCardProps }) {
+function Links({ p }: { p: Project }) {
   const live = p.demo || p.playground;
   return (
     <div className="flex flex-wrap items-center gap-4 text-[11px] mono text-zinc-500">
@@ -86,7 +85,7 @@ function Chrome() {
   );
 }
 
-export function ProjectCard({ project }: { project: ProjectCardProps; index: number }) {
+export function ProjectCard({ project }: { project: Project; index: number }) {
   const accent = ACCENT[project.color || 'default'] || ACCENT.default;
   const live = project.demo || project.playground;
   const href = live || project.code;
@@ -125,7 +124,7 @@ export function ProjectCard({ project }: { project: ProjectCardProps; index: num
             <div className="flex items-center justify-between"><span className="text-zinc-500">stack</span><span className="text-zinc-700 dark:text-zinc-300">{project.stack.length} systems</span></div>
             <div className="flex items-center justify-between"><span className="text-zinc-500">extracted</span><span className="text-cyan-700 dark:text-cyan-400">anchor · tripwire</span></div>
             <div className="h-px bg-cyan-500/15" />
-            <div className="text-zinc-500 leading-relaxed">// production patterns, hardened into OSS</div>
+            <div className="text-zinc-500 leading-relaxed">{'// production patterns, hardened into OSS'}</div>
           </div>
         </div>
       </div>

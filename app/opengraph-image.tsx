@@ -26,7 +26,7 @@ export default function OpengraphImage() {
         }}
       >
         <div style={{ color: '#34d399', fontSize: 26, letterSpacing: 10 }}>
-          // LAKSHYARAJ SINGH RAO
+          {'// LAKSHYARAJ SINGH RAO'}
         </div>
         <div
           style={{

@@ -19,7 +19,7 @@ export default function NowPage() {
         </Link>
 
         <div className="mt-8 mb-10">
-          <span className="section-label">// Now</span>
+          <span className="section-label">{'// Now'}</span>
           <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">What I&apos;m doing now</h1>
           <p className="mt-2 text-[13px] text-zinc-500 font-mono">
             A snapshot, not a feed. Updated when the work changes.

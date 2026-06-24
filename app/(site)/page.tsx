@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { TerminalHero } from '@/components/ui/terminal-hero';
 import { AsciiBackground } from '@/components/ui/ascii-background';
 import { HoverEffect } from '@/components/ui/card-hover-effect';
-import { ProjectCard } from '@/components/ui/project-card';
+import { ProjectCard, type Project } from '@/components/ui/project-card';
 import { TechBadge } from '@/components/ui/tech-badge';
 import { TerminalContact } from '@/components/ui/terminal-contact';
 import { ResumeButton } from '@/components/ui/resume-button';
@@ -44,7 +44,7 @@ function Hero() {
           transition={{ delay: 0.1, duration: 0.5 }}
         >
           <span className="mono text-[11px] text-cyan-700 dark:text-cyan-400 tracking-[0.28em] uppercase opacity-80">
-            // initialize
+            {'// initialize'}
           </span>
         </motion.div>
 
@@ -190,7 +190,7 @@ function NowSection() {
 
 // ── Projects ─────────────────────────────────────────────────────────────────
 function ProjectsSection() {
-  const projects = projectsData as any[];
+  const projects = projectsData as Project[];
   const flagship = projects.find((p) => p.flagship);
   const others = projects.filter((p) => !p.flagship);
 

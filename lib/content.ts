@@ -5,7 +5,7 @@ export interface ContentMetadata {
   title: string;
   description: string;
   date: string;
-  [key: string]: any;
+  [key: string]: string;
 }
 
 export interface ContentFile {
