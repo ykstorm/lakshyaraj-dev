@@ -11,6 +11,7 @@ import { TechBadge } from '@/components/ui/tech-badge';
 import { TerminalContact } from '@/components/ui/terminal-contact';
 import { ResumeButton } from '@/components/ui/resume-button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { GithubContributions } from '@/components/ui/github-contributions';
 import { IconBrandGithub, IconBrandLinkedin, IconBrandNpm } from '@tabler/icons-react';
 import { Mail, ExternalLink } from 'lucide-react';
 import projectsData from '@/data/projects.json';
@@ -100,7 +101,7 @@ function Hero() {
               href={href}
               target={href.startsWith('http') ? '_blank' : undefined}
               rel="noopener"
-              className="flex items-center gap-1.5 text-[12px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+              className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{label}</span>
@@ -124,29 +125,11 @@ function Hero() {
   );
 }
 
-// ── About ─────────────────────────────────────────────────────────────────────
-function AboutSection() {
+// ── Activity (GitHub contribution graph) ──────────────────────────────────────
+function ActivitySection() {
   return (
-    <Section id="about" label="// About">
-      <div className="max-w-2xl space-y-4 text-[15px] leading-relaxed text-zinc-700 dark:text-zinc-300">
-        <p>
-          I build backend and AI-infrastructure systems and ship them to production. Right now I&apos;m solo on{' '}
-          <a href="https://homesty.ai" target="_blank" rel="noopener" className="text-cyan-700 dark:text-cyan-400 hover:underline">
-            homesty.ai
-          </a>
-          , a commission-driven real-estate advisor running on Next.js, pgvector, and a refusal-first retrieval layer.
-        </p>
-        <p>
-          The reliability patterns I needed there became open source: Anchor (RAG that refuses instead of hallucinating),
-          Tripwire (mid-stream LLM guardrails), and Anvil (an idempotent webhook → BullMQ pipeline with dead-letter replay).
-          Same engine, made public.
-        </p>
-        <p>
-          I care about the unglamorous parts — constant-time HMAC verification, backoff schedules, golden-dataset evals
-          that block a merge on regression. I&apos;m open to backend / AI-infra roles and contract work on RAG, streaming
-          LLMs, and queue/webhook reliability.
-        </p>
-      </div>
+    <Section id="activity" label="// Commit Activity">
+      <GithubContributions />
     </Section>
   );
 }
@@ -238,7 +221,7 @@ function ProjectsSection() {
 const STACK = {
   Languages: ['TypeScript', 'Python', 'SQL', 'Bash', 'YAML', 'Go (learning)'],
   'Backend/Data': ['Node.js', 'Next.js 15', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
-  'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'GPT-4o', 'Claude', 'Ollama', 'vLLM'],
+  'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'Terraform', 'Ollama', 'vLLM', 'RAG'],
 };
 
 function StackSection() {
@@ -260,33 +243,50 @@ function StackSection() {
   );
 }
 
-// ── Live Telemetry ────────────────────────────────────────────────────────────
+// ── Shipped to npm ────────────────────────────────────────────────────────────
+const NPM_PKGS = [
+  { name: '@ykstormsorg/anvil', note: 'webhook → BullMQ pipeline · SLSA provenance', slsa: true },
+  { name: '@ykstormsorg/tripwire', note: 'mid-stream guardrail + OpenAI-compatible proxy', slsa: false },
+  { name: '@ykstormsorg/goldset', note: 'eval-runner Action + PR-comment bot', slsa: false },
+  { name: '@ykstormsorg/quickdraw', note: 'LLM streaming benchmark CLI · SLSA provenance', slsa: true },
+];
+
 function TelemetrySection() {
   const [npmVersions, setNpmVersions] = useState<Record<string, string>>({});
-  const [ghContribs, setGhContribs] = useState(0);
 
   useEffect(() => {
-    fetch('/api/npm-versions').then((r) => r.json()).then((d) => setNpmVersions(d)).catch(() => {});
-    fetch('/api/github-activity').then((r) => r.json()).then((d) => setGhContribs(d.total || 0)).catch(() => {});
+    fetch('/api/npm-versions').then((r) => r.json()).then(setNpmVersions).catch(() => {});
   }, []);
 
   return (
-    <Section id="telemetry" label="// Live Telemetry">
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {[
-          { label: '@ykstormsorg/tripwire', value: npmVersions['@ykstormsorg/tripwire'] || '…' },
-          { label: '@ykstormsorg/goldset', value: npmVersions['@ykstormsorg/goldset'] || '…' },
-          { label: '@ykstormsorg/quickdraw', value: npmVersions['@ykstormsorg/quickdraw'] || '…' },
-          { label: 'GitHub contributions (30d)', value: ghContribs > 0 ? String(ghContribs) : '…' },
-          { label: 'Timezone', value: 'IST (UTC+5:30)' },
-          { label: 'Status', value: 'Available' },
-        ].map(({ label, value }) => (
-          <div key={label} className="telemetry-card">
-            <p className="mono text-[10px] text-zinc-500 dark:text-zinc-600 mb-1 truncate">{label}</p>
-            <p className="mono text-sm text-cyan-700 dark:text-cyan-400">{value}</p>
-          </div>
-        ))}
+    <Section id="telemetry" label="// Shipped to npm">
+      <div className="grid sm:grid-cols-2 gap-4">
+        {NPM_PKGS.map(({ name, note }) => {
+          const v = npmVersions[name];
+          return (
+            <a
+              key={name}
+              href={`https://npmjs.com/package/${name}`}
+              target="_blank"
+              rel="noopener"
+              className="telemetry-card group flex items-center justify-between gap-3 hover:border-cyan-500/50"
+            >
+              <div className="min-w-0">
+                <p className="mono text-[12.5px] text-zinc-800 dark:text-zinc-200 truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                  {name}
+                </p>
+                <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{note}</p>
+              </div>
+              <span className="mono text-sm text-cyan-700 dark:text-cyan-400 shrink-0">
+                {v && v !== 'N/A' ? `v${v}` : '…'}
+              </span>
+            </a>
+          );
+        })}
       </div>
+      <p className="mono text-[11px] text-zinc-500 mt-4 text-center">
+        four packages live on npm · two with SLSA build provenance · every repo green in CI
+      </p>
     </Section>
   );
 }
@@ -308,10 +308,10 @@ function ContactSection() {
 // ── Navigation ────────────────────────────────────────────────────────────────
 function Nav() {
   const links = [
-    { href: '/#about', label: 'About' },
     { href: '/#now', label: 'Now' },
     { href: '/#projects', label: 'Projects' },
     { href: '/#stack', label: 'Stack' },
+    { href: '/#activity', label: 'Activity' },
     { href: '/#contact', label: 'Contact' },
   ];
 
@@ -322,15 +322,18 @@ function Nav() {
           lakshyaraj<span className="text-cyan-600 dark:text-cyan-400">/</span>
         </Link>
         <div className="flex items-center gap-5 sm:gap-6">
-          {links.map(({ href, label }) => (
-            <Link
-              key={label}
-              href={href}
-              className="text-[11px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
-            >
-              {label}
-            </Link>
-          ))}
+          {/* links collapse under sm so the theme toggle is always reachable on mobile */}
+          <div className="hidden sm:flex items-center gap-5 sm:gap-6">
+            {links.map(({ href, label }) => (
+              <Link
+                key={label}
+                href={href}
+                className="text-[11px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
           <ThemeToggle />
         </div>
       </div>
@@ -353,10 +356,10 @@ export default function HomePage() {
       <Nav />
       <main className="pt-14">
         <Hero />
-        <AboutSection />
         <NowSection />
         <ProjectsSection />
         <StackSection />
+        <ActivitySection />
         <TelemetrySection />
         <ContactSection />
         <footer className="border-t border-[var(--border)] py-8 text-center">
