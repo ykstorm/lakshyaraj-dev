@@ -43,7 +43,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: TITLE,
     description: 'The reliability layer for production AI — refusal, guardrails, eval-gating, idempotency. 7 OSS tools, 4 on npm.',
-    creator: '@ykstorm',
   },
 };
 
@@ -67,7 +66,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 'https://github.com/ykstorm',
                 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152',
                 'https://www.npmjs.com/~ykstormsorg',
-                'https://x.com/ykstorm',
               ],
             }),
           }}
