@@ -111,7 +111,7 @@
     ],
     "code": "https://github.com/ykstorm/stackup",
     "color": "purple",
-    "metric": "canary verified live · 25→100% · 3/3 Prometheus analysis"
+    "metric": "canary CI-verified · 25→100% · real ≥0.95 Prometheus gate"
   },
   {
     "id": "anvil",
