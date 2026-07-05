@@ -13,7 +13,6 @@
       "Claude"
     ],
     "demo": "https://homesty.ai",
-    "code": "https://github.com/ykstorm/buyerchat",
     "flagship": true,
     "color": "cyan"
   },
@@ -78,7 +77,7 @@
     ],
     "code": "https://github.com/ykstorm/goldset",
     "npm": "@ykstormsorg/goldset",
-    "action": "uses: ykstorm/goldset@v0.2.0",
+    "action": "uses: ykstorm/goldset@v1.0.0",
     "color": "green",
     "metric": "1k structural eval cases in ~3 ms"
   },
