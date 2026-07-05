@@ -19,13 +19,23 @@ export default function ResumePage() {
           >
             ← back
           </Link>
-          <a
-            href={PDF}
-            download
-            className="inline-flex items-center gap-2 px-4 py-2 border border-cyan-500/50 rounded-lg font-mono text-xs text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10 transition-colors"
-          >
-            Download PDF
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href={PDF}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-cyan-500/50 rounded-lg font-mono text-xs text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10 transition-colors"
+            >
+              Open PDF ↗
+            </a>
+            <a
+              href={PDF}
+              download
+              className="inline-flex items-center gap-2 px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg font-mono text-xs text-zinc-600 dark:text-zinc-300 hover:bg-zinc-500/10 transition-colors"
+            >
+              Download
+            </a>
+          </div>
         </div>
 
         <div className="mb-6">
@@ -35,29 +45,23 @@ export default function ResumePage() {
           </h1>
         </div>
 
-        <object
-          data={PDF}
-          type="application/pdf"
-          className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800"
+        {/* iframe renders PDFs inline more reliably than <object> on desktop.
+            Mobile browsers often can't embed a PDF at all — the always-visible
+            "Open PDF ↗" button above covers them, so the resume is never a
+            dead end regardless of device. */}
+        <iframe
+          src={`${PDF}#view=FitH`}
+          title="Lakshyaraj Singh Rao — resume"
+          className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
           style={{ height: '80vh' }}
-        >
-          <noscript>
-            <p className="font-mono text-sm text-zinc-600 dark:text-zinc-400">
-              Your browser can&apos;t display the embedded PDF.{' '}
-              <a href={PDF} className="text-cyan-700 dark:text-cyan-400 underline">
-                Download the resume
-              </a>
-              .
-            </p>
-          </noscript>
-          <p className="p-4 font-mono text-sm text-zinc-600 dark:text-zinc-400">
-            Can&apos;t display the PDF inline.{' '}
-            <a href={PDF} download className="text-cyan-700 dark:text-cyan-400 underline">
-              Download it instead
-            </a>
-            .
-          </p>
-        </object>
+        />
+        <p className="mt-3 font-mono text-xs text-zinc-500">
+          PDF not showing?{' '}
+          <a href={PDF} target="_blank" rel="noopener" className="text-cyan-700 dark:text-cyan-400 underline">
+            Open it in a new tab
+          </a>
+          .
+        </p>
       </div>
     </div>
   );
