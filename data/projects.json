@@ -95,7 +95,8 @@
     ],
     "code": "https://github.com/ykstorm/quickdraw",
     "npm": "@ykstormsorg/quickdraw",
-    "color": "amber"
+    "color": "amber",
+    "metric": "Haiku live: TTFT p50 739 ms · 85.6 tok/s · CI-measured"
   },
   {
     "id": "stackup",
