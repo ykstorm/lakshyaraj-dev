@@ -16,6 +16,8 @@ export interface Project {
   action?: string;
   color?: string;
   flagship?: boolean;
+  /** One-line measured benchmark, e.g. "p50 2.6 ms retrieval @ 100k vectors". */
+  metric?: string;
 }
 
 // border + hover-border per project accent
@@ -149,6 +151,12 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
 
         <p className="text-[11px] mono text-cyan-700/80 dark:text-cyan-400/70 leading-snug">{project.tagline}</p>
         <p className="text-[12.5px] text-zinc-600 dark:text-zinc-400 leading-relaxed">{project.description}</p>
+
+        {project.metric && (
+          <p className="text-[10.5px] mono text-emerald-700/90 dark:text-emerald-400/80 leading-snug" title="Measured benchmark">
+            ⚡ {project.metric}
+          </p>
+        )}
 
         <div className="flex flex-wrap gap-1.5 pt-0.5">
           {project.stack.slice(0, 4).map((tech) => (
