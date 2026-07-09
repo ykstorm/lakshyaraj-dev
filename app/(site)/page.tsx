@@ -220,7 +220,7 @@ function ProjectsSection() {
 // ── Technical Arsenal ─────────────────────────────────────────────────────────
 const STACK = {
   Languages: ['TypeScript', 'Python', 'SQL', 'Bash', 'YAML', 'Go (learning)'],
-  'Backend/Data': ['Node.js', 'Next.js 15', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
+  'Backend/Data': ['Node.js', 'Next.js 16', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
   'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'Terraform', 'Ollama', 'vLLM', 'RAG'],
 };
 
