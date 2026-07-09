@@ -312,6 +312,7 @@ function Nav() {
     { href: '/#projects', label: 'Projects' },
     { href: '/#stack', label: 'Stack' },
     { href: '/#activity', label: 'Activity' },
+    { href: '/blog', label: 'Blog' },
     { href: '/#contact', label: 'Contact' },
   ];
 
