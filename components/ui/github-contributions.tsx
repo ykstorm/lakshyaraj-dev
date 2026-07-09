@@ -20,23 +20,36 @@ const LEVEL: Record<string, string> = {
 export function GithubContributions() {
   const [weeks, setWeeks] = useState<Day[][]>([]);
   const [total, setTotal] = useState<number | null>(null);
+  const [status, setStatus] = useState<'loading' | 'error' | 'ok'>('loading');
   const reduce = useReducedMotion();
 
   useEffect(() => {
+    let cancelled = false;
     fetch('/api/github-activity')
-      .then((r) => r.json())
-      .then((d) => {
-        setWeeks(Array.isArray(d.weeks) ? d.weeks : []);
-        setTotal(typeof d.yearTotal === 'number' ? d.yearTotal : null);
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
       })
-      .catch(() => {});
+      .then((d) => {
+        if (cancelled) return;
+        const w = Array.isArray(d.weeks) ? d.weeks : [];
+        setWeeks(w);
+        setTotal(typeof d.yearTotal === 'number' ? d.yearTotal : null);
+        setStatus(w.length ? 'ok' : 'error');
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('error');
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
     <a
       href="https://github.com/ykstorm"
       target="_blank"
-      rel="noopener"
+      rel="noopener noreferrer"
       className="block group"
       aria-label="GitHub contribution graph for ykstorm"
     >
@@ -48,9 +61,14 @@ export function GithubContributions() {
           </span>
         </div>
 
-        {weeks.length === 0 ? (
+        {status === 'loading' ? (
           <div className="mono text-[11px] text-zinc-500 py-6 text-center">
             loading contribution data…
+          </div>
+        ) : status === 'error' ? (
+          <div className="mono text-[11px] text-zinc-500 py-6 text-center">
+            couldn&apos;t load the graph — see the full history on{' '}
+            <span className="text-cyan-600 dark:text-cyan-400 group-hover:underline">@ykstorm ↗</span>
           </div>
         ) : (
           <div className="cal-grid overflow-x-auto pb-1">

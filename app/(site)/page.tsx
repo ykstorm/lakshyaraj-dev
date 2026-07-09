@@ -100,7 +100,7 @@ function Hero() {
               key={label}
               href={href}
               target={href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener"
+              rel="noopener noreferrer"
               className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
             >
               <Icon className="w-3.5 h-3.5" />
@@ -144,7 +144,7 @@ function NowSection() {
             <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
             <span className="section-label text-[10px]">Currently</span>
           </div>
-          <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.currently}</p>
+          <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
         </div>
 
         <div className="telemetry-card space-y-4">
@@ -220,7 +220,7 @@ function ProjectsSection() {
 // ── Technical Arsenal ─────────────────────────────────────────────────────────
 const STACK = {
   Languages: ['TypeScript', 'Python', 'SQL', 'Bash', 'YAML', 'Go (learning)'],
-  'Backend/Data': ['Node.js', 'Next.js 15', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
+  'Backend/Data': ['Node.js', 'Next.js 16', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
   'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'Terraform', 'Ollama', 'vLLM', 'RAG'],
 };
 
@@ -268,7 +268,7 @@ function TelemetrySection() {
               key={name}
               href={`https://npmjs.com/package/${name}`}
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
               className="telemetry-card group flex items-center justify-between gap-3 hover:border-cyan-500/50"
             >
               <div className="min-w-0">
@@ -312,6 +312,7 @@ function Nav() {
     { href: '/#projects', label: 'Projects' },
     { href: '/#stack', label: 'Stack' },
     { href: '/#activity', label: 'Activity' },
+    { href: '/blog', label: 'Blog' },
     { href: '/#contact', label: 'Contact' },
   ];
 

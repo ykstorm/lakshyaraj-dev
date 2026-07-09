@@ -42,7 +42,7 @@ export function ResumeButton({ href }: ResumeButtonProps) {
     <motion.a
       href={href}
       target={external ? '_blank' : undefined}
-      rel={external ? 'noopener' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
       onMouseEnter={startGlitch}
       onMouseLeave={stopGlitch}
       whileHover={{ scale: 1.02 }}

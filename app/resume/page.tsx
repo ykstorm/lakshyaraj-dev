@@ -23,7 +23,7 @@ export default function ResumePage() {
             <a
               href={PDF}
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 border border-cyan-500/50 rounded-lg font-mono text-xs text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10 transition-colors"
             >
               Open PDF ↗
@@ -57,7 +57,7 @@ export default function ResumePage() {
         />
         <p className="mt-3 font-mono text-xs text-zinc-500">
           PDF not showing?{' '}
-          <a href={PDF} target="_blank" rel="noopener" className="text-cyan-700 dark:text-cyan-400 underline">
+          <a href={PDF} target="_blank" rel="noopener noreferrer" className="text-cyan-700 dark:text-cyan-400 underline">
             Open it in a new tab
           </a>
           .

@@ -32,17 +32,17 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <span className="text-zinc-700 dark:text-zinc-200 font-semibold truncate">{project.metadata.title}</span>
           <div className="ml-auto flex items-center gap-4">
             {live && (
-              <a href={live} target="_blank" rel="noopener" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+              <a href={live} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
                 Live
               </a>
             )}
             {meta?.code && (
-              <a href={meta.code} target="_blank" rel="noopener" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+              <a href={meta.code} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
                 Code
               </a>
             )}
             {meta?.npm && (
-              <a href={`https://npmjs.com/package/${meta.npm}`} target="_blank" rel="noopener" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+              <a href={`https://npmjs.com/package/${meta.npm}`} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
                 npm
               </a>
             )}

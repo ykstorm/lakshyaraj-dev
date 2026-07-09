@@ -55,7 +55,7 @@ export function TerminalContact() {
             <a
               href={p.href}
               target={p.href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener"
+              rel="noopener noreferrer"
               className={selected === p.id ? 'text-cyan-600 dark:text-cyan-400 underline' : 'text-cyan-700/90 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400'}
             >
               {p.value}
