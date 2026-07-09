@@ -44,22 +44,22 @@ function Links({ p }: { p: Project }) {
   return (
     <div className="flex flex-wrap items-center gap-4 text-[11px] mono text-zinc-500">
       {live && (
-        <a href={live} target="_blank" rel="noopener" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
           <Globe className="w-3 h-3" /> live
         </a>
       )}
       {p.playground && p.playground !== p.demo && (
-        <a href={p.playground} target="_blank" rel="noopener" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={p.playground} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
           <TerminalSquare className="w-3 h-3" /> playground
         </a>
       )}
       {p.code && (
-        <a href={p.code} target="_blank" rel="noopener" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={p.code} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
           <IconBrandGithub className="w-3 h-3" /> code
         </a>
       )}
       {p.npm && (
-        <a href={`https://npmjs.com/package/${p.npm}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={`https://npmjs.com/package/${p.npm}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
           <IconBrandNpm className="w-3.5 h-3.5" /> npm
         </a>
       )}
@@ -106,7 +106,7 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
             </div>
             <h3 className="font-display text-2xl sm:text-[1.7rem] font-semibold tracking-tight text-zinc-900 dark:text-white">
               {href ? (
-                <a href={href} target="_blank" rel="noopener" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
+                <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
               ) : project.name}
             </h3>
             <p className="text-[12px] mono text-cyan-700 dark:text-cyan-400/80">{project.tagline}</p>
@@ -145,7 +145,7 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
 
         <h3 className="font-display text-[1.05rem] font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
           {href ? (
-            <a href={href} target="_blank" rel="noopener" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
+            <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
           ) : project.name}
         </h3>
 

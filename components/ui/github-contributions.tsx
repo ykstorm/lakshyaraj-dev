@@ -49,7 +49,7 @@ export function GithubContributions() {
     <a
       href="https://github.com/ykstorm"
       target="_blank"
-      rel="noopener"
+      rel="noopener noreferrer"
       className="block group"
       aria-label="GitHub contribution graph for ykstorm"
     >

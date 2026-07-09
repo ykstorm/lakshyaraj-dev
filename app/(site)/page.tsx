@@ -100,7 +100,7 @@ function Hero() {
               key={label}
               href={href}
               target={href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener"
+              rel="noopener noreferrer"
               className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
             >
               <Icon className="w-3.5 h-3.5" />
@@ -268,7 +268,7 @@ function TelemetrySection() {
               key={name}
               href={`https://npmjs.com/package/${name}`}
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
               className="telemetry-card group flex items-center justify-between gap-3 hover:border-cyan-500/50"
             >
               <div className="min-w-0">
