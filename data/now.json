@@ -1,15 +1,6 @@
 {
-  "currently": "Shipped the full OSS reliability stack — seven repos, every CI green. Anvil v0.1.0 on npm with SLSA build provenance; Tripwire ships an OpenAI-compatible guard proxy; Goldset's eval Action posts a delta-vs-base PR comment and blocks merges on regression.",
   "current": "Shipped the full OSS reliability stack — seven repos, every CI green. Anvil v0.1.0 on npm with SLSA build provenance; Tripwire ships an OpenAI-compatible guard proxy; Goldset's eval Action posts a delta-vs-base PR comment and blocks merges on regression.",
   "shipped_this_week": [
-    "anvil v0.1.0 — webhook→BullMQ pipeline on npm with SLSA provenance; examples/stripe + examples/github",
-    "tripwire — OpenAI-compatible sidecar proxy that aborts mid-stream on a rule trip",
-    "goldset — real LLM-judge eval Action + delta-vs-base PR-comment bot",
-    "quickdraw v1.0.2 — streaming benchmark CLI (TTFT, p50/p95/p99, cost)",
-    "codecraft — Vite + editable Monaco + interactive terminal in the browser tab",
-    "stackup — kind GitOps lab with a real Prometheus success-rate canary"
-  ],
-  "shipped": [
     "anvil v0.1.0 — webhook→BullMQ pipeline on npm with SLSA provenance; examples/stripe + examples/github",
     "tripwire — OpenAI-compatible sidecar proxy that aborts mid-stream on a rule trip",
     "goldset — real LLM-judge eval Action + delta-vs-base PR-comment bot",
@@ -21,7 +12,6 @@
     "a unifying trust-policy SDK that wires Anchor (refuse) + Tripwire (abort) + Goldset (eval-gate) into one declarative policy",
     "a cited benchmark of agent-reliability failure modes"
   ],
-  "next": "a unifying trust-policy SDK that wires Anchor (refuse) + Tripwire (abort) + Goldset (eval-gate) into one declarative policy",
   "open_to": [
     "backend / AI-infra roles at Mumbai or Bangalore startups",
     "YC seed founding-engineer roles",

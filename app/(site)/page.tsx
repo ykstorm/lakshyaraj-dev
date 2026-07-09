@@ -144,7 +144,7 @@ function NowSection() {
             <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
             <span className="section-label text-[10px]">Currently</span>
           </div>
-          <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.currently}</p>
+          <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
         </div>
 
         <div className="telemetry-card space-y-4">
