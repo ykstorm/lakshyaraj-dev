@@ -104,7 +104,7 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
               <span className="mono text-[11px] text-zinc-500">~/{project.id}</span>
               <span className="px-1.5 py-0.5 bg-cyan-500 text-black text-[9px] mono font-bold tracking-[0.2em] uppercase rounded-sm">Flagship</span>
             </div>
-            <h3 className="font-display text-2xl sm:text-[1.7rem] font-semibold tracking-tight text-zinc-900 dark:text-white">
+            <h3 className="font-display text-2xl sm:text-[1.85rem] tracking-tight text-zinc-900 dark:text-white">
               {href ? (
                 <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
               ) : project.name}
@@ -143,7 +143,7 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
           <span className={`mono text-[9.5px] tracking-wider ${status.cls}`}>{status.text}</span>
         </div>
 
-        <h3 className="font-display text-[1.05rem] font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+        <h3 className="font-display text-[1.2rem] tracking-tight text-zinc-900 dark:text-zinc-100">
           {href ? (
             <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
           ) : project.name}

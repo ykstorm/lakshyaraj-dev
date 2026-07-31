@@ -42,10 +42,11 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
     let vy = new Float32Array(0);
 
     const mouse = { x: -9999, y: -9999, active: false };
-    const R = 110;          // repel radius
-    const FORCE = 26;       // repel strength
-    const K = 0.12;         // spring stiffness
-    const DAMP = 0.82;      // velocity damping
+    const R = 130;          // repel radius
+    const FORCE = 30;       // repel strength
+    const K = 0.10;         // spring stiffness (softer → looser, more physical)
+    const DAMP = 0.86;      // velocity damping
+    const GRAV = 0.9;       // gravity: disturbed glyphs fall + settle, not snap back
 
     const tint = () =>
       document.documentElement.classList.contains('dark')
@@ -91,7 +92,11 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
               vy[i] += ry * f;
             }
           }
-          // spring back to origin + damping
+          // spring back to origin + gravity + damping. Gravity only bites while
+          // a glyph is displaced (scaled by offset) so the rest state stays on
+          // the grid — disturbed glyphs sag and settle instead of snapping back.
+          const disp = Math.abs(dx[i]) + Math.abs(dy[i]);
+          vy[i] += GRAV * Math.min(1, disp / 40);
           vx[i] = (vx[i] - K * dx[i]) * DAMP;
           vy[i] = (vy[i] - K * dy[i]) * DAMP;
           dx[i] += vx[i];

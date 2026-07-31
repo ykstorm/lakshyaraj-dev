@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { TerminalHero } from '@/components/ui/terminal-hero';
 import { AsciiBackground } from '@/components/ui/ascii-background';
@@ -19,13 +19,26 @@ import nowData from '@/data/now.json';
 
 // ── Section wrapper ─────────────────────────────────────────────────────────
 function Section({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
+  const reduceMotion = useReducedMotion();
   return (
     <section id={id} className="py-20 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-10 flex items-center gap-4">
-          <span className="section-label">{label}</span>
-          <div className="flex-1 h-px bg-[var(--border)]" />
-        </div>
+        <motion.div
+          className="mb-10 flex items-center gap-4"
+          initial={reduceMotion ? false : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.4 }}
+        >
+          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>{label}</span>
+          <motion.div
+            className="flex-1 h-px bg-[var(--border)] origin-left"
+            initial={reduceMotion ? false : { scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </motion.div>
         {children}
       </div>
     </section>
@@ -44,15 +57,15 @@ function Hero() {
           transition={{ delay: 0.1, duration: 0.5 }}
         >
           <span className="mono text-[11px] text-cyan-700 dark:text-cyan-400 tracking-[0.28em] uppercase opacity-80">
-            {'// initialize'}
+            <span className="text-cyan-500 dark:text-cyan-400 font-bold">❯</span> initialize
           </span>
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="font-display text-4xl sm:text-5xl md:text-[3.4rem] font-semibold text-zinc-900 dark:text-white tracking-tight leading-[1.05]"
+          initial={{ opacity: 0, filter: 'blur(12px)', y: 6 }}
+          animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+          transition={{ delay: 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="font-display text-5xl sm:text-6xl md:text-[4.2rem] text-zinc-900 dark:text-white leading-[1.02]"
         >
           Lakshyaraj Singh&nbsp;Rao
         </motion.h1>
@@ -128,7 +141,7 @@ function Hero() {
 // ── Activity (GitHub contribution graph) ──────────────────────────────────────
 function ActivitySection() {
   return (
-    <Section id="activity" label="// Commit Activity">
+    <Section id="activity" label="Commit Activity">
       <GithubContributions />
     </Section>
   );
@@ -137,7 +150,7 @@ function ActivitySection() {
 // ── Now / Mission Status ──────────────────────────────────────────────────────
 function NowSection() {
   return (
-    <Section id="now" label="// Mission Status">
+    <Section id="now" label="Mission Status">
       <div className="grid md:grid-cols-2 gap-6">
         <div className="telemetry-card space-y-4">
           <div className="flex items-center gap-2">
@@ -200,13 +213,13 @@ function ProjectsSection() {
   }));
 
   return (
-    <Section id="projects" label="// System Architectures">
+    <Section id="projects" label="System Architectures">
       {flagship && (
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 18, scale: 0.99 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ type: 'spring', stiffness: 240, damping: 26, mass: 0.7 }}
           className="mb-5"
         >
           <ProjectCard project={flagship} index={0} />
@@ -226,7 +239,7 @@ const STACK = {
 
 function StackSection() {
   return (
-    <Section id="stack" label="// Technical Arsenal">
+    <Section id="stack" label="Technical Arsenal">
       <div className="grid md:grid-cols-3 gap-6">
         {Object.entries(STACK).map(([category, items]) => (
           <div key={category} className="telemetry-card space-y-4">
@@ -259,7 +272,7 @@ function TelemetrySection() {
   }, []);
 
   return (
-    <Section id="telemetry" label="// Shipped to npm">
+    <Section id="telemetry" label="Shipped to npm">
       <div className="grid sm:grid-cols-2 gap-4">
         {NPM_PKGS.map(({ name, note }) => {
           const v = npmVersions[name];
@@ -294,7 +307,7 @@ function TelemetrySection() {
 // ── Contact ───────────────────────────────────────────────────────────────────
 function ContactSection() {
   return (
-    <Section id="contact" label="// Establish Connection">
+    <Section id="contact" label="Establish Connection">
       <div className="space-y-8">
         <TerminalContact />
         <div className="flex justify-center">
@@ -319,7 +332,7 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--background)_82%,transparent)] backdrop-blur-md">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="font-display text-sm font-semibold text-zinc-800 dark:text-zinc-200 tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <Link href="/" className="mono text-sm font-semibold text-zinc-800 dark:text-zinc-200 tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
           lakshyaraj<span className="text-cyan-600 dark:text-cyan-400">/</span>
         </Link>
         <div className="flex items-center gap-5 sm:gap-6">
@@ -363,12 +376,72 @@ export default function HomePage() {
         <ActivitySection />
         <TelemetrySection />
         <ContactSection />
-        <footer className="border-t border-[var(--border)] py-8 text-center">
-          <p className="mono text-[11px] text-zinc-500 dark:text-zinc-600">
-            © {new Date().getFullYear()} Lakshyaraj Singh Rao
-          </p>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );
+}
+
+// ── Footer ─────────────────────────────────────────────────────────────────────
+function SiteFooter() {
+  const year = new Date().getFullYear();
+  const footLinks = [
+    { href: 'https://github.com/ykstorm', label: 'github' },
+    { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', label: 'linkedin' },
+    { href: 'https://npmjs.com/~ykstormsorg', label: 'npm' },
+    { href: '/resume', label: 'resume' },
+  ];
+  return (
+    <footer className="border-t border-[var(--border)] mt-8">
+      <div className="max-w-4xl mx-auto px-4 py-10">
+        <div className="term-window overflow-hidden">
+          <div className="term-titlebar">
+            <span className="term-dot" style={{ background: '#ff5f56' }} />
+            <span className="term-dot" style={{ background: '#ffbd2e' }} />
+            <span className="term-dot" style={{ background: '#27c93f' }} />
+            <span className="mono text-[11px] text-zinc-500 ml-2">~/lakshyaraj — bash</span>
+          </div>
+          <div className="p-4 sm:p-5 mono text-[12.5px] leading-relaxed">
+            <p className="text-zinc-600 dark:text-zinc-400">
+              <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
+              <span className="text-zinc-500">:</span>
+              <span className="text-cyan-600 dark:text-cyan-400">~</span>
+              <span className="text-zinc-500">$ </span>
+              cat contact.txt
+            </p>
+            <div className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1">
+              {footLinks.map(({ href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target={href.startsWith('http') ? '_blank' : undefined}
+                  rel="noopener noreferrer"
+                  className="text-zinc-600 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+            <p className="mt-3 text-zinc-600 dark:text-zinc-400">
+              <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
+              <span className="text-zinc-500">:</span>
+              <span className="text-cyan-600 dark:text-cyan-400">~</span>
+              <span className="text-zinc-500">$ </span>
+              echo &quot;built with next.js · typst résumé · deployed on vercel&quot;
+            </p>
+            <p className="mt-1 text-zinc-500 dark:text-zinc-500">
+              built with next.js · typst résumé · deployed on vercel
+            </p>
+            <p className="mt-3 text-zinc-500">
+              <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
+              <span className="text-zinc-500">:</span>
+              <span className="text-cyan-600 dark:text-cyan-400">~</span>
+              <span className="text-zinc-500">$ </span>
+              <span className="inline-block w-2 h-4 -mb-0.5 bg-cyan-500/80 dark:bg-cyan-400/80" style={{ animation: 'caret-blink 1.1s step-end infinite' }} />
+            </p>
+            <p className="mt-4 text-[11px] text-zinc-500 dark:text-zinc-600">© {year} Lakshyaraj Singh Rao · Mumbai, IN</p>
+          </div>
+        </div>
+      </div>
+    </footer>);
 }

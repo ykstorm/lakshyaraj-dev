@@ -54,10 +54,10 @@ function TiltCard({
 
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0, y: 24 }}
-      whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+      initial={reduce ? false : { opacity: 0, y: 18, scale: 0.985 }}
+      whileInView={reduce ? undefined : { opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ delay: index * 0.07, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ type: 'spring', stiffness: 260, damping: 26, mass: 0.7, delay: Math.min(index * 0.04, 0.16) }}
       onMouseEnter={() => {
         setHovered(index);
         if (!reduce) lift.set(1);

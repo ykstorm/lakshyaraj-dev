@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, JetBrains_Mono, Martian_Mono } from 'next/font/google';
+import { Hanken_Grotesk, JetBrains_Mono, Instrument_Serif } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -8,14 +8,15 @@ import './globals.css';
 
 // Self-hosted via next/font (no layout shift, and survives Tailwind v4's bundler,
 // which drops bare @import url() font links). Exposed as CSS variables consumed
-// in globals.css: body prose = Geist, terminals/code = JetBrains Mono, display/
-// labels = Martian Mono.
+// in globals.css: body prose = Hanken Grotesk (warm humanist sans), terminals/
+// code/labels = JetBrains Mono, big display headings = Instrument Serif (editorial
+// serif — the distinctive, un-generated voice).
 // Unique --ff-* names: Tailwind v4 already claims --font-sans/--font-mono as theme
 // tokens, so reusing them creates an equal-specificity tie the system font can win.
 // globals.css re-points the Tailwind tokens at these.
-const sans = Geist({ subsets: ['latin'], variable: '--ff-sans', display: 'swap' });
+const sans = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--ff-sans', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--ff-mono', display: 'swap' });
-const display = Martian_Mono({ subsets: ['latin'], variable: '--ff-display', display: 'swap' });
+const display = Instrument_Serif({ subsets: ['latin'], weight: '400', variable: '--ff-display', display: 'swap' });
 
 const SITE = 'https://lakshyaraj-dev.vercel.app';
 const TITLE = 'Lakshyaraj Singh Rao — Backend & AI-Infrastructure Engineer';

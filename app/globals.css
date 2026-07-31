@@ -117,21 +117,31 @@
 
 @layer components {
   /* ── Typographic primitives ────────────────────────────────────────────── */
+  /* Instrument Serif — editorial display voice. Ships weight 400 only, so never
+     pair with font-semibold/bold (faux-bold looks off); size carries the weight. */
   .font-display {
     font-family: var(--ff-display);
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    letter-spacing: -0.005em;
   }
   .mono {
     font-family: var(--ff-mono);
   }
 
+  /* Section labels are terminal-native: mono, tracked, a caret prompt (❯) — not
+     the "// comment" cliché. */
   .section-label {
-    font-family: var(--ff-display);
+    font-family: var(--ff-mono);
     font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
+    font-weight: 500;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--accent) 85%, var(--foreground));
+  }
+  .section-label .caret {
+    color: var(--accent);
+    margin-right: 0.5em;
+    font-weight: 700;
   }
 
   /* ── Fixed background stack (grid + scanlines + drifting phosphor glow) ─── */
