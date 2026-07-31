@@ -1,32 +1,45 @@
 import { NextResponse } from 'next/server';
 
+// Contribution calendar for the homepage graph. The previous source
+// (github-contributions-api.deno.dev) was permanently sunset with Deno Deploy
+// Classic and now 404s — that's why the graph stopped loading. This proxies the
+// maintained jogruber API and reshapes its flat day array into the weeks × days
+// grid + level strings the <GithubContributions> widget expects.
 type Day = { contributionCount: number; contributionLevel: string; date: string };
 
-// Proxies the public contributions calendar (weeks × days) and derives a correct
-// 30-day total. The upstream returns `contributions` as an array of weeks, each a
-// 7-element array of { contributionCount, contributionLevel, date }.
+const LEVELS = ['NONE', 'FIRST_QUARTILE', 'SECOND_QUARTILE', 'THIRD_QUARTILE', 'FOURTH_QUARTILE'];
+const EMPTY: Day = { contributionCount: 0, contributionLevel: 'NONE', date: '' };
+
 export async function GET() {
   try {
-    const res = await fetch('https://github-contributions-api.deno.dev/ykstorm.json', {
+    const res = await fetch('https://github-contributions-api.jogruber.de/v4/ykstorm?y=last', {
       next: { revalidate: 1800 },
     });
-    if (!res.ok) return NextResponse.json({ total: 0, weeks: [], last30: 0 });
+    if (!res.ok) return NextResponse.json({ total: 0, weeks: [], last30: 0, yearTotal: 0 });
 
     const data = await res.json();
-    const weeks: Day[][] = Array.isArray(data.contributions) ? data.contributions : [];
-    const days: Day[] = weeks.flat();
+    const raw: { date: string; count: number; level: number }[] = Array.isArray(data.contributions)
+      ? data.contributions
+      : [];
 
-    const last30 = days
-      .slice(-30)
-      .reduce((sum, d) => sum + (d.contributionCount || 0), 0);
+    const days: Day[] = raw.map((d) => ({
+      contributionCount: d.count || 0,
+      contributionLevel: LEVELS[Math.max(0, Math.min(4, d.level || 0))],
+      date: d.date,
+    }));
 
-    return NextResponse.json({
-      total: last30,                       // back-compat: telemetry reads `total` as 30d
-      last30,
-      yearTotal: data.totalContributions || days.reduce((s, d) => s + (d.contributionCount || 0), 0),
-      weeks,
-    });
+    // Pad the front so column 0 starts on Sunday, keeping weekday rows aligned.
+    const lead = days.length ? new Date(days[0].date + 'T00:00:00Z').getUTCDay() : 0;
+    const padded: Day[] = [...Array.from({ length: lead }, () => EMPTY), ...days];
+
+    const weeks: Day[][] = [];
+    for (let i = 0; i < padded.length; i += 7) weeks.push(padded.slice(i, i + 7));
+
+    const last30 = days.slice(-30).reduce((s, d) => s + d.contributionCount, 0);
+    const yearTotal = data.total?.lastYear ?? days.reduce((s, d) => s + d.contributionCount, 0);
+
+    return NextResponse.json({ total: last30, last30, yearTotal, weeks });
   } catch {
-    return NextResponse.json({ total: 0, weeks: [], last30: 0 });
+    return NextResponse.json({ total: 0, weeks: [], last30: 0, yearTotal: 0 });
   }
 }

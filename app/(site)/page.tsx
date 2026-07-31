@@ -332,8 +332,8 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--background)_82%,transparent)] backdrop-blur-md">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="mono text-sm font-semibold text-zinc-800 dark:text-zinc-200 tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
-          lakshyaraj<span className="text-cyan-600 dark:text-cyan-400">/</span>
+        <Link href="/" className="font-display text-[15px] font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+          Lakshyaraj
         </Link>
         <div className="flex items-center gap-5 sm:gap-6">
           {/* links collapse under sm so the theme toggle is always reachable on mobile */}
@@ -366,6 +366,7 @@ export default function HomePage() {
       <div className="terminal-bg" aria-hidden="true">
         <div className="phosphor-glow" />
       </div>
+      <div className="grain" aria-hidden="true" />
 
       <Nav />
       <main className="pt-14">
@@ -383,6 +384,17 @@ export default function HomePage() {
 }
 
 // ── Footer ─────────────────────────────────────────────────────────────────────
+function Prompt() {
+  return (
+    <span aria-hidden="true" className="shrink-0">
+      <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
+      <span className="text-zinc-500">:</span>
+      <span className="text-cyan-600 dark:text-cyan-400">~</span>
+      <span className="text-zinc-500">$</span>
+    </span>
+  );
+}
+
 function SiteFooter() {
   const year = new Date().getFullYear();
   const footLinks = [
@@ -402,43 +414,31 @@ function SiteFooter() {
             <span className="mono text-[11px] text-zinc-500 ml-2">~/lakshyaraj — bash</span>
           </div>
           <div className="p-4 sm:p-5 mono text-[12.5px] leading-relaxed">
-            <p className="text-zinc-600 dark:text-zinc-400">
-              <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
-              <span className="text-zinc-500">:</span>
-              <span className="text-cyan-600 dark:text-cyan-400">~</span>
-              <span className="text-zinc-500">$ </span>
-              cat contact.txt
-            </p>
-            <div className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1">
+            <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+              <Prompt />
+              <span>cat contact.txt</span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5">
               {footLinks.map(({ href, label }) => (
                 <a
                   key={label}
                   href={href}
                   target={href.startsWith('http') ? '_blank' : undefined}
                   rel="noopener noreferrer"
-                  className="text-zinc-600 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                  className="text-zinc-700 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
                 >
                   {label}
                 </a>
               ))}
             </div>
-            <p className="mt-3 text-zinc-600 dark:text-zinc-400">
-              <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
-              <span className="text-zinc-500">:</span>
-              <span className="text-cyan-600 dark:text-cyan-400">~</span>
-              <span className="text-zinc-500">$ </span>
-              echo &quot;built with next.js · typst résumé · deployed on vercel&quot;
-            </p>
-            <p className="mt-1 text-zinc-500 dark:text-zinc-500">
-              built with next.js · typst résumé · deployed on vercel
-            </p>
-            <p className="mt-3 text-zinc-500">
-              <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
-              <span className="text-zinc-500">:</span>
-              <span className="text-cyan-600 dark:text-cyan-400">~</span>
-              <span className="text-zinc-500">$ </span>
-              <span className="inline-block w-2 h-4 -mb-0.5 bg-cyan-500/80 dark:bg-cyan-400/80" style={{ animation: 'caret-blink 1.1s step-end infinite' }} />
-            </p>
+            <div className="mt-4 flex items-center gap-2 text-zinc-500">
+              <Prompt />
+              <span className="text-zinc-500 dark:text-zinc-500">next.js · typst résumé · vercel</span>
+            </div>
+            <div className="mt-3 flex items-center gap-2 text-zinc-500">
+              <Prompt />
+              <span className="inline-block w-[7px] h-[15px] bg-cyan-500/80 dark:bg-cyan-400/80" style={{ animation: 'caret-blink 1.1s step-end infinite' }} />
+            </div>
             <p className="mt-4 text-[11px] text-zinc-500 dark:text-zinc-600">© {year} Lakshyaraj Singh Rao · Mumbai, IN</p>
           </div>
         </div>

@@ -120,8 +120,8 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
           if (ch === ' ') continue;
           // glyphs that got displaced glow a little brighter
           const disp = Math.min(1, (Math.abs(dx[i]) + Math.abs(dy[i])) / 30);
-          const alpha = 0.04 + n * 0.16 + disp * 0.5;
-          c.fillStyle = base + Math.min(0.85, alpha).toFixed(3) + ')';
+          const alpha = 0.07 + n * 0.26 + disp * 0.55;
+          c.fillStyle = base + Math.min(0.9, alpha).toFixed(3) + ')';
           c.fillText(ch, x * CELL + dx[i], y * CELL + dy[i]);
         }
       }
@@ -203,8 +203,8 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
       aria-hidden="true"
       className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       style={{
-        WebkitMaskImage: 'radial-gradient(ellipse 78% 78% at 50% 42%, #000 22%, transparent 80%)',
-        maskImage: 'radial-gradient(ellipse 78% 78% at 50% 42%, #000 22%, transparent 80%)',
+        WebkitMaskImage: 'radial-gradient(ellipse 92% 90% at 50% 44%, #000 48%, transparent 92%)',
+        maskImage: 'radial-gradient(ellipse 92% 90% at 50% 44%, #000 48%, transparent 92%)',
       }}
     >
       <canvas ref={ref} className="h-full w-full" />
