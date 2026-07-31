@@ -109,6 +109,14 @@
     0%, 49%   { opacity: 1; }
     50%, 100% { opacity: 0; }
   }
+  @keyframes page-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page-fade { animation: page-fade-in 0.25s ease-out both; }
+  @media (prefers-reduced-motion: reduce) {
+    .page-fade { animation: none; }
+  }
   @keyframes spotlight {
     0%   { opacity: 0; transform: translate(-72px, -62px) scale(0.5); }
     100% { opacity: 1; transform: translate(-50%, -40%) scale(1); }

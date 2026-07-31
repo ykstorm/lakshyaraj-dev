@@ -5,6 +5,8 @@ import nowData from '@/data/now.json';
 export const metadata: Metadata = {
   title: 'Now — Lakshyaraj Singh Rao',
   description: 'What I am working on right now.',
+  alternates: { canonical: '/now' },
+  openGraph: { title: 'Now — Lakshyaraj Singh Rao', description: 'What I am working on right now.', url: '/now' },
 };
 
 export default function NowPage() {
@@ -19,7 +21,7 @@ export default function NowPage() {
         </Link>
 
         <div className="mt-8 mb-10">
-          <span className="section-label">{'// Now'}</span>
+          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Now</span>
           <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">What I&apos;m doing now</h1>
           <p className="mt-2 text-[13px] text-zinc-500 font-mono">
             A snapshot, not a feed. Updated when the work changes.

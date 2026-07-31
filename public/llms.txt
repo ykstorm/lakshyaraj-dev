@@ -4,7 +4,7 @@
 > reliability layer that lets AI systems run in production without supervision:
 > refusal when retrieval fails, mid-stream guardrails, eval-gating before merge,
 > and idempotency under webhook re-delivery. Co-Founder and sole engineer at
-> Homesty.ai LLP (a live buyer-side real-estate AI on Next.js 15 + pgvector +
+> Homesty.ai LLP (a live buyer-side real-estate AI on Next.js 16 + pgvector +
 > GPT-4o). Author of seven open-source tools, four published on npm (two with
 > SLSA build provenance) and one GitHub Marketplace Action.
 
@@ -24,6 +24,9 @@
 - Quickdraw — LLM streaming benchmark CLI (TTFT, tokens/sec, p50/p95/p99, cost) across OpenAI + Anthropic. Live Claude Haiku: TTFT p50 739 ms, 85.6 tok/s. npm @ykstormsorg/quickdraw (SLSA provenance). https://github.com/ykstorm/quickdraw
 - Stackup — full production Kubernetes stack on a laptop (ArgoCD, Argo Rollouts canary, Prometheus). Canary is CI-verified end to end: a real ≥0.95 Prometheus success-rate gate advances the rollout 25→50→75→100%. https://github.com/ykstorm/stackup
 - Codecraft — in-browser Vite + React dev environment (WebContainers, Monaco, xterm). Cold boot ~51 s, warm <20 s via IndexedDB cache. https://codecraft-ai-tau.vercel.app
+
+## Writing
+- Idempotent webhooks: the pattern behind Anvil — https://lakshyaraj-dev.vercel.app/blog/anvil-idempotent-webhooks
 
 ## Skills
 TypeScript, JavaScript, Python, SQL, Node.js, Next.js, PostgreSQL, pgvector,

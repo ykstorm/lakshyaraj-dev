@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Resume — Lakshyaraj Singh Rao',
   description: 'Resume of Lakshyaraj Singh Rao — Backend Engineer · AI Infrastructure.',
+  alternates: { canonical: '/resume' },
+  openGraph: { title: 'Resume — Lakshyaraj Singh Rao', description: 'Resume of Lakshyaraj Singh Rao — Backend Engineer · AI Infrastructure.', url: '/resume' },
 };
 
 const PDF = '/Lakshyaraj_Singh_Rao_Resume.pdf';
@@ -39,7 +41,7 @@ export default function ResumePage() {
         </div>
 
         <div className="mb-6">
-          <span className="section-label">{'// Resume'}</span>
+          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Resume</span>
           <h1 className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
             Lakshyaraj Singh Rao
           </h1>

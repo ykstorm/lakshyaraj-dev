@@ -30,7 +30,7 @@ function Section({ id, label, children }: { id: string; label: string; children:
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.4 }}
         >
-          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>{label}</span>
+          <h2 className="section-label m-0"><span className="caret" aria-hidden="true">❯</span>{label}</h2>
           <motion.div
             className="flex-1 h-px bg-[var(--border)] origin-left"
             initial={reduceMotion ? false : { scaleX: 0 }}
@@ -61,14 +61,11 @@ function Hero() {
           </span>
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, filter: 'blur(12px)', y: 6 }}
-          animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-          transition={{ delay: 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-5xl sm:text-6xl md:text-[4.2rem] text-zinc-900 dark:text-white leading-[1.02]"
-        >
+        {/* LCP element — rendered visible at first paint (no opacity/blur gate),
+            so it isn't held back from counting as painted. */}
+        <h1 className="font-display text-5xl sm:text-6xl md:text-[4.2rem] text-zinc-900 dark:text-white leading-[1.02]">
           Lakshyaraj Singh&nbsp;Rao
-        </motion.h1>
+        </h1>
 
         <motion.p
           initial={{ opacity: 0 }}
@@ -384,64 +381,73 @@ export default function HomePage() {
 }
 
 // ── Footer ─────────────────────────────────────────────────────────────────────
-function Prompt() {
-  return (
-    <span aria-hidden="true" className="shrink-0">
-      <span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev</span>
-      <span className="text-zinc-500">:</span>
-      <span className="text-cyan-600 dark:text-cyan-400">~</span>
-      <span className="text-zinc-500">$</span>
-    </span>
-  );
-}
+const FOOTER_COLS = [
+  {
+    h: 'Explore',
+    links: [
+      { href: '/#now', l: 'Now' },
+      { href: '/#projects', l: 'Projects' },
+      { href: '/#stack', l: 'Stack' },
+      { href: '/blog', l: 'Blog' },
+    ],
+  },
+  {
+    h: 'Connect',
+    links: [
+      { href: 'https://github.com/ykstorm', l: 'GitHub' },
+      { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', l: 'LinkedIn' },
+      { href: 'https://npmjs.com/~ykstormsorg', l: 'npm' },
+      { href: 'mailto:raolakshyaraj@gmail.com', l: 'Email' },
+      { href: '/resume', l: 'Résumé' },
+    ],
+  },
+];
 
+// Clean, non-terminal footer — the hero and contact sections are already
+// terminals; a third would be redundant. This is the quiet editorial coda.
 function SiteFooter() {
   const year = new Date().getFullYear();
-  const footLinks = [
-    { href: 'https://github.com/ykstorm', label: 'github' },
-    { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', label: 'linkedin' },
-    { href: 'https://npmjs.com/~ykstormsorg', label: 'npm' },
-    { href: '/resume', label: 'resume' },
-  ];
   return (
-    <footer className="border-t border-[var(--border)] mt-8">
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="term-window overflow-hidden">
-          <div className="term-titlebar">
-            <span className="term-dot" style={{ background: '#ff5f56' }} />
-            <span className="term-dot" style={{ background: '#ffbd2e' }} />
-            <span className="term-dot" style={{ background: '#27c93f' }} />
-            <span className="mono text-[11px] text-zinc-500 ml-2">~/lakshyaraj — bash</span>
+    <footer className="border-t border-[var(--border)] mt-10">
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="grid gap-8 sm:grid-cols-[1.6fr_1fr_1fr]">
+          <div>
+            <p className="font-display text-lg text-zinc-800 dark:text-zinc-100">Lakshyaraj Singh Rao</p>
+            <p className="mt-2 text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
+              The reliability layer for production AI — refusal, guardrails, eval-gating, idempotency.
+            </p>
+            <div className="mt-4 inline-flex items-center gap-2 text-[11px] mono text-emerald-700 dark:text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
+              Open to backend / AI-infra roles
+            </div>
           </div>
-          <div className="p-4 sm:p-5 mono text-[12.5px] leading-relaxed">
-            <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-              <Prompt />
-              <span>cat contact.txt</span>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5">
-              {footLinks.map(({ href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target={href.startsWith('http') ? '_blank' : undefined}
-                  rel="noopener noreferrer"
-                  className="text-zinc-700 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
-                >
-                  {label}
-                </a>
-              ))}
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-zinc-500">
-              <Prompt />
-              <span className="text-zinc-500 dark:text-zinc-500">next.js · typst résumé · vercel</span>
-            </div>
-            <div className="mt-3 flex items-center gap-2 text-zinc-500">
-              <Prompt />
-              <span className="inline-block w-[7px] h-[15px] bg-cyan-500/80 dark:bg-cyan-400/80" style={{ animation: 'caret-blink 1.1s step-end infinite' }} />
-            </div>
-            <p className="mt-4 text-[11px] text-zinc-500 dark:text-zinc-600">© {year} Lakshyaraj Singh Rao · Mumbai, IN</p>
-          </div>
+
+          {FOOTER_COLS.map((col) => (
+            <nav key={col.h} aria-label={col.h}>
+              <p className="section-label text-[10px] mb-3">{col.h}</p>
+              <ul className="space-y-2.5">
+                {col.links.map(({ href, l }) => (
+                  <li key={l}>
+                    <a
+                      href={href}
+                      target={href.startsWith('http') ? '_blank' : undefined}
+                      rel="noopener noreferrer"
+                      className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                    >
+                      {l}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+
+        <div className="mt-10 pt-5 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-500 dark:text-zinc-500">
+          <p>© {year} Lakshyaraj Singh Rao · Mumbai, India</p>
+          <p className="mono">Next.js · Tailwind · Vercel</p>
         </div>
       </div>
-    </footer>);
+    </footer>
+  );
 }

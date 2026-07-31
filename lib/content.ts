@@ -63,6 +63,11 @@ export async function getContentFiles(contentType: 'projects' | 'blog'): Promise
 }
 
 export async function getContentBySlug(contentType: 'projects' | 'blog', slug: string): Promise<ContentFile | null> {
+  // Slug comes from a dynamic route param → untrusted. Restrict to a safe
+  // charset before it ever reaches the filesystem so no crafted value can
+  // escape the content dir (defense-in-depth against path traversal).
+  if (!/^[a-z0-9-]+$/.test(slug)) return null;
+
   const contentDir = path.join(process.cwd(), 'content', contentType);
   const filePath = path.join(contentDir, `${slug}.mdx`);
 

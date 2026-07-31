@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getContentBySlug, getContentFiles } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import projectsData from '@/data/projects.json';
@@ -7,6 +8,27 @@ import type { Project } from '@/components/ui/project-card';
 export async function generateStaticParams() {
   const projects = await getContentFiles('projects');
   return projects.map((p) => ({ slug: p.slug }));
+}
+
+// Per-project metadata — otherwise every project page inherited the root
+// title/description and canonicalized to the home page (invisible to search).
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getContentBySlug('projects', slug);
+  if (!project) return {};
+  const meta = (projectsData as Project[]).find((p) => p.id === slug);
+  const description = project.metadata.description || meta?.description;
+  return {
+    title: project.metadata.title,
+    description,
+    alternates: { canonical: `/projects/${slug}` },
+    openGraph: {
+      type: 'article',
+      title: project.metadata.title,
+      description,
+      url: `/projects/${slug}`,
+    },
+  };
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -53,7 +75,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <article className="space-y-6">
           <header className="space-y-2">
-            <span className="section-label">{'// Project'}</span>
+            <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Project</span>
             <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">
               {project.metadata.title}
             </h1>

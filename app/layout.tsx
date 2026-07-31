@@ -14,9 +14,11 @@ import './globals.css';
 // Unique --ff-* names: Tailwind v4 already claims --font-sans/--font-mono as theme
 // tokens, so reusing them creates an equal-specificity tie the system font can win.
 // globals.css re-points the Tailwind tokens at these.
-const sans = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--ff-sans', display: 'swap' });
+// Only the weights actually rendered — body 400, headings 700 (Hanken); display
+// is locked to 600 by .font-display. Fewer static woff2 files on the LCP path.
+const sans = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '700'], variable: '--ff-sans', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--ff-mono', display: 'swap' });
-const display = Space_Grotesk({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--ff-display', display: 'swap' });
+const display = Space_Grotesk({ subsets: ['latin'], weight: ['600'], variable: '--ff-display', display: 'swap' });
 
 const SITE = 'https://lakshyaraj-dev.vercel.app';
 const TITLE = 'Lakshyaraj Singh Rao — Backend & AI-Infrastructure Engineer';
@@ -63,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               url: SITE,
               jobTitle: 'Backend & AI-Infrastructure Engineer',
               email: 'mailto:raolakshyaraj@gmail.com',
+              worksFor: { '@type': 'Organization', name: 'Homesty.ai LLP', url: 'https://homesty.ai' },
               address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'IN' },
               knowsAbout: ['Backend engineering', 'AI infrastructure', 'RAG', 'LLM reliability', 'Kubernetes', 'DevOps'],
               sameAs: [

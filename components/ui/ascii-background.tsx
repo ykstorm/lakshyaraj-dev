@@ -176,6 +176,10 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
       window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
       window.innerWidth < 768;
 
+    // Pause the rAF loop while the hero is scrolled out of view — otherwise it
+    // keeps redrawing an invisible canvas for the rest of the session.
+    let io: IntersectionObserver | null = null;
+
     resize();
     if (isStatic) {
       draw();
@@ -184,6 +188,25 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerdown', onDown);
       window.addEventListener('pointerleave', onLeave);
+
+      const target = cv.parentElement;
+      if (target && 'IntersectionObserver' in window) {
+        io = new IntersectionObserver(
+          (entries) => {
+            const visible = entries[0]?.isIntersecting ?? true;
+            if (visible && !running) {
+              running = true;
+              last = 0;
+              raf = requestAnimationFrame(loop);
+            } else if (!visible && running) {
+              running = false;
+              cancelAnimationFrame(raf);
+            }
+          },
+          { threshold: 0 }
+        );
+        io.observe(target);
+      }
     }
     const onResize = () => resize();
     window.addEventListener('resize', onResize);
@@ -191,6 +214,7 @@ export function AsciiBackground({ className = '' }: { className?: string }) {
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      io?.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerdown', onDown);

@@ -1,10 +1,31 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getContentBySlug, getContentFiles } from '@/lib/content';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
   const posts = await getContentFiles('blog');
   return posts.map((p) => ({ slug: p.slug }));
+}
+
+// Per-post metadata — without this every post inherited the root title/description
+// and (via the root canonical) pointed search engines back at the home page.
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getContentBySlug('blog', slug);
+  if (!post) return {};
+  return {
+    title: post.metadata.title,
+    description: post.metadata.description,
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      type: 'article',
+      title: post.metadata.title,
+      description: post.metadata.description,
+      url: `/blog/${slug}`,
+      publishedTime: post.metadata.date,
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -31,7 +52,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <article className="space-y-6">
           <header className="space-y-2">
-            <span className="section-label">{'// Writing'}</span>
+            <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Writing</span>
             <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">
               {post.metadata.title}
             </h1>

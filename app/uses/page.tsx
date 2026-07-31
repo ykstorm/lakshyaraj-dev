@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Uses — Lakshyaraj Singh Rao',
   description: 'The tools, hardware, and stack I actually use.',
+  alternates: { canonical: '/uses' },
+  openGraph: { title: 'Uses — Lakshyaraj Singh Rao', description: 'The tools, hardware, and stack I actually use.', url: '/uses' },
 };
 
 const SECTIONS: { label: string; items: string[] }[] = [
@@ -100,7 +102,7 @@ export default function UsesPage() {
         </Link>
 
         <div className="mt-8 mb-10">
-          <span className="section-label">{'// Uses'}</span>
+          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Uses</span>
           <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">What I use</h1>
           <p className="mt-2 text-[13px] text-zinc-500 font-mono">
             The actual stack, not an aspirational one.

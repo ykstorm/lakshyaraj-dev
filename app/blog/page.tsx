@@ -5,6 +5,8 @@ import { getContentFiles } from '@/lib/content';
 export const metadata: Metadata = {
   title: 'Writing — Lakshyaraj Singh Rao',
   description: 'Notes on engineering, architecture, and the tools I build.',
+  alternates: { canonical: '/blog' },
+  openGraph: { title: 'Writing — Lakshyaraj Singh Rao', description: 'Notes on engineering, architecture, and the tools I build.', url: '/blog' },
 };
 
 export default async function BlogPage() {
@@ -21,7 +23,7 @@ export default async function BlogPage() {
         </Link>
 
         <div className="mt-8 mb-10">
-          <span className="section-label">{'// Writing'}</span>
+          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Writing</span>
           <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Writing</h1>
           <p className="mt-2 text-[13px] text-zinc-500 font-mono">
             Notes on engineering, architecture, and the tools I build.
