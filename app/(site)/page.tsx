@@ -125,10 +125,9 @@ function Hero() {
           transition={{ delay: 0.55, duration: 0.6 }}
           className="pt-4"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-amber-500/40 rounded-full text-[11px] mono text-amber-700 dark:text-amber-400/80">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
-            Mumbai · Remote · Open to opportunities
-          </div>
+          <p className="text-[11px] mono text-zinc-500 dark:text-zinc-500 tracking-[0.15em]">
+            Mumbai · Remote · open to opportunities
+          </p>
         </motion.div>
       </div>
     </section>
@@ -151,7 +150,7 @@ function NowSection() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="telemetry-card space-y-4">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400" />
             <span className="section-label text-[10px]">Currently</span>
           </div>
           <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
@@ -416,10 +415,9 @@ function SiteFooter() {
             <p className="mt-2 text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
               The reliability layer for production AI — refusal, guardrails, eval-gating, idempotency.
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 text-[11px] mono text-emerald-700 dark:text-emerald-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
+            <p className="mt-4 text-[11px] mono text-amber-700 dark:text-amber-400/90 tracking-wide">
               Open to backend / AI-infra roles
-            </div>
+            </p>
           </div>
 
           {FOOTER_COLS.map((col) => (
@@ -443,9 +441,8 @@ function SiteFooter() {
           ))}
         </div>
 
-        <div className="mt-10 pt-5 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-500 dark:text-zinc-500">
+        <div className="mt-10 pt-5 border-t border-[var(--border)] text-[11px] text-zinc-500 dark:text-zinc-500">
           <p>© {year} Lakshyaraj Singh Rao · Mumbai, India</p>
-          <p className="mono">Next.js · Tailwind · Vercel</p>
         </div>
       </div>
     </footer>

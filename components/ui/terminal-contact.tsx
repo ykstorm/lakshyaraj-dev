@@ -66,14 +66,18 @@ export function TerminalContact() {
           <span className="text-emerald-600 dark:text-emerald-400">user@lakshyaraj</span>
           <span className="text-zinc-400 dark:text-zinc-500">:~$</span>
           <span className="text-amber-700 dark:text-amber-300">select [1-4]:</span>
+          {/* One cursor only: the block ▋ is the terminal cursor, so the input's
+              native caret is hidden (caret-transparent). Previously both showed
+              at once → two blinking cursors. */}
           <input
             type="text"
             inputMode="numeric"
             aria-label="Select a contact channel by number 1 to 4"
             onKeyDown={handleKey}
-            className="bg-transparent border-none outline-none text-amber-600 dark:text-amber-400 w-8 caret-amber-500"
+            autoComplete="off"
+            className="bg-transparent border-none outline-none text-amber-600 dark:text-amber-400 w-4 caret-transparent"
           />
-          <span className="text-amber-600 dark:text-amber-400" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>
+          <span className="text-amber-600 dark:text-amber-400 -ml-1" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>
         </div>
       </div>
 
