@@ -56,8 +56,8 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.5 }}
         >
-          <span className="mono text-[11px] text-cyan-700 dark:text-cyan-400 tracking-[0.28em] uppercase opacity-80">
-            <span className="text-cyan-500 dark:text-cyan-400 font-bold">❯</span> initialize
+          <span className="mono text-[11px] text-amber-700 dark:text-amber-400 tracking-[0.28em] uppercase opacity-80">
+            <span className="text-amber-500 dark:text-amber-400 font-bold">❯</span> initialize
           </span>
         </motion.div>
 
@@ -111,7 +111,7 @@ function Hero() {
               href={href}
               target={href.startsWith('http') ? '_blank' : undefined}
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+              className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{label}</span>
@@ -125,8 +125,8 @@ function Hero() {
           transition={{ delay: 0.55, duration: 0.6 }}
           className="pt-4"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-cyan-500/40 rounded-full text-[11px] mono text-cyan-700 dark:text-cyan-400/80">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-amber-500/40 rounded-full text-[11px] mono text-amber-700 dark:text-amber-400/80">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
             Mumbai · Remote · Open to opportunities
           </div>
         </motion.div>
@@ -151,7 +151,7 @@ function NowSection() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="telemetry-card space-y-4">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
             <span className="section-label text-[10px]">Currently</span>
           </div>
           <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
@@ -162,7 +162,7 @@ function NowSection() {
           <ul className="space-y-2">
             {nowData.shipped_this_week.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                <span className="text-cyan-600 dark:text-cyan-400 mt-0.5">›</span><span>{item}</span>
+                <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span><span>{item}</span>
               </li>
             ))}
           </ul>
@@ -279,15 +279,15 @@ function TelemetrySection() {
               href={`https://npmjs.com/package/${name}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="telemetry-card group flex items-center justify-between gap-3 hover:border-cyan-500/50"
+              className="telemetry-card group flex items-center justify-between gap-3 hover:border-amber-500/50"
             >
               <div className="min-w-0">
-                <p className="mono text-[12.5px] text-zinc-800 dark:text-zinc-200 truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                <p className="mono text-[12.5px] text-zinc-800 dark:text-zinc-200 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   {name}
                 </p>
                 <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{note}</p>
               </div>
-              <span className="mono text-sm text-cyan-700 dark:text-cyan-400 shrink-0">
+              <span className="mono text-sm text-amber-700 dark:text-amber-400 shrink-0">
                 {v && v !== 'N/A' ? `v${v}` : '…'}
               </span>
             </a>
@@ -329,7 +329,7 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--background)_82%,transparent)] backdrop-blur-md">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="font-display text-[15px] font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <Link href="/" className="font-display text-[15px] font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
           Lakshyaraj
         </Link>
         <div className="flex items-center gap-5 sm:gap-6">
@@ -339,7 +339,7 @@ function Nav() {
               <Link
                 key={label}
                 href={href}
-                className="text-[11px] mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+                className="text-[11px] mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
               >
                 {label}
               </Link>
@@ -432,7 +432,7 @@ function SiteFooter() {
                       href={href}
                       target={href.startsWith('http') ? '_blank' : undefined}
                       rel="noopener noreferrer"
-                      className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                      className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
                     >
                       {l}
                     </a>

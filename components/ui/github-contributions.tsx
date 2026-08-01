@@ -56,7 +56,7 @@ export function GithubContributions() {
       <div className="telemetry-card overflow-hidden">
         <div className="flex items-center justify-between mb-4">
           <span className="section-label text-[10px]">Contribution graph</span>
-          <span className="mono text-[10.5px] text-zinc-500 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+          <span className="mono text-[10.5px] text-zinc-500 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
             {total !== null ? `${total} in the last year ↗` : '@ykstorm ↗'}
           </span>
         </div>
@@ -68,7 +68,7 @@ export function GithubContributions() {
         ) : status === 'error' ? (
           <div className="mono text-[11px] text-zinc-500 py-6 text-center">
             couldn&apos;t load the graph — see the full history on{' '}
-            <span className="text-cyan-600 dark:text-cyan-400 group-hover:underline">@ykstorm ↗</span>
+            <span className="text-amber-600 dark:text-amber-400 group-hover:underline">@ykstorm ↗</span>
           </div>
         ) : (
           <div className="cal-grid overflow-x-auto pb-1">

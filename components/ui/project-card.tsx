@@ -22,7 +22,7 @@ export interface Project {
 
 // border + hover-border per project accent
 const ACCENT: Record<string, string> = {
-  cyan: 'hover:border-cyan-400/70',
+  cyan: 'hover:border-amber-400/70',
   amber: 'hover:border-amber-400/70',
   green: 'hover:border-emerald-400/70',
   red: 'hover:border-red-400/70',
@@ -35,7 +35,7 @@ function statusOf(p: Project): { text: string; cls: string } {
   if (p.demo || p.playground)
     return { text: '● LIVE', cls: 'text-emerald-600 dark:text-emerald-400' };
   if (p.npm) return { text: '◆ NPM', cls: 'text-amber-600 dark:text-amber-400' };
-  return { text: '◇ REPO', cls: 'text-cyan-700 dark:text-cyan-400' };
+  return { text: '◇ REPO', cls: 'text-zinc-500 dark:text-zinc-400' };
 }
 
 // shared link row
@@ -44,22 +44,22 @@ function Links({ p }: { p: Project }) {
   return (
     <div className="flex flex-wrap items-center gap-4 text-[11px] mono text-zinc-500">
       {live && (
-        <a href={live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
           <Globe className="w-3 h-3" /> live
         </a>
       )}
       {p.playground && p.playground !== p.demo && (
-        <a href={p.playground} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={p.playground} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
           <TerminalSquare className="w-3 h-3" /> playground
         </a>
       )}
       {p.code && (
-        <a href={p.code} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={p.code} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
           <IconBrandGithub className="w-3 h-3" /> code
         </a>
       )}
       {p.npm && (
-        <a href={`https://npmjs.com/package/${p.npm}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+        <a href={`https://npmjs.com/package/${p.npm}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
           <IconBrandNpm className="w-3.5 h-3.5" /> npm
         </a>
       )}
@@ -96,20 +96,20 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
   // ── Featured (flagship) — full-width split layout ─────────────────────────
   if (project.flagship) {
     return (
-      <div className={`group relative overflow-hidden rounded-xl border bg-[color-mix(in_srgb,var(--card)_82%,transparent)] backdrop-blur p-6 sm:p-7 transition-colors duration-200 border-cyan-500/40 ${accent}`}>
+      <div className={`group relative overflow-hidden rounded-xl border bg-[color-mix(in_srgb,var(--card)_82%,transparent)] backdrop-blur p-6 sm:p-7 transition-colors duration-200 border-amber-500/40 ${accent}`}>
         <Chrome />
         <div className="relative z-10 grid md:grid-cols-[1.4fr_1fr] gap-6 md:gap-8 items-start">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <span className="mono text-[11px] text-zinc-500">~/{project.id}</span>
-              <span className="px-1.5 py-0.5 bg-cyan-500 text-black text-[9px] mono font-bold tracking-[0.2em] uppercase rounded-sm">Flagship</span>
+              <span className="px-1.5 py-0.5 bg-amber-500 text-black text-[9px] mono font-bold tracking-[0.2em] uppercase rounded-sm">Flagship</span>
             </div>
             <h3 className="font-display text-2xl sm:text-[1.85rem] tracking-tight text-zinc-900 dark:text-white">
               {href ? (
-                <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
+                <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">{project.name}</a>
               ) : project.name}
             </h3>
-            <p className="text-[12px] mono text-cyan-700 dark:text-cyan-400/80">{project.tagline}</p>
+            <p className="text-[12px] mono text-amber-700 dark:text-amber-400/80">{project.tagline}</p>
             <p className="text-[13.5px] text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-prose">{project.description}</p>
             <div className="flex flex-wrap gap-1.5 pt-1">
               {project.stack.map((tech) => (
@@ -120,12 +120,12 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
           </div>
 
           {/* faux process-monitor panel — honest fields */}
-          <div className="mono text-[11px] rounded-lg border border-cyan-500/20 bg-black/[0.03] dark:bg-white/[0.02] p-4 space-y-2.5">
+          <div className="mono text-[11px] rounded-lg border border-amber-500/20 bg-black/[0.03] dark:bg-white/[0.02] p-4 space-y-2.5">
             <div className="flex items-center justify-between"><span className="text-zinc-500">status</span><span className="text-emerald-600 dark:text-emerald-400">{status.text}</span></div>
             <div className="flex items-center justify-between"><span className="text-zinc-500">role</span><span className="text-zinc-700 dark:text-zinc-300">sole engineer</span></div>
             <div className="flex items-center justify-between"><span className="text-zinc-500">stack</span><span className="text-zinc-700 dark:text-zinc-300">{project.stack.length} systems</span></div>
-            <div className="flex items-center justify-between"><span className="text-zinc-500">extracted</span><span className="text-cyan-700 dark:text-cyan-400">anchor · tripwire</span></div>
-            <div className="h-px bg-cyan-500/15" />
+            <div className="flex items-center justify-between"><span className="text-zinc-500">extracted</span><span className="text-amber-700 dark:text-amber-400">anchor · tripwire</span></div>
+            <div className="h-px bg-amber-500/15" />
             <div className="text-zinc-500 leading-relaxed">{'// production patterns, hardened into OSS'}</div>
           </div>
         </div>
@@ -145,11 +145,11 @@ export function ProjectCard({ project }: { project: Project; index: number }) {
 
         <h3 className="font-display text-[1.2rem] tracking-tight text-zinc-900 dark:text-zinc-100">
           {href ? (
-            <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">{project.name}</a>
+            <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">{project.name}</a>
           ) : project.name}
         </h3>
 
-        <p className="text-[11px] mono text-cyan-700/80 dark:text-cyan-400/70 leading-snug">{project.tagline}</p>
+        <p className="text-[11px] mono text-amber-700/80 dark:text-amber-400/70 leading-snug">{project.tagline}</p>
         <p className="text-[12.5px] text-zinc-600 dark:text-zinc-400 leading-relaxed">{project.description}</p>
 
         {project.metric && (

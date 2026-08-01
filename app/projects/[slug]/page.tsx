@@ -47,24 +47,24 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {/* Sticky thin top bar */}
       <div className="sticky top-0 z-40 border-b border-zinc-200/70 dark:border-zinc-800/60 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-11 flex items-center gap-4 text-[12px] font-mono">
-          <Link href="/#projects" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+          <Link href="/#projects" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
             ← Back
           </Link>
           <span className="text-zinc-400 dark:text-zinc-600">/</span>
           <span className="text-zinc-700 dark:text-zinc-200 font-semibold truncate">{project.metadata.title}</span>
           <div className="ml-auto flex items-center gap-4">
             {live && (
-              <a href={live} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+              <a href={live} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 Live
               </a>
             )}
             {meta?.code && (
-              <a href={meta.code} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+              <a href={meta.code} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 Code
               </a>
             )}
             {meta?.npm && (
-              <a href={`https://npmjs.com/package/${meta.npm}`} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+              <a href={`https://npmjs.com/package/${meta.npm}`} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 npm
               </a>
             )}

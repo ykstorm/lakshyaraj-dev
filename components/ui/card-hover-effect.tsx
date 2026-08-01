@@ -81,7 +81,7 @@ function TiltCard({
       <AnimatePresence>
         {hovered === index && (
           <motion.span
-            className="pointer-events-none absolute -inset-px block rounded-xl bg-emerald-500/10 dark:bg-cyan-500/10"
+            className="pointer-events-none absolute -inset-px block rounded-xl bg-emerald-500/10 dark:bg-amber-500/10"
             layoutId="card-hover-bg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.15 } }}

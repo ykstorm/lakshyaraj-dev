@@ -44,7 +44,7 @@ export function TerminalContact() {
         <div className="whitespace-pre-wrap break-words">
           <span className="text-emerald-600 dark:text-emerald-400">user@lakshyaraj</span>
           <span className="text-zinc-400 dark:text-zinc-500">:~$</span>{' '}
-          <span className="text-cyan-700 dark:text-cyan-300">connect --protocol=secure --auto-link</span>
+          <span className="text-amber-700 dark:text-amber-300">connect --protocol=secure --auto-link</span>
         </div>
         <div className="text-zinc-500 pl-4">&gt; Establishing uplink to Lakshyaraj Singh Rao…</div>
         <div className="text-zinc-500 pl-4">&gt; Press [1-4] to open a channel:</div>
@@ -56,7 +56,7 @@ export function TerminalContact() {
               href={p.href}
               target={p.href.startsWith('http') ? '_blank' : undefined}
               rel="noopener noreferrer"
-              className={selected === p.id ? 'text-cyan-600 dark:text-cyan-400 underline' : 'text-cyan-700/90 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400'}
+              className={selected === p.id ? 'text-amber-600 dark:text-amber-400 underline' : 'text-amber-700/90 dark:text-zinc-300 hover:text-amber-600 dark:hover:text-amber-400'}
             >
               {p.value}
             </a>
@@ -65,22 +65,22 @@ export function TerminalContact() {
         <div className="pl-4 flex items-center gap-2 pt-2">
           <span className="text-emerald-600 dark:text-emerald-400">user@lakshyaraj</span>
           <span className="text-zinc-400 dark:text-zinc-500">:~$</span>
-          <span className="text-cyan-700 dark:text-cyan-300">select [1-4]:</span>
+          <span className="text-amber-700 dark:text-amber-300">select [1-4]:</span>
           <input
             type="text"
             inputMode="numeric"
             aria-label="Select a contact channel by number 1 to 4"
             onKeyDown={handleKey}
-            className="bg-transparent border-none outline-none text-cyan-600 dark:text-cyan-400 w-8 caret-cyan-500"
+            className="bg-transparent border-none outline-none text-amber-600 dark:text-amber-400 w-8 caret-amber-500"
           />
-          <span className="text-cyan-600 dark:text-cyan-400" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>
+          <span className="text-amber-600 dark:text-amber-400" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>
         </div>
       </div>
 
       <noscript>
         <div className="px-5 pb-4 pl-9 flex flex-col gap-1">
           {PROTOCOLS.map((p) => (
-            <a key={p.id} href={p.href} className="text-cyan-700 dark:text-cyan-400 underline">
+            <a key={p.id} href={p.href} className="text-amber-700 dark:text-amber-400 underline">
               [{p.id}] {p.label}: {p.value}
             </a>
           ))}

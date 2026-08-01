@@ -15,7 +15,7 @@ export default function NowPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <Link
           href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+          className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
         >
           ← back
         </Link>
@@ -31,7 +31,7 @@ export default function NowPage() {
         <div className="space-y-6">
           <section className="telemetry-card space-y-3">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
               <span className="section-label text-[10px]">Current focus</span>
             </div>
             <p className="font-mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
@@ -42,7 +42,7 @@ export default function NowPage() {
             <ul className="space-y-2">
               {nowData.shipped_this_week.map((item) => (
                 <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                  <span className="text-cyan-600 dark:text-cyan-400 mt-0.5">›</span>
+                  <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span>
                   <span>{item}</span>
                 </li>
               ))}

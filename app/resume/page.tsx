@@ -17,7 +17,7 @@ export default function ResumePage() {
         <div className="flex items-center justify-between gap-4 mb-6">
           <Link
             href="/"
-            className="text-[12px] font-mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+            className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
           >
             ← back
           </Link>
@@ -26,7 +26,7 @@ export default function ResumePage() {
               href={PDF}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 border border-cyan-500/50 rounded-lg font-mono text-xs text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-amber-500/50 rounded-lg font-mono text-xs text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 transition-colors"
             >
               Open PDF ↗
             </a>
@@ -59,7 +59,7 @@ export default function ResumePage() {
         />
         <p className="mt-3 font-mono text-xs text-zinc-500">
           PDF not showing?{' '}
-          <a href={PDF} target="_blank" rel="noopener noreferrer" className="text-cyan-700 dark:text-cyan-400 underline">
+          <a href={PDF} target="_blank" rel="noopener noreferrer" className="text-amber-700 dark:text-amber-400 underline">
             Open it in a new tab
           </a>
           .

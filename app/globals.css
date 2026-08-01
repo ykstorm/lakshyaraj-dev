@@ -11,7 +11,7 @@
     /* ── Light: engineering blueprint paper ─────────────────────────────── */
     --background: #f4f1e9;        /* warm parchment, not stark white */
     --foreground: #1b1a17;        /* ink */
-    --accent: #0e7490;            /* cyan-700, readable on paper */
+    --accent: #b45309;            /* rich amber-700, readable on paper */
     --accent-2: #047857;          /* emerald-700 */
     --muted: #ebe7db;
     --muted-foreground: #6c675b;
@@ -19,7 +19,7 @@
     --card: #fbfaf4;
     --card-foreground: #1b1a17;
     --grid: rgba(27, 26, 23, 0.045);
-    --glow: rgba(14, 116, 144, 0.10);
+    --glow: rgba(180, 83, 9, 0.10);
     --scan: rgba(27, 26, 23, 0.018);
 
     /* contribution-graph scale (teal/emerald ink on paper) */
@@ -41,7 +41,7 @@
     /* ── Dark: phosphor terminal ────────────────────────────────────────── */
     --background: #050706;        /* near-black, faint green cast */
     --foreground: #d6e0d8;
-    --accent: #22d3ee;
+    --accent: #f5b53d;
     --accent-2: #34d399;
     --muted: #0e1411;
     --muted-foreground: #6b7672;
@@ -49,7 +49,7 @@
     --card: #090c0a;
     --card-foreground: #e7efe9;
     --grid: rgba(52, 211, 153, 0.055);
-    --glow: rgba(34, 211, 238, 0.12);
+    --glow: rgba(245, 181, 61, 0.12);
     --scan: rgba(0, 0, 0, 0.22);
 
     /* contribution-graph scale (phosphor emerald on black) */

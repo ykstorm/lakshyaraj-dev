@@ -47,13 +47,13 @@ export function ResumeButton({ href }: ResumeButtonProps) {
       onMouseLeave={stopGlitch}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className="inline-flex items-center gap-2 px-5 py-2.5 border border-cyan-500/50 rounded-lg font-mono text-xs text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10 transition-all duration-150 cursor-pointer"
+      className="inline-flex items-center gap-2 px-5 py-2.5 border border-amber-500/50 rounded-lg font-mono text-xs text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 transition-all duration-150 cursor-pointer"
     >
       {glitched && (
         <motion.span
           animate={{ opacity: [1, 0, 1] }}
           transition={{ duration: 0.1, repeat: Infinity }}
-          className="text-cyan-300"
+          className="text-amber-300"
         >▋</motion.span>
       )}
       {displayed}

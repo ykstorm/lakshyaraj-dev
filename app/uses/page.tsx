@@ -96,7 +96,7 @@ export default function UsesPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <Link
           href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+          className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
         >
           ← back
         </Link>
@@ -116,7 +116,7 @@ export default function UsesPage() {
               <ul className="space-y-2">
                 {section.items.map((item) => (
                   <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                    <span className="text-cyan-600 dark:text-cyan-400 mt-0.5">›</span>
+                    <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span>
                     <span>{item}</span>
                   </li>
                 ))}

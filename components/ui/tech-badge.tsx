@@ -7,7 +7,7 @@ interface TechBadgeProps {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  cyan: 'border-cyan-500/40 text-cyan-700 dark:text-cyan-400 bg-cyan-500/10',
+  cyan: 'border-amber-500/40 text-amber-700 dark:text-amber-400 bg-amber-500/10',
   amber: 'border-amber-500/40 text-amber-700 dark:text-amber-400 bg-amber-500/10',
   green: 'border-green-500/40 text-green-700 dark:text-green-400 bg-green-500/10',
   red: 'border-red-500/40 text-red-700 dark:text-red-400 bg-red-500/10',

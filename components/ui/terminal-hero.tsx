@@ -90,7 +90,7 @@ function run(raw: string): Line[] {
 }
 
 function Caret() {
-  return <span className="inline-block w-[0.5ch] text-cyan-600 dark:text-cyan-400" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>;
+  return <span className="inline-block w-[0.5ch] text-amber-600 dark:text-amber-400" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>;
 }
 
 export function TerminalHero() {
@@ -180,7 +180,7 @@ export function TerminalHero() {
             return (
               <div key={i} className="whitespace-pre-wrap break-words">
                 <span className="text-emerald-600 dark:text-emerald-400">{PROMPT}</span>
-                <span className="text-cyan-700 dark:text-cyan-300">{l.text}</span>
+                <span className="text-amber-700 dark:text-amber-300">{l.text}</span>
                 {lastCmd && <Caret />}
               </div>
             );
@@ -202,7 +202,7 @@ export function TerminalHero() {
               autoCapitalize="off"
               autoComplete="off"
               aria-label="Terminal input — type a command like help"
-              className="flex-1 bg-transparent border-none outline-none text-cyan-700 dark:text-cyan-300 caret-cyan-500 ml-0"
+              className="flex-1 bg-transparent border-none outline-none text-amber-700 dark:text-amber-300 caret-amber-500 ml-0"
             />
           </form>
         )}

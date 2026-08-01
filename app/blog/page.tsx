@@ -17,7 +17,7 @@ export default async function BlogPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <Link
           href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors tracking-wide"
+          className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
         >
           ← back
         </Link>
@@ -40,7 +40,7 @@ export default async function BlogPage() {
                 href={`/blog/${post.slug}`}
                 className="telemetry-card group block"
               >
-                <h2 className="font-display text-xl tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                <h2 className="font-display text-xl tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   {post.metadata.title}
                 </h2>
                 <p className="mt-2 text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">{post.metadata.description}</p>
