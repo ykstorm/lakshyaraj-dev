@@ -1,0 +1,18 @@
+version: 2
+updates:
+  # npm dependencies — grouped so it's at most a couple of PRs a week, not noise.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
+  # keep GitHub Actions pinned + current (supply-chain hygiene)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
