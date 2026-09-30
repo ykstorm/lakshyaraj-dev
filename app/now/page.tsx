@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import nowData from '@/data/now.json';
 
@@ -11,61 +10,27 @@ export const metadata: Metadata = {
 
 export default function NowPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#050505] text-zinc-800 dark:text-zinc-100">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-        <Link
-          href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-        >
-          ← back
-        </Link>
+    <div className="col py-12">
+      <h1 className="text-[clamp(1.8rem,5vw,2.4rem)] font-bold tracking-tight">Now</h1>
+      <p className="mt-2 text-[var(--muted-foreground)]">A snapshot, not a feed. Updated when the work changes.</p>
 
-        <div className="mt-8 mb-10">
-          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Now</span>
-          <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">What I&apos;m doing now</h1>
-          <p className="mt-2 text-[13px] text-zinc-500 font-mono">
-            A snapshot, not a feed. Updated when the work changes.
-          </p>
-        </div>
+      <p className="mt-8 leading-relaxed">{nowData.current}</p>
 
-        <div className="space-y-6">
-          <section className="telemetry-card space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
-              <span className="section-label text-[10px]">Current focus</span>
-            </div>
-            <p className="font-mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
-          </section>
+      <h2 className="mt-8 mb-2 text-[var(--muted-foreground)] text-[0.95rem]">Recently</h2>
+      <ul className="space-y-1.5">
+        {nowData.recent.map((item) => (
+          <li key={item} className="text-[var(--muted-foreground)]">{item}</li>
+        ))}
+      </ul>
 
-          <section className="telemetry-card space-y-3">
-            <span className="section-label text-[10px]">Recently</span>
-            <ul className="space-y-2">
-              {nowData.recent.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                  <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
+      <p className="mt-8">
+        <span className="text-[var(--muted-foreground)]">Open to </span>
+        {nowData.open_to.join(', ')}.
+      </p>
 
-          <section className="telemetry-card space-y-3">
-            <span className="section-label text-[10px]">Open to</span>
-            <ul className="space-y-2">
-              {nowData.open_to.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                  <span className="text-green-600 dark:text-green-400 mt-0.5">›</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-600 pt-2">
-            Last updated {nowData.updated_at}
-          </p>
-        </div>
-      </div>
+      <p className="mt-3 mono text-[0.8rem] text-[var(--muted-foreground)]">
+        {nowData.location} · updated {nowData.updated_at}
+      </p>
     </div>
   );
 }

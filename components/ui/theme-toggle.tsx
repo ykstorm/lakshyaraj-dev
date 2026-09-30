@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { Moon, Sun } from 'lucide-react';
+import { IconMoon, IconSun } from '@tabler/icons-react';
 
 // Single light⇄dark button. The old 3-segment control (light/dark/system) was
 // wider than the mobile nav allowed, so it clipped off-screen; one icon button
@@ -20,9 +20,9 @@ export function ThemeToggle() {
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       title={isDark ? 'Switch to light' : 'Switch to dark'}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="grid place-items-center w-8 h-8 rounded-md border border-[var(--border)] text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-500/50 transition-colors"
+      className="grid place-items-center w-8 h-8 rounded-md border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
     >
-      {isDark ? <Sun size={14} /> : <Moon size={14} />}
+      {isDark ? <IconSun size={16} /> : <IconMoon size={16} />}
     </button>
   );
 }

@@ -14,6 +14,19 @@ export interface ContentFile {
   content: string;
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  stack: string[];
+  demo?: string;
+  playground?: string;
+  code?: string;
+  npm?: string;
+  secondary?: boolean;
+}
+
 const parseMarkdownFrontmatter = (content: string): { metadata: ContentMetadata; body: string } => {
   const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) {

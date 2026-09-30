@@ -1,429 +1,194 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { TerminalHero } from '@/components/ui/terminal-hero';
-import { AsciiBackground } from '@/components/ui/ascii-background';
-import { HoverEffect } from '@/components/ui/card-hover-effect';
-import { ProjectCard, type Project } from '@/components/ui/project-card';
-import { TechBadge } from '@/components/ui/tech-badge';
-import { TerminalContact } from '@/components/ui/terminal-contact';
-import { ResumeButton } from '@/components/ui/resume-button';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { GithubContributions } from '@/components/ui/github-contributions';
-import { IconBrandGithub, IconBrandLinkedin, IconBrandNpm } from '@tabler/icons-react';
-import { Mail, ExternalLink } from 'lucide-react';
+import { SOCIAL, EMAIL } from '@/lib/site';
+import type { Project } from '@/lib/content';
 import projectsData from '@/data/projects.json';
 import nowData from '@/data/now.json';
 
-// ── Section wrapper ─────────────────────────────────────────────────────────
-function Section({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-  const reduceMotion = useReducedMotion();
-  return (
-    <section id={id} className="py-20 px-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          className="mb-10 flex items-center gap-4"
-          initial={reduceMotion ? false : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.4 }}
-        >
-          <h2 className="section-label m-0"><span className="caret" aria-hidden="true">❯</span>{label}</h2>
-          <motion.div
-            className="flex-1 h-px bg-[var(--border)] origin-left"
-            initial={reduceMotion ? false : { scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </motion.div>
-        {children}
-      </div>
-    </section>
-  );
-}
-
-// ── Hero ─────────────────────────────────────────────────────────────────────
-function Hero() {
-  return (
-    <section className="relative min-h-[92vh] flex flex-col items-center justify-center px-4 text-center overflow-hidden">
-      <AsciiBackground />
-      <div className="relative z-10 space-y-6 max-w-3xl mx-auto w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-        >
-          <span className="mono text-[11px] text-amber-700 dark:text-amber-400 tracking-[0.28em] uppercase opacity-80">
-            <span className="text-amber-500 dark:text-amber-400 font-bold">❯</span> initialize
-          </span>
-        </motion.div>
-
-        {/* LCP element — rendered visible at first paint (no opacity/blur gate),
-            so it isn't held back from counting as painted. */}
-        <h1 className="font-display text-5xl sm:text-6xl md:text-[4.2rem] text-zinc-900 dark:text-white leading-[1.02]">
-          Lakshyaraj Singh&nbsp;Rao
-        </h1>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.32, duration: 0.5 }}
-          className="space-y-2 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-xl mx-auto"
-        >
-          <p>Full-stack developer with a backend focus, based in Mumbai.</p>
-          <p>Building Homesty.ai since November 2025 — Next.js, React, Node, Postgres, Prisma, Vercel, Sentry.</p>
-          <p>B.Tech in Computer Science, Manipal University Jaipur, 2026.</p>
-        </motion.div>
-
-        {/* Dynamic terminal: client typewriter + server <noscript> fallback */}
-        <div className="pt-2">
-          <TerminalHero />
-          <noscript>
-            <div className="term-window w-full max-w-xl mx-auto p-4 text-left text-[13px] space-y-2">
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>whoami
-                <div className="text-zinc-600 dark:text-zinc-400">Full-stack developer, backend focus · Mumbai</div></div>
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>cat focus.txt
-                <div className="text-zinc-600 dark:text-zinc-400">Building Homesty.ai since November 2025</div></div>
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>ls ~/projects
-                <div className="text-zinc-600 dark:text-zinc-400">anvil anchor tripwire stackup goldset quickdraw codecraft</div></div>
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>status
-                <div className="text-zinc-600 dark:text-zinc-400">Open to a backend role, Mumbai or remote</div></div>
-            </div>
-          </noscript>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="flex flex-wrap gap-5 justify-center items-center pt-2"
-        >
-          {[
-            { href: 'mailto:raolakshyaraj@gmail.com', label: 'email', icon: Mail },
-            { href: 'https://github.com/ykstorm', label: 'github', icon: IconBrandGithub },
-            { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', label: 'linkedin', icon: IconBrandLinkedin },
-            { href: 'https://npmjs.com/~ykstormsorg', label: 'npm', icon: IconBrandNpm },
-            { href: '/resume', label: 'resume', icon: ExternalLink },
-          ].map(({ href, label, icon: Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{label}</span>
-            </a>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.55, duration: 0.6 }}
-          className="pt-4"
-        >
-          <p className="text-[11px] mono text-zinc-500 dark:text-zinc-500 tracking-[0.15em]">
-            Mumbai · Remote · open to opportunities
-          </p>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── Activity (GitHub contribution graph) ──────────────────────────────────────
-function ActivitySection() {
-  return (
-    <Section id="activity" label="Commit Activity">
-      <GithubContributions />
-    </Section>
-  );
-}
-
-// ── Now ─────────────────────────────────────────────────────────────────────
-function NowSection() {
-  return (
-    <Section id="now" label="Now">
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="telemetry-card space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400" />
-            <span className="section-label text-[10px]">Currently</span>
-          </div>
-          <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
-        </div>
-
-        <div className="telemetry-card space-y-4">
-          <span className="section-label text-[10px]">Recently</span>
-          <ul className="space-y-2">
-            {nowData.recent.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span><span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="telemetry-card space-y-4">
-          <span className="section-label text-[10px]">Open to</span>
-          <ul className="space-y-2">
-            {nowData.open_to.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                <span className="text-green-600 dark:text-green-400 mt-0.5">›</span><span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="pt-2">
-            <span className="section-label text-[10px]">Location</span>
-            <p className="mono text-sm text-zinc-700 dark:text-zinc-300 mt-1">{nowData.location}</p>
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-// ── Projects ─────────────────────────────────────────────────────────────────
-function ProjectsSection() {
-  const projects = projectsData as Project[];
-
-  const items = projects.map((project, i) => ({
-    id: project.id,
-    content: <ProjectCard key={project.id} project={project} index={i} />,
-  }));
-
-  return (
-    <Section id="projects" label="Projects">
-      <HoverEffect items={items} />
-    </Section>
-  );
-}
-
-// ── Stack ─────────────────────────────────────────────────────────────────────
-const STACK = {
-  Languages: ['JavaScript', 'TypeScript', 'SQL'],
-  Frontend: ['React', 'Next.js', 'Tailwind'],
-  Backend: ['Node', 'Express', 'REST', 'Postgres', 'Prisma', 'Redis', 'Mongo'],
-  Tooling: ['Git', 'Docker', 'Kubernetes', 'GitHub Actions', 'Vercel', 'Sentry'],
-};
-
-function StackSection() {
-  return (
-    <Section id="stack" label="Stack">
-      <div className="grid md:grid-cols-3 gap-6">
-        {Object.entries(STACK).map(([category, items]) => (
-          <div key={category} className="telemetry-card space-y-4">
-            <span className="section-label text-[10px]">{category}</span>
-            <div className="flex flex-wrap gap-2">
-              {items.map((item) => (
-                <TechBadge key={item} label={item} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-// ── Shipped to npm ────────────────────────────────────────────────────────────
-const NPM_PKGS = [
-  { name: '@ykstormsorg/anvil', note: 'idempotent webhook intake on Redis and BullMQ' },
-  { name: '@ykstormsorg/tripwire', note: 'checks LLM output while it streams' },
-  { name: '@ykstormsorg/goldset', note: 'eval runner as a GitHub Action' },
-  { name: '@ykstormsorg/quickdraw', note: 'CLI that benchmarks LLM streaming' },
+const NPM_PACKAGES = [
+  '@ykstormsorg/anvil',
+  '@ykstormsorg/tripwire',
+  '@ykstormsorg/goldset',
+  '@ykstormsorg/quickdraw',
 ];
 
-function TelemetrySection() {
-  const [npmVersions, setNpmVersions] = useState<Record<string, string>>({});
+// Fetched on the server, cached an hour, so the published version numbers are in
+// the HTML itself — the site can't claim a version it didn't ship.
+async function getNpmVersions(): Promise<Record<string, string>> {
+  const entries = await Promise.all(
+    NPM_PACKAGES.map(async (pkg) => {
+      try {
+        const res = await fetch(`https://registry.npmjs.org/${pkg}/latest`, { next: { revalidate: 3600 } });
+        if (!res.ok) return [pkg, ''] as const;
+        const data = await res.json();
+        return [pkg, typeof data.version === 'string' ? data.version : ''] as const;
+      } catch {
+        return [pkg, ''] as const;
+      }
+    }),
+  );
+  return Object.fromEntries(entries);
+}
 
-  useEffect(() => {
-    fetch('/api/npm-versions').then((r) => r.json()).then(setNpmVersions).catch(() => {});
-  }, []);
-
+function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <Section id="telemetry" label="Shipped to npm">
-      <div className="grid sm:grid-cols-2 gap-4">
-        {NPM_PKGS.map(({ name, note }) => {
-          const v = npmVersions[name];
-          return (
-            <a
-              key={name}
-              href={`https://npmjs.com/package/${name}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="telemetry-card group flex items-center justify-between gap-3 hover:border-amber-500/50"
-            >
-              <div className="min-w-0">
-                <p className="mono text-[12.5px] text-zinc-800 dark:text-zinc-200 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                  {name}
-                </p>
-                <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{note}</p>
-              </div>
-              <span className="mono text-sm text-amber-700 dark:text-amber-400 shrink-0">
-                {v && v !== 'N/A' ? `v${v}` : '…'}
-              </span>
-            </a>
-          );
-        })}
-      </div>
-      <p className="mono text-[11px] text-zinc-500 mt-4 text-center">
-        four packages published on npm
-      </p>
-    </Section>
+    <section id={id} className="col py-10 border-t border-[var(--border)]">
+      <h2 className="text-[1.15rem] font-bold tracking-tight mb-5">{title}</h2>
+      {children}
+    </section>
   );
 }
 
-// ── Contact ───────────────────────────────────────────────────────────────────
-function ContactSection() {
+function ProjectLinks({ p, version }: { p: Project; version?: string }) {
+  const live = p.demo || p.playground;
   return (
-    <Section id="contact" label="Contact">
-      <div className="space-y-8">
-        <TerminalContact />
-        <div className="flex justify-center">
-          <ResumeButton href="/resume" />
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-// ── Navigation ────────────────────────────────────────────────────────────────
-function Nav() {
-  const links = [
-    { href: '/#now', label: 'Now' },
-    { href: '/#projects', label: 'Projects' },
-    { href: '/#stack', label: 'Stack' },
-    { href: '/#activity', label: 'Activity' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/#contact', label: 'Contact' },
-  ];
-
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--background)_82%,transparent)] backdrop-blur-md">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="font-display text-[15px] font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-          Lakshyaraj
-        </Link>
-        <div className="flex items-center gap-5 sm:gap-6">
-          {/* links collapse under sm so the theme toggle is always reachable on mobile */}
-          <div className="hidden sm:flex items-center gap-5 sm:gap-6">
-            {links.map(({ href, label }) => (
-              <Link
-                key={label}
-                href={href}
-                className="text-[11px] mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-          <ThemeToggle />
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-// ── Main page ─────────────────────────────────────────────────────────────────
-export default function HomePage() {
-  // Sections render unconditionally so all content (projects, copy) is present
-  // in server-rendered HTML — crawlers, link unfurls, and no-JS visitors see it.
-  // The hero terminal degrades to a <noscript> static transcript.
-  return (
-    <div className="relative min-h-screen text-zinc-800 dark:text-zinc-100">
-      {/* fixed atmosphere: grid + scanlines + drifting phosphor glow */}
-      <div className="terminal-bg" aria-hidden="true">
-        <div className="phosphor-glow" />
-      </div>
-      <div className="grain" aria-hidden="true" />
-
-      <Nav />
-      <main className="pt-14">
-        <Hero />
-        <NowSection />
-        <ProjectsSection />
-        <StackSection />
-        <ActivitySection />
-        <TelemetrySection />
-        <ContactSection />
-        <SiteFooter />
-      </main>
+    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 mono text-[0.8rem] text-[var(--muted-foreground)]">
+      {p.code && <a className="hover:text-[var(--accent)] transition-colors" href={p.code} target="_blank" rel="noopener noreferrer">code</a>}
+      {p.npm && (
+        <a className="hover:text-[var(--accent)] transition-colors" href={`https://npmjs.com/package/${p.npm}`} target="_blank" rel="noopener noreferrer">
+          {version ? `npm v${version}` : 'npm'}
+        </a>
+      )}
+      {live && <a className="hover:text-[var(--accent)] transition-colors" href={live} target="_blank" rel="noopener noreferrer">live</a>}
+      {p.playground && p.playground !== p.demo && (
+        <a className="hover:text-[var(--accent)] transition-colors" href={p.playground} target="_blank" rel="noopener noreferrer">playground</a>
+      )}
     </div>
   );
 }
 
-// ── Footer ─────────────────────────────────────────────────────────────────────
-const FOOTER_COLS = [
-  {
-    h: 'Explore',
-    links: [
-      { href: '/#now', l: 'Now' },
-      { href: '/#projects', l: 'Projects' },
-      { href: '/#stack', l: 'Stack' },
-      { href: '/blog', l: 'Blog' },
-    ],
-  },
-  {
-    h: 'Connect',
-    links: [
-      { href: 'https://github.com/ykstorm', l: 'GitHub' },
-      { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', l: 'LinkedIn' },
-      { href: 'https://npmjs.com/~ykstormsorg', l: 'npm' },
-      { href: 'mailto:raolakshyaraj@gmail.com', l: 'Email' },
-      { href: '/resume', l: 'Résumé' },
-    ],
-  },
+function ProjectRow({ p, version }: { p: Project; version?: string }) {
+  const href = p.demo || p.playground || p.code;
+  return (
+    <li className="py-4 first:pt-0">
+      <h3 className="text-[1.05rem] font-medium">
+        {href ? (
+          <a className="hover:text-[var(--accent)] transition-colors" href={href} target="_blank" rel="noopener noreferrer">{p.name}</a>
+        ) : (
+          p.name
+        )}
+      </h3>
+      <p className="mt-1 text-[var(--muted-foreground)]">{p.tagline}</p>
+      <p className="mt-1 mono text-[0.8rem] text-[var(--muted-foreground)]">{p.stack.join(', ')}</p>
+      <ProjectLinks p={p} version={version} />
+    </li>
+  );
+}
+
+function AlsoRow({ p, version }: { p: Project; version?: string }) {
+  const href = p.demo || p.playground || p.code;
+  return (
+    <li className="py-2">
+      <span className="font-medium">
+        {href ? (
+          <a className="hover:text-[var(--accent)] transition-colors" href={href} target="_blank" rel="noopener noreferrer">{p.name}</a>
+        ) : (
+          p.name
+        )}
+      </span>
+      <span className="text-[var(--muted-foreground)]"> — {p.tagline}</span>
+      <ProjectLinks p={p} version={version} />
+    </li>
+  );
+}
+
+const STACK: [string, string[]][] = [
+  ['Languages', ['JavaScript', 'TypeScript', 'SQL']],
+  ['Frontend', ['React', 'Next.js', 'Tailwind']],
+  ['Backend', ['Node', 'Express', 'REST', 'Postgres', 'Prisma', 'Redis', 'Mongo']],
+  ['Tooling', ['Git', 'Docker', 'Kubernetes', 'GitHub Actions', 'Vercel', 'Sentry']],
 ];
 
-// Clean, non-terminal footer — the hero and contact sections are already
-// terminals; a third would be redundant. This is the quiet editorial coda.
-function SiteFooter() {
-  const year = new Date().getFullYear();
+export default async function HomePage() {
+  const projects = projectsData as Project[];
+  const primary = projects.filter((p) => !p.secondary);
+  const secondary = projects.filter((p) => p.secondary);
+  const versions = await getNpmVersions();
+
   return (
-    <footer className="border-t border-[var(--border)] mt-10">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="grid gap-8 sm:grid-cols-[1.6fr_1fr_1fr]">
-          <div>
-            <p className="font-display text-lg text-zinc-800 dark:text-zinc-100">Lakshyaraj Singh Rao</p>
-            <p className="mt-2 text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
-              Full-stack developer, backend focus. Building Homesty.ai since November 2025.
-            </p>
-            <p className="mt-4 text-[11px] mono text-amber-700 dark:text-amber-400/90 tracking-wide">
-              Open to a backend role, Mumbai or remote
-            </p>
-          </div>
-
-          {FOOTER_COLS.map((col) => (
-            <nav key={col.h} aria-label={col.h}>
-              <p className="section-label text-[10px] mb-3">{col.h}</p>
-              <ul className="space-y-2.5">
-                {col.links.map(({ href, l }) => (
-                  <li key={l}>
-                    <a
-                      href={href}
-                      target={href.startsWith('http') ? '_blank' : undefined}
-                      rel="noopener noreferrer"
-                      className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
-                    >
-                      {l}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+    <div className="page-content">
+      {/* Hero — name, three resume sentences, one link row. */}
+      <section className="col pt-16 pb-12">
+        <h1 className="text-[clamp(2.1rem,6vw,3rem)] font-bold leading-[1.05] tracking-[-0.02em]">
+          Lakshyaraj Singh&nbsp;Rao
+        </h1>
+        <div className="mt-5 space-y-3 text-[1.05rem] leading-relaxed">
+          <p>Full-stack developer with a backend focus, based in Mumbai.</p>
+          <p>Building Homesty.ai since November 2025 — Next.js, React, Node, Postgres, Prisma, Vercel, Sentry.</p>
+          <p>B.Tech in Computer Science, Manipal University Jaipur, 2026.</p>
+        </div>
+        <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
+          {SOCIAL.map(({ label, href }) => (
+            <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="hover:text-[var(--accent)] transition-colors">
+              {label}
+            </a>
           ))}
+          <Link href="/resume" className="hover:text-[var(--accent)] transition-colors">Résumé (PDF)</Link>
         </div>
+      </section>
 
-        <div className="mt-10 pt-5 border-t border-[var(--border)] text-[11px] text-zinc-500 dark:text-zinc-500">
-          <p>© {year} Lakshyaraj Singh Rao · Mumbai, India</p>
-        </div>
-      </div>
-    </footer>
+      {/* Projects — a list, not a card grid. */}
+      <Section id="projects" title="Projects">
+        <ul>
+          {primary.map((p) => (
+            <ProjectRow key={p.id} p={p} version={p.npm ? versions[p.npm] : undefined} />
+          ))}
+        </ul>
+        {secondary.length > 0 && (
+          <>
+            <h3 className="mt-6 mb-1 text-[var(--muted-foreground)] text-[0.95rem]">Also</h3>
+            <ul>
+              {secondary.map((p) => (
+                <AlsoRow key={p.id} p={p} version={p.npm ? versions[p.npm] : undefined} />
+              ))}
+            </ul>
+          </>
+        )}
+      </Section>
+
+      {/* Now */}
+      <Section id="now" title="Now">
+        <p className="leading-relaxed">{nowData.current}</p>
+        <h3 className="mt-6 mb-2 text-[var(--muted-foreground)] text-[0.95rem]">Recently</h3>
+        <ul className="space-y-1.5">
+          {nowData.recent.map((item) => (
+            <li key={item} className="text-[var(--muted-foreground)]">{item}</li>
+          ))}
+        </ul>
+        <p className="mt-6">
+          <span className="text-[var(--muted-foreground)]">Open to </span>
+          {nowData.open_to.join(', ')}.
+        </p>
+        <p className="mt-3 mono text-[0.8rem] text-[var(--muted-foreground)]">
+          {nowData.location} · updated {nowData.updated_at}
+        </p>
+      </Section>
+
+      {/* Stack */}
+      <Section id="stack" title="Stack">
+        <dl className="space-y-3">
+          {STACK.map(([label, items]) => (
+            <div key={label} className="sm:grid sm:grid-cols-[7rem_1fr] gap-2">
+              <dt className="text-[var(--muted-foreground)]">{label}</dt>
+              <dd className="mono text-[0.85rem]">{items.join(', ')}</dd>
+            </div>
+          ))}
+        </dl>
+      </Section>
+
+      {/* GitHub activity (client island) */}
+      <Section id="activity" title="Activity">
+        <GithubContributions />
+      </Section>
+
+      {/* Contact */}
+      <Section id="contact" title="Contact">
+        <p className="leading-relaxed">
+          Email me at{' '}
+          <a className="link" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+          {' '}— I read everything. You can also find me on GitHub, LinkedIn, and npm.
+        </p>
+      </Section>
+    </div>
   );
 }

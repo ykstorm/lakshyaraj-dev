@@ -1,77 +1,64 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 /* Fonts are loaded via next/font in app/layout.tsx (Tailwind v4's bundler drops
-   bare @import url() font links), which defines --font-sans/-mono/-display. */
+   bare @import url() font links), which defines --ff-sans / --ff-mono. */
 
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
   :root {
-    /* ── Light: engineering blueprint paper ─────────────────────────────── */
+    /* ── Light: warm paper (default) ──────────────────────────────────────── */
     --background: #f4f1e9;        /* warm parchment, not stark white */
     --foreground: #1b1a17;        /* ink */
-    --accent: #b45309;            /* rich amber-700, readable on paper */
-    --accent-2: #047857;          /* emerald-700 */
+    --accent: #b45309;            /* amber-700, readable on paper */
     --muted: #ebe7db;
     --muted-foreground: #6c675b;
-    --border: #d8d2c2;
+    --border: #ddd7c8;
     --card: #fbfaf4;
-    --card-foreground: #1b1a17;
-    --grid: rgba(27, 26, 23, 0.045);
-    --glow: rgba(180, 83, 9, 0.10);
-    --scan: rgba(27, 26, 23, 0.018);
 
-    /* contribution-graph scale (teal/emerald ink on paper) */
+    /* contribution-graph scale — warm amber ramp (single-accent discipline) */
     --cal-0: #e6e1d2;
-    --cal-1: #b8e3d6;
-    --cal-2: #6fccbb;
-    --cal-3: #1f9e96;
-    --cal-4: #0e7490;
+    --cal-1: #ecd8af;
+    --cal-2: #ddb268;
+    --cal-3: #c5831d;
+    --cal-4: #9a570b;
 
-    /* --ff-sans / --ff-mono / --ff-display come from next/font (layout.tsx).
-       Re-point Tailwind's theme tokens at the webfonts so font-sans/font-mono
-       utilities resolve to them too (defined after the shadcn import → wins). */
+    /* --ff-sans / --ff-mono come from next/font (layout.tsx). Re-point
+       Tailwind's theme tokens at the webfonts so font-sans/font-mono resolve. */
     --font-sans: var(--ff-sans);
     --font-mono: var(--ff-mono);
+    color-scheme: light;
     font-family: var(--ff-sans), system-ui, -apple-system, sans-serif;
   }
 
   .dark {
-    /* ── Dark: phosphor terminal ────────────────────────────────────────── */
-    --background: #050706;        /* near-black, faint green cast */
-    --foreground: #d6e0d8;
-    --accent: #f5b53d;
-    --accent-2: #34d399;
-    --muted: #0e1411;
-    --muted-foreground: #6b7672;
-    --border: #1b2420;
-    --card: #090c0a;
-    --card-foreground: #e7efe9;
-    --grid: rgba(52, 211, 153, 0.055);
-    --glow: rgba(245, 181, 61, 0.12);
-    --scan: rgba(0, 0, 0, 0.22);
+    /* ── Dark: warm charcoal (same ink + amber, not a terminal) ───────────── */
+    --background: #1a1712;
+    --foreground: #e8e3d6;
+    --accent: #e0973f;            /* amber, lifted for contrast on dark */
+    --muted: #241f17;
+    --muted-foreground: #9a9384;
+    --border: #332d22;
+    --card: #201c15;
 
-    /* contribution-graph scale (phosphor emerald on black) */
-    --cal-0: #14201a;
-    --cal-1: #143b2e;
-    --cal-2: #1c6b4f;
-    --cal-3: #25a06f;
-    --cal-4: #34d399;
+    --cal-0: #241f17;
+    --cal-1: #3d3016;
+    --cal-2: #70521c;
+    --cal-3: #a9781f;
+    --cal-4: #e0973f;
+
+    color-scheme: dark;
   }
 
   html {
     scroll-behavior: smooth;
   }
 
-  * {
-    border-color: var(--border);
-  }
-
   body {
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -81,203 +68,90 @@
     color: var(--background);
   }
 
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--background);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 0;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
-  /* ── Background atmosphere keyframes ───────────────────────────────────── */
-  @keyframes glow-drift {
-    0%   { transform: translate3d(-8%, -6%, 0) scale(1); }
-    50%  { transform: translate3d(10%, 8%, 0) scale(1.15); }
-    100% { transform: translate3d(-8%, -6%, 0) scale(1); }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
-  @keyframes scan-sweep {
-    0%   { transform: translateY(-120%); }
-    100% { transform: translateY(120%); }
-  }
-  @keyframes caret-blink {
-    0%, 49%   { opacity: 1; }
-    50%, 100% { opacity: 0; }
-  }
+
+  /* The one page-load motion: a short fade+rise, replayed per route by
+     PageTransition. Reduced-motion disables it. */
   @keyframes page-fade-in {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .page-fade { animation: page-fade-in 0.25s ease-out both; }
+  .page-fade { animation: page-fade-in 0.28s ease-out both; }
   @media (prefers-reduced-motion: reduce) {
     .page-fade { animation: none; }
-  }
-  @keyframes spotlight {
-    0%   { opacity: 0; transform: translate(-72px, -62px) scale(0.5); }
-    100% { opacity: 1; transform: translate(-50%, -40%) scale(1); }
   }
 }
 
 @layer components {
-  /* ── Typographic primitives ────────────────────────────────────────────── */
-  /* Space Grotesk — geometric grotesque display voice. */
-  .font-display {
-    font-family: var(--ff-display);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
   .mono {
     font-family: var(--ff-mono);
+    font-feature-settings: "liga" 0;
   }
 
-  /* Section labels are terminal-native: mono, tracked, a caret prompt (❯) — not
-     the "// comment" cliché. */
-  .section-label {
-    font-family: var(--ff-mono);
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--accent) 85%, var(--foreground));
+  /* Reading column — one measure shared by nav, content, footer. */
+  .col {
+    width: 100%;
+    max-width: 42rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
   }
-  .section-label .caret {
+
+  /* A link that reveals its amber underline on hover — used in prose and lists. */
+  .link {
     color: var(--accent);
-    margin-right: 0.5em;
-    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.15s ease;
   }
+  .link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-  /* ── Fixed background stack (grid + scanlines + drifting phosphor glow) ─── */
-  .terminal-bg {
-    position: fixed;
-    inset: 0;
-    z-index: -10;
-    overflow: hidden;
-    pointer-events: none;
-    background-color: var(--background);
-  }
-  .terminal-bg::before {
-    /* blueprint / phosphor grid, faded toward the page center */
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 34px 34px;
-    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 18%, #000 30%, transparent 82%);
-            mask-image: radial-gradient(ellipse 90% 70% at 50% 18%, #000 30%, transparent 82%);
-  }
-  .terminal-bg::after {
-    /* CRT scanlines, extremely subtle */
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent 0 2px,
-      var(--scan) 2px 3px
-    );
-    opacity: 0.6;
-  }
-  /* film grain — fixed SVG fractal-noise overlay, very low opacity */
-  .grain {
-    position: fixed;
-    inset: 0;
-    z-index: -9;
-    pointer-events: none;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 140px 140px;
-  }
-
-  .phosphor-glow {
-    position: absolute;
-    top: -20%;
-    left: 28%;
-    width: 60vw;
-    height: 60vw;
-    max-width: 760px;
-    max-height: 760px;
-    border-radius: 9999px;
-    background: radial-gradient(circle at center, var(--glow), transparent 68%);
-    filter: blur(40px);
-    animation: glow-drift 22s ease-in-out infinite;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .phosphor-glow { animation: none; }
-  }
-
-  /* ── Cards ──────────────────────────────────────────────────────────────── */
-  .telemetry-card {
-    position: relative;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background-color: color-mix(in srgb, var(--card) 70%, transparent);
-    backdrop-filter: blur(4px);
-    transition: border-color 0.2s ease, transform 0.2s ease;
-  }
-  .telemetry-card:hover {
-    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-  }
-
-  /* terminal window chrome shared by hero + contact */
-  .term-window {
+  /* ── Article prose (react-markdown output on project/blog detail pages) ──── */
+  .article { line-height: 1.7; color: var(--foreground); }
+  .article > :first-child { margin-top: 0; }
+  .article h1 { font-size: 1.6rem; font-weight: 700; line-height: 1.2; margin: 2rem 0 0.75rem; }
+  .article h2 { font-size: 1.3rem; font-weight: 700; line-height: 1.25; margin: 2rem 0 0.5rem; }
+  .article h3 { font-size: 1.08rem; font-weight: 600; margin: 1.5rem 0 0.4rem; }
+  .article p { margin: 1rem 0; }
+  .article ul, .article ol { margin: 1rem 0; padding-left: 1.3rem; }
+  .article ul { list-style: disc; }
+  .article ol { list-style: decimal; }
+  .article li { margin: 0.35rem 0; }
+  .article a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .article strong { font-weight: 700; }
+  .article code {
     font-family: var(--ff-mono);
+    font-size: 0.85em;
+    background: var(--muted);
+    padding: 0.12em 0.35em;
+    border-radius: 0.25rem;
+  }
+  .article pre {
+    font-family: var(--ff-mono);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 0.6rem;
-    background-color: color-mix(in srgb, var(--card) 90%, transparent);
-    backdrop-filter: blur(6px);
-    overflow: hidden;
-    box-shadow:
-      0 1px 0 color-mix(in srgb, var(--accent) 12%, transparent) inset,
-      0 24px 60px -30px rgba(0, 0, 0, 0.55);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.25rem 0;
   }
-  .term-titlebar {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--border);
-    background-color: color-mix(in srgb, var(--muted) 70%, transparent);
+  .article pre code { background: none; padding: 0; font-size: inherit; }
+  .article blockquote {
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
+    margin: 1.25rem 0;
+    color: var(--muted-foreground);
   }
-  .term-dot { width: 0.6rem; height: 0.6rem; border-radius: 9999px; }
+  .article hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
 
-  /* ── Mobile perf ──────────────────────────────────────────────────────────
-     backdrop-filter forces the browser to recomposite everything behind it
-     (incl. the canvas) every frame — brutal on touch GPUs. Drop it there and
-     make the surfaces opaque instead. */
-  @media (hover: none) and (pointer: coarse) {
-    .telemetry-card { backdrop-filter: none; background-color: var(--card); }
-    .term-window    { backdrop-filter: none; background-color: var(--card); }
-    .backdrop-blur, .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg {
-      -webkit-backdrop-filter: none !important;
-      backdrop-filter: none !important;
-    }
-  }
-
-  /* contribution graph scrolls horizontally on narrow screens without an ugly bar */
-  .cal-grid {
-    scrollbar-width: none;
-  }
-  .cal-grid::-webkit-scrollbar {
-    display: none;
-    height: 0;
-  }
-
-  /* corner brackets used on project cards */
-  .corner {
-    position: absolute;
-    width: 0.7rem;
-    height: 0.7rem;
-    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
-    opacity: 0.3;
-    transition: opacity 0.25s ease;
-  }
-  .group:hover .corner { opacity: 0.85; }
+  /* contribution graph scrolls horizontally on narrow screens, no visible bar */
+  .cal-grid { scrollbar-width: none; }
+  .cal-grid::-webkit-scrollbar { display: none; height: 0; }
 }

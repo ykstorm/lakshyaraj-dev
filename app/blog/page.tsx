@@ -4,56 +4,40 @@ import { getContentFiles } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Writing — Lakshyaraj Singh Rao',
-  description: 'Notes on engineering, architecture, and the tools I build.',
+  description: 'Notes on backend engineering and the tools I build.',
   alternates: { canonical: '/blog' },
-  openGraph: { title: 'Writing — Lakshyaraj Singh Rao', description: 'Notes on engineering, architecture, and the tools I build.', url: '/blog' },
+  openGraph: { title: 'Writing — Lakshyaraj Singh Rao', description: 'Notes on backend engineering and the tools I build.', url: '/blog' },
 };
 
 export default async function BlogPage() {
   const posts = await getContentFiles('blog');
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#050505] text-zinc-800 dark:text-zinc-100">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-        <Link
-          href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-        >
-          ← back
-        </Link>
+    <div className="col py-12">
+      <h1 className="text-[clamp(1.8rem,5vw,2.4rem)] font-bold tracking-tight">Writing</h1>
+      <p className="mt-2 text-[var(--muted-foreground)]">Notes on backend engineering and the tools I build.</p>
 
-        <div className="mt-8 mb-10">
-          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Writing</span>
-          <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Writing</h1>
-          <p className="mt-2 text-[13px] text-zinc-500 font-mono">
-            Notes on engineering, architecture, and the tools I build.
-          </p>
-        </div>
-
-        {posts.length === 0 ? (
-          <p className="font-mono text-[13px] text-zinc-500">No posts yet.</p>
-        ) : (
-          <div className="space-y-5">
-            {posts.map((post) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="telemetry-card group block"
-              >
-                <h2 className="font-display text-xl tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+      {posts.length === 0 ? (
+        <p className="mt-8 text-[var(--muted-foreground)]">No posts yet.</p>
+      ) : (
+        <ul className="mt-8 divide-y divide-[var(--border)]">
+          {posts.map((post) => (
+            <li key={post.slug} className="py-5">
+              <Link href={`/blog/${post.slug}`} className="group block">
+                <h2 className="text-[1.1rem] font-medium group-hover:text-[var(--accent)] transition-colors">
                   {post.metadata.title}
                 </h2>
-                <p className="mt-2 text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">{post.metadata.description}</p>
+                <p className="mt-1 text-[var(--muted-foreground)]">{post.metadata.description}</p>
                 {post.metadata.date && (
-                  <time className="mt-3 block text-[11px] font-mono text-zinc-500">
-                    {new Date(post.metadata.date).toLocaleDateString()}
+                  <time className="mt-2 block mono text-[0.78rem] text-[var(--muted-foreground)]">
+                    {new Date(post.metadata.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                   </time>
                 )}
               </Link>
-            ))}
-          </div>
-        )}
-      </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
