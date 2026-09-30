@@ -6,6 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { PageTransition } from '@/components/page-transition';
 import { SiteNav } from '@/components/site-nav';
 import { SiteFooter } from '@/components/site-footer';
+import { SITE } from '@/lib/site';
 import './globals.css';
 
 // Two families only, self-hosted via next/font (no layout shift, and survives
@@ -16,7 +17,6 @@ import './globals.css';
 const sans = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--ff-sans', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--ff-mono', display: 'swap' });
 
-const SITE = 'https://lakshyaraj-dev.vercel.app';
 const TITLE = 'Lakshyaraj Singh Rao — full-stack developer';
 const DESC =
   'Full-stack developer, backend focus. Building Homesty.ai since Nov 2025. Anvil, Anchor, Tripwire and Stackup on GitHub; four packages on npm. Mumbai.';

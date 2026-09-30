@@ -4,6 +4,7 @@ import { getContentBySlug, getContentFiles } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import projectsData from '@/data/projects.json';
 import type { Project } from '@/lib/content';
+import { ProjectLinks } from '@/components/project-links';
 
 export async function generateStaticParams() {
   const projects = await getContentFiles('projects');
@@ -40,7 +41,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   }
 
   const meta = (projectsData as Project[]).find((p) => p.id === slug);
-  const live = meta?.demo || meta?.playground;
 
   return (
     <div className="col py-12">
@@ -48,11 +48,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <header className="mb-8">
           <h1 className="text-[clamp(1.8rem,5vw,2.4rem)] font-bold tracking-tight">{project.metadata.title}</h1>
           <p className="mt-2 text-[var(--muted-foreground)]">{project.metadata.description}</p>
-          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 mono text-[0.8rem] text-[var(--muted-foreground)]">
-            {meta?.code && <a className="hover:text-[var(--accent)] transition-colors" href={meta.code} target="_blank" rel="noopener noreferrer">code</a>}
-            {meta?.npm && <a className="hover:text-[var(--accent)] transition-colors" href={`https://npmjs.com/package/${meta.npm}`} target="_blank" rel="noopener noreferrer">npm</a>}
-            {live && <a className="hover:text-[var(--accent)] transition-colors" href={live} target="_blank" rel="noopener noreferrer">live</a>}
-          </div>
+          {meta && <ProjectLinks p={meta} className="mt-3 flex flex-wrap gap-x-4 gap-y-1 mono text-[0.8rem] text-[var(--muted-foreground)]" />}
         </header>
 
         <div className="article">

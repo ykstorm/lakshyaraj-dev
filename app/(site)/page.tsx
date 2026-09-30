@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { GithubContributions } from '@/components/ui/github-contributions';
+import { NowContent } from '@/components/now-content';
+import { ProjectLinks } from '@/components/project-links';
 import { SOCIAL, EMAIL } from '@/lib/site';
 import type { Project } from '@/lib/content';
 import projectsData from '@/data/projects.json';
-import nowData from '@/data/now.json';
 
 const NPM_PACKAGES = [
   '@ykstormsorg/anvil',
@@ -36,24 +37,6 @@ function Section({ id, title, children }: { id: string; title: string; children:
       <h2 className="text-[1.15rem] font-bold tracking-tight mb-5">{title}</h2>
       {children}
     </section>
-  );
-}
-
-function ProjectLinks({ p, version }: { p: Project; version?: string }) {
-  const live = p.demo || p.playground;
-  return (
-    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 mono text-[0.8rem] text-[var(--muted-foreground)]">
-      {p.code && <a className="hover:text-[var(--accent)] transition-colors" href={p.code} target="_blank" rel="noopener noreferrer">code</a>}
-      {p.npm && (
-        <a className="hover:text-[var(--accent)] transition-colors" href={`https://npmjs.com/package/${p.npm}`} target="_blank" rel="noopener noreferrer">
-          {version ? `npm v${version}` : 'npm'}
-        </a>
-      )}
-      {live && <a className="hover:text-[var(--accent)] transition-colors" href={live} target="_blank" rel="noopener noreferrer">live</a>}
-      {p.playground && p.playground !== p.demo && (
-        <a className="hover:text-[var(--accent)] transition-colors" href={p.playground} target="_blank" rel="noopener noreferrer">playground</a>
-      )}
-    </div>
   );
 }
 
@@ -148,20 +131,7 @@ export default async function HomePage() {
 
       {/* Now */}
       <Section id="now" title="Now">
-        <p className="leading-relaxed">{nowData.current}</p>
-        <h3 className="mt-6 mb-2 text-[var(--muted-foreground)] text-[0.95rem]">Recently</h3>
-        <ul className="space-y-1.5">
-          {nowData.recent.map((item) => (
-            <li key={item} className="text-[var(--muted-foreground)]">{item}</li>
-          ))}
-        </ul>
-        <p className="mt-6">
-          <span className="text-[var(--muted-foreground)]">Open to </span>
-          {nowData.open_to.join(', ')}.
-        </p>
-        <p className="mt-3 mono text-[0.8rem] text-[var(--muted-foreground)]">
-          {nowData.location} · updated {nowData.updated_at}
-        </p>
+        <NowContent />
       </Section>
 
       {/* Stack */}

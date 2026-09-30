@@ -5,7 +5,6 @@ export interface ContentMetadata {
   title: string;
   description: string;
   date: string;
-  [key: string]: string;
 }
 
 export interface ContentFile {
@@ -27,28 +26,39 @@ export interface Project {
   secondary?: boolean;
 }
 
-const parseMarkdownFrontmatter = (content: string): { metadata: ContentMetadata; body: string } => {
+const EMPTY_METADATA: ContentMetadata = { title: '', description: '', date: '' };
+
+function parseFields(frontmatter: string): Record<string, string> {
+  const fields: Record<string, string> = {};
+  for (const line of frontmatter.split('\n')) {
+    const idx = line.indexOf(':');
+    if (idx === -1) continue;
+    const key = line.slice(0, idx).trim();
+    if (key) fields[key] = line.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+  }
+  return fields;
+}
+
+function parseMarkdownFrontmatter(raw: string): { metadata: ContentMetadata; body: string } {
+  // Normalise line endings first: the .mdx files are checked out with CRLF on
+  // Windows, which the front-matter fence regex (expecting \n) would otherwise miss.
+  const content = raw.replace(/\r\n/g, '\n');
   const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) {
-    return { metadata: {} as ContentMetadata, body: content };
+    return { metadata: EMPTY_METADATA, body: content };
   }
 
-  const frontmatter = match[1];
-  const body = match[2];
-
-  const metadata: ContentMetadata = { title: '', description: '', date: '' };
-  const lines = frontmatter.split('\n');
-
-  for (const line of lines) {
-    const [key, ...valueParts] = line.split(':');
-    const value = valueParts.join(':').trim().replace(/^["']|["']$/g, '');
-    if (key.trim()) {
-      metadata[key.trim()] = value;
-    }
-  }
-
-  return { metadata, body };
-};
+  const [, frontmatter, body] = match;
+  const fields = parseFields(frontmatter);
+  return {
+    metadata: {
+      title: fields.title ?? '',
+      description: fields.description ?? '',
+      date: fields.date ?? '',
+    },
+    body,
+  };
+}
 
 export async function getContentFiles(contentType: 'projects' | 'blog'): Promise<ContentFile[]> {
   const contentDir = path.join(process.cwd(), 'content', contentType);
@@ -61,16 +71,9 @@ export async function getContentFiles(contentType: 'projects' | 'blog'): Promise
 
   return files
     .map((file) => {
-      const fullPath = path.join(contentDir, file);
-      const content = fs.readFileSync(fullPath, 'utf-8');
+      const content = fs.readFileSync(path.join(contentDir, file), 'utf-8');
       const { metadata, body } = parseMarkdownFrontmatter(content);
-      const slug = file.replace('.mdx', '');
-
-      return {
-        slug,
-        metadata,
-        content: body,
-      };
+      return { slug: file.replace('.mdx', ''), metadata, content: body };
     })
     .sort((a, b) => new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime());
 }
@@ -81,19 +84,12 @@ export async function getContentBySlug(contentType: 'projects' | 'blog', slug: s
   // escape the content dir (defense-in-depth against path traversal).
   if (!/^[a-z0-9-]+$/.test(slug)) return null;
 
-  const contentDir = path.join(process.cwd(), 'content', contentType);
-  const filePath = path.join(contentDir, `${slug}.mdx`);
-
+  const filePath = path.join(process.cwd(), 'content', contentType, `${slug}.mdx`);
   if (!fs.existsSync(filePath)) {
     return null;
   }
 
   const content = fs.readFileSync(filePath, 'utf-8');
   const { metadata, body } = parseMarkdownFrontmatter(content);
-
-  return {
-    slug,
-    metadata,
-    content: body,
-  };
+  return { slug, metadata, content: body };
 }

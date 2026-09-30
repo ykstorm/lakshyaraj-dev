@@ -4,9 +4,9 @@ import { getContentFiles } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Writing — Lakshyaraj Singh Rao',
-  description: 'Notes on backend engineering and the tools I build.',
+  description: 'Notes on backend work and the tools I build.',
   alternates: { canonical: '/blog' },
-  openGraph: { title: 'Writing — Lakshyaraj Singh Rao', description: 'Notes on backend engineering and the tools I build.', url: '/blog' },
+  openGraph: { title: 'Writing — Lakshyaraj Singh Rao', description: 'Notes on backend work and the tools I build.', url: '/blog' },
 };
 
 export default async function BlogPage() {
@@ -15,7 +15,7 @@ export default async function BlogPage() {
   return (
     <div className="col py-12">
       <h1 className="text-[clamp(1.8rem,5vw,2.4rem)] font-bold tracking-tight">Writing</h1>
-      <p className="mt-2 text-[var(--muted-foreground)]">Notes on backend engineering and the tools I build.</p>
+      <p className="mt-2 text-[var(--muted-foreground)]">Notes on backend work and the tools I build.</p>
 
       {posts.length === 0 ? (
         <p className="mt-8 text-[var(--muted-foreground)]">No posts yet.</p>
