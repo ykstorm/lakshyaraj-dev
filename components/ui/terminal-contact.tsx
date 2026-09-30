@@ -37,7 +37,7 @@ export function TerminalContact() {
         <span className="term-dot bg-red-400/70" />
         <span className="term-dot bg-amber-400/70" />
         <span className="term-dot bg-emerald-400/70" />
-        <span className="ml-2 text-[10px] text-zinc-400 dark:text-zinc-600">connect — secure uplink</span>
+        <span className="ml-2 text-[10px] text-zinc-400 dark:text-zinc-600">connect</span>
       </div>
 
       <div className="p-5 space-y-1 text-zinc-700 dark:text-zinc-300">
@@ -46,7 +46,7 @@ export function TerminalContact() {
           <span className="text-zinc-400 dark:text-zinc-500">:~$</span>{' '}
           <span className="text-amber-700 dark:text-amber-300">connect --protocol=secure --auto-link</span>
         </div>
-        <div className="text-zinc-500 pl-4">&gt; Establishing uplink to Lakshyaraj Singh Rao…</div>
+        <div className="text-zinc-500 pl-4">&gt; Reaching Lakshyaraj Singh Rao…</div>
         <div className="text-zinc-500 pl-4">&gt; Press [1-4] to open a channel:</div>
         {PROTOCOLS.map((p) => (
           <div key={p.id} className="pl-4 flex items-center gap-2">

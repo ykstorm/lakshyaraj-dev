@@ -1,20 +1,20 @@
 ---
 title: "Stackup"
-description: "Production Kubernetes locally in 10 minutes. ArgoCD + Argo Rollouts + Grafana."
+description: "One-command local Kubernetes cluster with canary deploys and auto-rollback."
 date: "2026-05-02"
 ---
 
 ## What it does
 
-Stackup stands up a production-shaped Kubernetes cluster on a laptop in about ten minutes. It uses kind for the cluster and layers on ArgoCD, Argo Rollouts, Prometheus, Grafana, Loki, and Tempo. Everything is wired through GitOps from the first commit, so the cluster state is whatever the repo says it is. The goal is to practice the real moving parts without a cloud bill.
+Stackup stands up a production-shaped Kubernetes cluster on a laptop with one command. It uses kind for the cluster and layers on ArgoCD, Argo Rollouts, Prometheus, and Grafana. Everything is wired through GitOps from the first commit, so the cluster state is whatever the repo says it is. The goal is to practice the real moving parts without a cloud bill.
 
 ## Why this approach
 
-Most Kubernetes tutorials stop at `kubectl run nginx` and call it a day. But canary rollouts, metrics, traces, logs, and GitOps only make sense together — you can't learn how a bad rollout shows up in Grafana if you never wired Grafana in. Bundling them means you see the whole loop. The trade-off is that kind fakes some of what a real cloud cluster does, so a few lessons don't carry over unchanged.
+Most Kubernetes tutorials stop at `kubectl run nginx` and call it a day. But canary rollouts, metrics, and GitOps only make sense together — you can't learn how a bad rollout shows up in Grafana if you never wired Grafana in. Bundling them means you see the whole loop. The trade-off is that kind fakes some of what a real cloud cluster does, so a few lessons don't carry over unchanged.
 
 ## How it's built
 
-A Makefile bootstraps a kind cluster, then ArgoCD takes over and syncs the rest from the repo: Argo Rollouts for canary deploys, Prometheus and Grafana for metrics, Loki for logs, Tempo for traces. After bootstrap, changes go through git and ArgoCD reconciles them, the same way you'd run it for real.
+A Makefile bootstraps a kind cluster, then ArgoCD takes over and syncs the rest from the repo: Argo Rollouts for canary deploys, Prometheus and Grafana for metrics. A canary advances only when the success-rate metric holds, and rolls back automatically when it doesn't. After bootstrap, changes go through git and ArgoCD reconciles them, the same way you'd run it for real.
 
 ## Known limitations
 

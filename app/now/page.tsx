@@ -38,21 +38,9 @@ export default function NowPage() {
           </section>
 
           <section className="telemetry-card space-y-3">
-            <span className="section-label text-[10px]">Just shipped</span>
+            <span className="section-label text-[10px]">Recently</span>
             <ul className="space-y-2">
-              {nowData.shipped_this_week.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                  <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="telemetry-card space-y-3">
-            <span className="section-label text-[10px]">Up next</span>
-            <ul className="space-y-2">
-              {nowData.next_up.map((item) => (
+              {nowData.recent.map((item) => (
                 <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
                   <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span>
                   <span>{item}</span>

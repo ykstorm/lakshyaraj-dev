@@ -1,6 +1,6 @@
 ---
 title: "Tripwire"
-description: "Mid-stream LLM safety — catch the lie before the user finishes reading it."
+description: "Checks LLM output while it streams and stops it when a rule matches."
 date: "2026-05-18"
 ---
 
@@ -21,8 +21,8 @@ For apps that don't want to wrap their model call directly, Tripwire also ships 
 ## Known limitations
 
 - Rules are regex and structural only. There's no semantic model in the loop.
-- On long streams the per-chunk checks add roughly 8-15ms each, which accumulates.
-- It catches banned content, not hallucination. A confident wrong answer sails through.
+- On long streams the per-chunk checks add up, since every chunk is tested.
+- It catches banned content, not made-up facts. A confident wrong answer sails through.
 - Complex rules are easy to write badly; a sloppy regex can false-positive on safe text.
 
 ## Where it runs

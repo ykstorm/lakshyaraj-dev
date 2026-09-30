@@ -21,18 +21,14 @@ const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--ff-mono', display
 const display = Space_Grotesk({ subsets: ['latin'], weight: ['600'], variable: '--ff-display', display: 'swap' });
 
 const SITE = 'https://lakshyaraj-dev.vercel.app';
-const TITLE = 'Lakshyaraj Singh Rao — Backend & AI-Infrastructure Engineer';
+const TITLE = 'Lakshyaraj Singh Rao — full-stack developer';
 const DESC =
-  'I build the reliability layer for production AI — refusal, guardrails, eval-gating, idempotency. Seven open-source tools (four on npm), extracted from a live AI product.';
+  'Full-stack developer, backend focus. Building Homesty.ai since Nov 2025. Anvil, Anchor, Tripwire and Stackup on GitHub; four packages on npm. Mumbai.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: { default: TITLE, template: '%s · Lakshyaraj Singh Rao' },
   description: DESC,
-  keywords: [
-    'Lakshyaraj Singh Rao', 'backend engineer', 'AI infrastructure', 'DevOps',
-    'RAG', 'LLM', 'TypeScript', 'Kubernetes', 'webhook reliability', 'idempotency', 'Mumbai',
-  ],
   authors: [{ name: 'Lakshyaraj Singh Rao', url: SITE }],
   creator: 'Lakshyaraj Singh Rao',
   icons: { icon: '/favicon.ico' },
@@ -47,7 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
-    description: 'The reliability layer for production AI — refusal, guardrails, eval-gating, idempotency. 7 OSS tools, 4 on npm.',
+    description: DESC,
   },
 };
 
@@ -63,11 +59,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@type': 'Person',
               name: 'Lakshyaraj Singh Rao',
               url: SITE,
-              jobTitle: 'Backend & AI-Infrastructure Engineer',
+              jobTitle: 'Full-stack developer',
               email: 'mailto:raolakshyaraj@gmail.com',
-              worksFor: { '@type': 'Organization', name: 'Homesty.ai LLP', url: 'https://homesty.ai' },
+              worksFor: { '@type': 'Organization', name: 'Homesty.ai', url: 'https://homesty.ai' },
               address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'IN' },
-              knowsAbout: ['Backend engineering', 'AI infrastructure', 'RAG', 'LLM reliability', 'Kubernetes', 'DevOps'],
+              knowsAbout: ['JavaScript', 'TypeScript', 'SQL', 'React', 'Next.js', 'Node.js', 'Express', 'PostgreSQL', 'Prisma', 'Redis', 'Docker', 'Kubernetes', 'GitHub Actions', 'Vercel'],
               sameAs: [
                 'https://github.com/ykstorm',
                 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152',

@@ -8,7 +8,7 @@ date: "2026-06-15"
 
 Webhook re-delivery is a failure mode people discover in production, not in the docs. Stripe re-sends. GitHub re-sends. Your own worker crashes after it did the work but before it acked, so the provider retries and you charge the card twice. Every webhook integration eventually has to answer the same four questions: is this request real, have I seen it before, where does the work go, and what happens when the work keeps failing.
 
-Most of the open-source examples answer one of those. They show signature verification, or they show a BullMQ queue, but not the chain that connects them. I needed the chain for [Homesty](https://homesty.ai)'s webhook surface — Stripe re-deliveries and CRM callbacks — and ended up extracting it into [Anvil](https://github.com/ykstorm/anvil).
+Most of the open-source examples answer one of those. They show signature verification, or they show a BullMQ queue, but not the chain that connects them. I needed the chain for a webhook integration I was working on, and ended up building it into [Anvil](https://github.com/ykstorm/anvil).
 
 ## The chain
 
@@ -42,7 +42,7 @@ Second, you hash the **raw** bytes. If your framework runs `express.json()` befo
 
 This is the part that looks wrong until you've been burned by it.
 
-The intuitive idempotency key is the signature header — it's unique per delivery, right? It isn't. **Stripe rotates the signature on re-delivery in some test modes.** Same event, same payload, a different signature. Key on the signature alone and you enqueue the same job twice.
+The intuitive idempotency key is the signature header — it's unique per delivery, right? It isn't. **Some providers rotate the signature on re-delivery.** Same event, same payload, a different signature. Key on the signature alone and you enqueue the same job twice.
 
 So the key is `sha256(signatureHeader + rawPayload)`. The payload is what actually identifies the event; the signature is folded in so that a genuinely different event with a colliding payload still separates. Same signature plus a different body is a different key — two jobs. Same key, redelivered five times, is exactly one job, ever. A re-delivery returns the original job's id instead of enqueuing again.
 
@@ -71,8 +71,7 @@ The dead-letter handler was re-using the original job's id as the dead job's id:
 - `createServer({ secret })` — the Express ingress (verify → dedupe → enqueue → 202)
 - `createWorker(handler, opts)` — the worker with the backoff schedule and dead-letter
 - `replayDeadLetter(jobId)` — the separate replay path
-- A Terraform module (Hetzner: Redis + server + worker pool) and a Helm chart
-- Published as [`@ykstormsorg/anvil`](https://www.npmjs.com/package/@ykstormsorg/anvil) with npm build provenance — the package is signed by the GitHub Actions run that built it, so you can verify it came from the source you're reading.
+- Published as [`@ykstormsorg/anvil`](https://www.npmjs.com/package/@ykstormsorg/anvil) with npm build provenance, so you can verify the package came from the source you're reading.
 
 It's a 0.1, not a finished library: you map the provider's signature header yourself, replay is one job at a time, and BullMQ + Redis is the only backend. But the chain is real and the contracts are tested.
 

@@ -10,19 +10,19 @@ const GLITCH_CHARS = '█▓▒░▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀�
 
 export function ResumeButton({ href }: ResumeButtonProps) {
   const [glitched, setGlitched] = useState(false);
-  const [displayed, setDisplayed] = useState('DECRYPT TO READ');
+  const [displayed, setDisplayed] = useState('Résumé (PDF)');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function startGlitch() {
     setGlitched(true);
     let count = 0;
     intervalRef.current = setInterval(() => {
-      const label = 'DECRYPT TO READ';
+      const label = 'Résumé (PDF)';
       if (count < label.length) {
         setDisplayed(label.slice(0, count) + GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)].repeat(label.length - count));
         count++;
       } else {
-        setDisplayed('DECRYPT TO READ');
+        setDisplayed('Résumé (PDF)');
         setGlitched(false);
         if (intervalRef.current) clearInterval(intervalRef.current);
       }
@@ -31,7 +31,7 @@ export function ResumeButton({ href }: ResumeButtonProps) {
 
   function stopGlitch() {
     setGlitched(false);
-    setDisplayed('DECRYPT TO READ');
+    setDisplayed('Résumé (PDF)');
     if (intervalRef.current) clearInterval(intervalRef.current);
   }
 

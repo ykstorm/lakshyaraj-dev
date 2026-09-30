@@ -67,14 +67,16 @@ function Hero() {
           Lakshyaraj Singh&nbsp;Rao
         </h1>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.32, duration: 0.5 }}
-          className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 mono tracking-tight"
+          className="space-y-2 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-xl mx-auto"
         >
-          Backend Engineer · AI Infrastructure · Full-Stack · DevOps
-        </motion.p>
+          <p>Full-stack developer with a backend focus, based in Mumbai.</p>
+          <p>Building Homesty.ai since November 2025 — Next.js, React, Node, Postgres, Prisma, Vercel, Sentry.</p>
+          <p>B.Tech in Computer Science, Manipal University Jaipur, 2026.</p>
+        </motion.div>
 
         {/* Dynamic terminal: client typewriter + server <noscript> fallback */}
         <div className="pt-2">
@@ -82,13 +84,13 @@ function Hero() {
           <noscript>
             <div className="term-window w-full max-w-xl mx-auto p-4 text-left text-[13px] space-y-2">
               <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>whoami
-                <div className="text-zinc-600 dark:text-zinc-400">Backend Engineer · AI Infrastructure · DevOps</div></div>
+                <div className="text-zinc-600 dark:text-zinc-400">Full-stack developer, backend focus · Mumbai</div></div>
               <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>cat focus.txt
-                <div className="text-zinc-600 dark:text-zinc-400">Anvil — webhook→BullMQ pipeline</div></div>
+                <div className="text-zinc-600 dark:text-zinc-400">Building Homesty.ai since November 2025</div></div>
               <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>ls ~/projects
-                <div className="text-zinc-600 dark:text-zinc-400">anchor tripwire goldset quickdraw stackup codecraft anvil</div></div>
+                <div className="text-zinc-600 dark:text-zinc-400">anvil anchor tripwire stackup goldset quickdraw codecraft</div></div>
               <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>status
-                <div className="text-zinc-600 dark:text-zinc-400">Open to backend / AI-infra roles</div></div>
+                <div className="text-zinc-600 dark:text-zinc-400">Open to a backend role, Mumbai or remote</div></div>
             </div>
           </noscript>
         </div>
@@ -143,10 +145,10 @@ function ActivitySection() {
   );
 }
 
-// ── Now / Mission Status ──────────────────────────────────────────────────────
+// ── Now ─────────────────────────────────────────────────────────────────────
 function NowSection() {
   return (
-    <Section id="now" label="Mission Status">
+    <Section id="now" label="Now">
       <div className="grid md:grid-cols-2 gap-6">
         <div className="telemetry-card space-y-4">
           <div className="flex items-center gap-2">
@@ -157,20 +159,9 @@ function NowSection() {
         </div>
 
         <div className="telemetry-card space-y-4">
-          <span className="section-label text-[10px]">Shipped this week</span>
+          <span className="section-label text-[10px]">Recently</span>
           <ul className="space-y-2">
-            {nowData.shipped_this_week.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span><span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="telemetry-card space-y-4">
-          <span className="section-label text-[10px]">Next up</span>
-          <ul className="space-y-2">
-            {nowData.next_up.map((item, i) => (
+            {nowData.recent.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
                 <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span><span>{item}</span>
               </li>
@@ -200,42 +191,30 @@ function NowSection() {
 // ── Projects ─────────────────────────────────────────────────────────────────
 function ProjectsSection() {
   const projects = projectsData as Project[];
-  const flagship = projects.find((p) => p.flagship);
-  const others = projects.filter((p) => !p.flagship);
 
-  const items = others.map((project, i) => ({
+  const items = projects.map((project, i) => ({
     id: project.id,
     content: <ProjectCard key={project.id} project={project} index={i} />,
   }));
 
   return (
-    <Section id="projects" label="System Architectures">
-      {flagship && (
-        <motion.div
-          initial={{ opacity: 0, y: 18, scale: 0.99 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ type: 'spring', stiffness: 240, damping: 26, mass: 0.7 }}
-          className="mb-5"
-        >
-          <ProjectCard project={flagship} index={0} />
-        </motion.div>
-      )}
+    <Section id="projects" label="Projects">
       <HoverEffect items={items} />
     </Section>
   );
 }
 
-// ── Technical Arsenal ─────────────────────────────────────────────────────────
+// ── Stack ─────────────────────────────────────────────────────────────────────
 const STACK = {
-  Languages: ['TypeScript', 'Python', 'SQL', 'Bash', 'YAML', 'Go (learning)'],
-  'Backend/Data': ['Node.js', 'Next.js 16', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
-  'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'Terraform', 'Ollama', 'vLLM', 'RAG'],
+  Languages: ['JavaScript', 'TypeScript', 'SQL'],
+  Frontend: ['React', 'Next.js', 'Tailwind'],
+  Backend: ['Node', 'Express', 'REST', 'Postgres', 'Prisma', 'Redis', 'Mongo'],
+  Tooling: ['Git', 'Docker', 'Kubernetes', 'GitHub Actions', 'Vercel', 'Sentry'],
 };
 
 function StackSection() {
   return (
-    <Section id="stack" label="Technical Arsenal">
+    <Section id="stack" label="Stack">
       <div className="grid md:grid-cols-3 gap-6">
         {Object.entries(STACK).map(([category, items]) => (
           <div key={category} className="telemetry-card space-y-4">
@@ -254,10 +233,10 @@ function StackSection() {
 
 // ── Shipped to npm ────────────────────────────────────────────────────────────
 const NPM_PKGS = [
-  { name: '@ykstormsorg/anvil', note: 'webhook → BullMQ pipeline · SLSA provenance', slsa: true },
-  { name: '@ykstormsorg/tripwire', note: 'mid-stream guardrail + OpenAI-compatible proxy', slsa: false },
-  { name: '@ykstormsorg/goldset', note: 'eval-runner Action + PR-comment bot', slsa: false },
-  { name: '@ykstormsorg/quickdraw', note: 'LLM streaming benchmark CLI · SLSA provenance', slsa: true },
+  { name: '@ykstormsorg/anvil', note: 'idempotent webhook intake on Redis and BullMQ' },
+  { name: '@ykstormsorg/tripwire', note: 'checks LLM output while it streams' },
+  { name: '@ykstormsorg/goldset', note: 'eval runner as a GitHub Action' },
+  { name: '@ykstormsorg/quickdraw', note: 'CLI that benchmarks LLM streaming' },
 ];
 
 function TelemetrySection() {
@@ -294,7 +273,7 @@ function TelemetrySection() {
         })}
       </div>
       <p className="mono text-[11px] text-zinc-500 mt-4 text-center">
-        four packages live on npm · two with SLSA build provenance · every repo green in CI
+        four packages published on npm
       </p>
     </Section>
   );
@@ -303,7 +282,7 @@ function TelemetrySection() {
 // ── Contact ───────────────────────────────────────────────────────────────────
 function ContactSection() {
   return (
-    <Section id="contact" label="Establish Connection">
+    <Section id="contact" label="Contact">
       <div className="space-y-8">
         <TerminalContact />
         <div className="flex justify-center">
@@ -413,10 +392,10 @@ function SiteFooter() {
           <div>
             <p className="font-display text-lg text-zinc-800 dark:text-zinc-100">Lakshyaraj Singh Rao</p>
             <p className="mt-2 text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
-              The reliability layer for production AI — refusal, guardrails, eval-gating, idempotency.
+              Full-stack developer, backend focus. Building Homesty.ai since November 2025.
             </p>
             <p className="mt-4 text-[11px] mono text-amber-700 dark:text-amber-400/90 tracking-wide">
-              Open to backend / AI-infra roles
+              Open to a backend role, Mumbai or remote
             </p>
           </div>
 

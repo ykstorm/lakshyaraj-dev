@@ -1,11 +1,11 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'Lakshyaraj Singh Rao — Backend & AI-Infrastructure Engineer';
+export const alt = 'Lakshyaraj Singh Rao — full-stack developer';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-// Branded phosphor-terminal OG card, generated at the edge (no static asset).
+// Plain editorial OG card, generated at the edge (no static asset).
 export default function OpengraphImage() {
   return new ImageResponse(
     (
@@ -15,36 +15,27 @@ export default function OpengraphImage() {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
-          padding: '80px',
-          background: '#050706',
-          backgroundImage:
-            'linear-gradient(rgba(52,211,153,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.06) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-          color: '#d6e0d8',
-          fontFamily: 'monospace',
+          padding: '215px 96px',
+          background: '#f4f1e9',
+          color: '#1b1a17',
+          fontFamily: 'sans-serif',
         }}
       >
-        <div style={{ color: '#34d399', fontSize: 26, letterSpacing: 10 }}>
-          {'// LAKSHYARAJ SINGH RAO'}
-        </div>
         <div
           style={{
-            fontSize: 68,
+            fontSize: 72,
             fontWeight: 700,
-            marginTop: 28,
-            lineHeight: 1.08,
-            color: '#ffffff',
-            maxWidth: 980,
+            lineHeight: 1.05,
+            color: '#1b1a17',
           }}
         >
-          The reliability layer for production AI
+          Lakshyaraj Singh Rao
         </div>
-        <div style={{ fontSize: 32, marginTop: 30, color: '#9aa6a0' }}>
-          refusal · guardrails · eval-gating · idempotency
+        <div style={{ fontSize: 36, marginTop: 28, color: '#3b382f' }}>
+          Full-stack developer, backend focus
         </div>
-        <div style={{ fontSize: 26, marginTop: 48, color: '#22d3ee' }}>
-          7 OSS tools · 4 on npm · Backend · AI Infrastructure · DevOps
+        <div style={{ fontSize: 28, marginTop: 44, color: '#b45309' }}>
+          Building Homesty.ai · Mumbai
         </div>
       </div>
     ),

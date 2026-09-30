@@ -1,27 +1,26 @@
 ---
 title: "Homesty.ai"
-description: "Live commission-driven real-estate AI assistant, serving real traffic."
+description: "Buyer-side real-estate chat: a buyer asks about a property and gets answers from real listings."
 date: "2026-06-01"
 ---
 
 ## What it does
 
-Homesty is a live real-estate AI running on Next.js 15. Buyers chat directly with a listing — asking about specs, location, and price — and the AI answers from the property data. Agents get qualified leads out the other end. The AI handles the repetitive property-spec questions so the human agent only spends time on buyers who are actually serious.
+Homesty is a buyer-side real-estate chat. Buyers chat directly with a listing — asking about specs, location, and price — and the app answers from the property data. Agents get qualified leads out the other end. The chat handles the repetitive property-spec questions so the human agent only spends time on buyers who are actually serious.
 
 ## Why this approach
 
-The easy version replaces the agent. This one keeps the human in the loop on purpose. The AI's job is to filter tire-kickers and field the same five questions every listing gets, not to close the deal. That's the trade-off: it's deliberately not autonomous, because in a commission business the agent relationship is the product.
+The easy version replaces the agent. This one keeps the human in the loop on purpose. The chat's job is to filter tire-kickers and field the same five questions every listing gets, not to close the deal. That's the trade-off: it's deliberately not autonomous, because the agent relationship is the product.
 
 ## How it's built
 
-Next.js 15 on the front, Postgres with pgvector for listing retrieval, and a mix of GPT-4o and Claude for the chat. Buyer questions hit the property data through vector search, and qualified conversations get routed to the listing's agent as a lead. Sentry and Upstash Redis sit behind it for error tracking and rate limiting.
+Next.js and React on the front, Node for the API, and Postgres with Prisma for the listings and app data. Buyer questions are answered against the property data, and qualified conversations get routed to the listing's agent as a lead. It's deployed on Vercel, with Sentry behind it for error tracking. So far the pieces are the landing page, the chat screen, a REST API, admin pages, login, and an audit log.
 
 ## Known limitations
 
-- Coverage is Bombay and Pune listings only. Other cities aren't in the index yet.
+- Coverage is a limited set of listings; other cities aren't in the index yet.
 - RERA lookup is best-effort against a scraped index, not the live regulator API, so it can lag.
-- Voice input falls back to keyboard on Safari iOS, where the speech API isn't reliable.
-- It depends on listing data quality; a thin or stale listing gives the AI little to answer from.
+- It depends on listing data quality; a thin or stale listing gives the chat little to answer from.
 
 ## Where it runs
 

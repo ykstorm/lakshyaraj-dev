@@ -1,22 +1,14 @@
 {
-  "current": "Shipped the full OSS reliability stack — seven repos, every CI green. Anvil v0.1.0 on npm with SLSA build provenance; Tripwire ships an OpenAI-compatible guard proxy; Goldset's eval Action posts a delta-vs-base PR comment and blocks merges on regression.",
-  "shipped_this_week": [
-    "anvil v0.1.0 — webhook→BullMQ pipeline on npm with SLSA provenance; examples/stripe + examples/github",
-    "tripwire — OpenAI-compatible sidecar proxy that aborts mid-stream on a rule trip",
-    "goldset — real LLM-judge eval Action + delta-vs-base PR-comment bot",
-    "quickdraw v1.0.2 — streaming benchmark CLI (TTFT, p50/p95/p99, cost)",
-    "codecraft — Vite + editable Monaco + interactive terminal in the browser tab",
-    "stackup — kind GitOps lab with a real Prometheus success-rate canary"
-  ],
-  "next_up": [
-    "a unifying trust-policy SDK that wires Anchor (refuse) + Tripwire (abort) + Goldset (eval-gate) into one declarative policy",
-    "a cited benchmark of agent-reliability failure modes"
+  "current": "Building Homesty.ai since November 2025 — a buyer-side real-estate chat on Next.js, Postgres and Prisma. So far: the landing page, the chat screen, a REST API, admin pages, login, and an audit log.",
+  "recent": [
+    "Homesty.ai — chat screen, REST API, admin pages, and an audit log",
+    "Anvil on npm — idempotent webhook intake: verify, dedupe in Redis, hand to a BullMQ worker",
+    "Anchor — pgvector RAG that returns no answer when the match is too weak",
+    "Tripwire on npm — checks LLM output while it streams and stops it when a rule matches"
   ],
   "open_to": [
-    "backend / AI-infra roles at Mumbai or Bangalore startups",
-    "YC seed founding-engineer roles",
-    "contract work on RAG, streaming LLM, queue/webhook reliability"
+    "a backend role, Mumbai or remote"
   ],
-  "location": "Mumbai, India · Open to Bangalore / Remote",
-  "updated_at": "2026-06-23"
+  "location": "Mumbai, India",
+  "updated_at": "2026-10-01"
 }

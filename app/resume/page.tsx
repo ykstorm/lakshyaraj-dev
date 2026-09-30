@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Resume — Lakshyaraj Singh Rao',
-  description: 'Resume of Lakshyaraj Singh Rao — Backend Engineer · AI Infrastructure.',
+  description: 'Resume of Lakshyaraj Singh Rao — full-stack developer, backend focus.',
   alternates: { canonical: '/resume' },
-  openGraph: { title: 'Resume — Lakshyaraj Singh Rao', description: 'Resume of Lakshyaraj Singh Rao — Backend Engineer · AI Infrastructure.', url: '/resume' },
+  openGraph: { title: 'Resume — Lakshyaraj Singh Rao', description: 'Resume of Lakshyaraj Singh Rao — full-stack developer, backend focus.', url: '/resume' },
 };
 
 const PDF = '/Lakshyaraj_Singh_Rao_Resume.pdf';

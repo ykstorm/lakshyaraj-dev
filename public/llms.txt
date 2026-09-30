@@ -1,12 +1,10 @@
 # Lakshyaraj Singh Rao
 
-> Backend & AI-Infrastructure Engineer based in Mumbai, India. Builds the
-> reliability layer that lets AI systems run in production without supervision:
-> refusal when retrieval fails, mid-stream guardrails, eval-gating before merge,
-> and idempotency under webhook re-delivery. Co-Founder and sole engineer at
-> Homesty.ai LLP (a live buyer-side real-estate AI on Next.js 16 + pgvector +
-> GPT-4o). Author of seven open-source tools, four published on npm (two with
-> SLSA build provenance) and one GitHub Marketplace Action.
+> Full-stack developer with a backend focus, based in Mumbai, India. Building
+> Homesty.ai since November 2025 (Next.js, React, Node, Postgres, Prisma, Vercel,
+> Sentry) — landing page, chat screen, REST API, admin pages, login, and audit
+> log. Also builds small backend and infrastructure tools in the open; four
+> packages published on npm.
 
 ## Contact
 - Portfolio: https://lakshyaraj-dev.vercel.app
@@ -14,24 +12,28 @@
 - GitHub: https://github.com/ykstorm
 - LinkedIn: https://linkedin.com/in/lakshyaraj-singh-rao-840273152
 - npm: https://www.npmjs.com/~ykstormsorg
-- Location: Mumbai, India (open to Bangalore / Remote)
+- Location: Mumbai, India
 
-## Open-source projects (all benchmarks are CI-measured, reproducible)
-- Anchor — RAG layer that refuses instead of hallucinating when retrieval is below the similarity floor. Postgres + pgvector (HNSW). p50 2.6 ms retrieval at 100k vectors. https://github.com/ykstorm/anchor
-- Anvil — idempotent webhook → BullMQ pipeline with HMAC verification, fixed-schedule retry, dead-letter replay. ~10.5k req/s ingress, constant-time HMAC (0.9% timing delta). npm @ykstormsorg/anvil (SLSA provenance). https://github.com/ykstorm/anvil
-- Tripwire — mid-stream LLM guardrail that aborts a response the moment a rule trips (PII, prompt-injection, fabricated facts). ~4.7 µs per token. npm @ykstormsorg/tripwire. https://github.com/ykstorm/tripwire
-- Goldset — CI for AI: golden-dataset, LLM-judge, and structural-assertion eval runners that gate merges. Deterministic runners clear 1k cases in ~3 ms; LLM-judge ~$0.00047/case on Claude Haiku. npm @ykstormsorg/goldset + GitHub Marketplace Action. https://github.com/ykstorm/goldset
-- Quickdraw — LLM streaming benchmark CLI (TTFT, tokens/sec, p50/p95/p99, cost) across OpenAI + Anthropic. Live Claude Haiku: TTFT p50 739 ms, 85.6 tok/s. npm @ykstormsorg/quickdraw (SLSA provenance). https://github.com/ykstorm/quickdraw
-- Stackup — full production Kubernetes stack on a laptop (ArgoCD, Argo Rollouts canary, Prometheus). Canary is CI-verified end to end: a real ≥0.95 Prometheus success-rate gate advances the rollout 25→50→75→100%. https://github.com/ykstorm/stackup
-- Codecraft — in-browser Vite + React dev environment (WebContainers, Monaco, xterm). Cold boot ~51 s, warm <20 s via IndexedDB cache. https://codecraft-ai-tau.vercel.app
+## Education
+- B.Tech, Computer Science — Manipal University Jaipur, 2026
+
+## Projects
+- Homesty.ai — buyer-side real-estate chat: a buyer asks about a property and gets answers from real listings. Landing, chat, REST, admin, auth, audit log. https://homesty.ai
+- Anvil — webhook receiver that dedupes re-deliveries in Redis and hands jobs to a BullMQ worker, with retry and dead-letter. TypeScript, Express, Docker. npm @ykstormsorg/anvil. https://github.com/ykstorm/anvil
+- Anchor — pgvector RAG that returns no answer when the best match is too weak. Next.js, Postgres, Prisma, Vercel. https://github.com/ykstorm/anchor
+- Tripwire — checks LLM output mid-stream and stops it when a rule trips. Ships an Express proxy. npm @ykstormsorg/tripwire. https://github.com/ykstorm/tripwire
+- Stackup — one-command local Kubernetes cluster with canary deploys and auto-rollback. Docker, Kubernetes, ArgoCD, Prometheus, Grafana. https://github.com/ykstorm/stackup
+- Goldset — eval runner as a GitHub Action that gates merges on regression. npm @ykstormsorg/goldset. https://github.com/ykstorm/goldset
+- Quickdraw — CLI that benchmarks LLM streaming. npm @ykstormsorg/quickdraw. https://github.com/ykstorm/quickdraw
+- Codecraft — in-browser IDE that boots a dev server in the tab via WebContainers. https://codecraft-ai-tau.vercel.app
 
 ## Writing
 - Idempotent webhooks: the pattern behind Anvil — https://lakshyaraj-dev.vercel.app/blog/anvil-idempotent-webhooks
 
 ## Skills
-TypeScript, JavaScript, Python, SQL, Node.js, Next.js, PostgreSQL, pgvector,
-Prisma, Redis, BullMQ, Docker, Kubernetes, ArgoCD, Argo Rollouts, Helm,
-Terraform, Prometheus, GitHub Actions, Vercel, OpenAI, Anthropic, RAG, LLM reliability.
+JavaScript, TypeScript, SQL; React, Next.js, Tailwind; Node, Express, REST,
+PostgreSQL, Prisma, Redis, Mongo; Git, Docker, Kubernetes, GitHub Actions,
+Vercel, Sentry.
 
 ## Availability
-Open to backend, AI-infrastructure, DevOps, and founding-engineer roles.
+Open to a backend role, Mumbai or remote.

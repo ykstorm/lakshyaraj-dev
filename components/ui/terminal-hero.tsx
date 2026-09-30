@@ -13,9 +13,9 @@ type Line = { kind: 'cmd' | 'out' | 'sys'; text: string };
 const PROMPT = 'lakshyaraj@dev:~$ ';
 
 const BOOT: { cmd: string; out: string }[] = [
-  { cmd: 'whoami', out: 'Backend Engineer · AI Infrastructure · DevOps' },
-  { cmd: 'cat focus.txt', out: 'Anvil — idempotent webhook → BullMQ pipeline' },
-  { cmd: "echo $AVAILABILITY", out: 'open to backend / AI-infra roles' },
+  { cmd: 'whoami', out: 'Full-stack developer, backend focus · Mumbai' },
+  { cmd: 'cat focus.txt', out: 'Building Homesty.ai since November 2025' },
+  { cmd: "echo $AVAILABILITY", out: 'open to a backend role, Mumbai or remote' },
 ];
 
 const PROJECTS: Record<string, string> = {
@@ -25,8 +25,8 @@ const PROJECTS: Record<string, string> = {
   quickdraw: 'streaming benchmark CLI · TTFT, tokens/sec, $/1K',
   stackup: 'production-shape Kubernetes locally · ArgoCD + Argo Rollouts + Grafana',
   codecraft: 'in-browser IDE · boots a real Next.js dev server via WebContainers',
-  anvil: 'idempotent webhook → BullMQ · HMAC, backoff, dead-letter replay · on npm',
-  homesty: 'live commission-driven real-estate AI · the product the OSS came from',
+  anvil: 'idempotent webhook intake · dedupe in Redis, hand to a BullMQ worker · on npm',
+  homesty: 'buyer-side real-estate chat · answers from real listings',
 };
 
 const HELP = [
@@ -52,7 +52,7 @@ function run(raw: string): Line[] {
     case '?':
       return HELP.map(out);
     case 'whoami':
-      return [out('Lakshyaraj Singh Rao — backend / AI-infra engineer. I ship AI to'), out('production, then extract the reliable parts into open source.')];
+      return [out('Lakshyaraj Singh Rao — full-stack developer, backend focus.'), out('Building Homesty.ai; I also build small backend tools in the open.')];
     case 'ls':
     case 'projects':
       return [out(Object.keys(PROJECTS).join('  '))];
@@ -62,7 +62,7 @@ function run(raw: string): Line[] {
       return [hit ? out(hit) : out(`cat: ${arg}: no such project. try 'ls'`)];
     }
     case 'stack':
-      return [out('TypeScript · Node · Postgres/pgvector · Redis/BullMQ'), out('Docker · Kubernetes · ArgoCD · Helm · Terraform')];
+      return [out('JS/TS · React/Next · Node/Express · Postgres/Prisma/Redis'), out('Git · Docker · Kubernetes · GitHub Actions · Vercel · Sentry')];
     case 'contact':
       return [out('email   raolakshyaraj@gmail.com'), out('github  github.com/ykstorm'), out('npm     npmjs.com/~ykstormsorg')];
     case 'open': {
