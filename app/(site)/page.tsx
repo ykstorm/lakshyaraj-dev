@@ -1,36 +1,13 @@
 import Link from 'next/link';
 import { HeroField } from '@/components/hero/hero-field';
 import { GithubContributions } from '@/components/ui/github-contributions';
+import { NpmTerminal } from '@/components/proof/npm-terminal';
 import { NowContent } from '@/components/now-content';
 import { ProjectLinks } from '@/components/project-links';
+import { getProof, type CiStatus } from '@/lib/proof';
 import { SOCIAL, EMAIL } from '@/lib/site';
 import type { Project } from '@/lib/content';
 import projectsData from '@/data/projects.json';
-
-const NPM_PACKAGES = [
-  '@ykstormsorg/anvil',
-  '@ykstormsorg/tripwire',
-  '@ykstormsorg/goldset',
-  '@ykstormsorg/quickdraw',
-];
-
-// Fetched on the server, cached an hour, so the published version numbers are in
-// the HTML itself — the site can't claim a version it didn't ship.
-async function getNpmVersions(): Promise<Record<string, string>> {
-  const entries = await Promise.all(
-    NPM_PACKAGES.map(async (pkg) => {
-      try {
-        const res = await fetch(`https://registry.npmjs.org/${pkg}/latest`, { next: { revalidate: 3600 } });
-        if (!res.ok) return [pkg, ''] as const;
-        const data = await res.json();
-        return [pkg, typeof data.version === 'string' ? data.version : ''] as const;
-      } catch {
-        return [pkg, ''] as const;
-      }
-    }),
-  );
-  return Object.fromEntries(entries);
-}
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
@@ -66,6 +43,26 @@ function ProjectRow({ p, version, lead }: { p: Project; version?: string; lead?:
   );
 }
 
+// One CI line per repository. A run that didn't come back (no workflow, rate
+// limit, network error) links to the Actions tab rather than claiming a state.
+function CiRow({ c }: { c: CiStatus }) {
+  const age = c.daysAgo === 0 ? 'today' : `${c.daysAgo}d ago`;
+  return (
+    <li className="flex flex-wrap items-baseline gap-x-2">
+      <span className="text-[var(--foreground)]">{c.repo}</span>
+      {c.state === 'unknown' ? (
+        <a className="link" href={c.actionsUrl} target="_blank" rel="noopener noreferrer">Actions</a>
+      ) : c.state === 'passing' ? (
+        <span className="text-[var(--accent)]">
+          CI passing{c.daysAgo !== null ? <span className="text-[var(--muted-foreground)]"> · {age}</span> : null}
+        </span>
+      ) : (
+        <span className="text-[var(--foreground)]">CI failing</span>
+      )}
+    </li>
+  );
+}
+
 const STACK: [string, string[]][] = [
   ['Languages', ['JavaScript', 'TypeScript', 'SQL']],
   ['Frontend', ['React', 'Next.js', 'Tailwind']],
@@ -77,7 +74,10 @@ export default async function HomePage() {
   const projects = projectsData as Project[];
   const primary = projects.filter((p) => !p.secondary);
   const secondary = projects.filter((p) => p.secondary);
-  const versions = await getNpmVersions();
+  const proof = await getProof();
+  const versions: Record<string, string> = Object.fromEntries(
+    proof.npm.map((n) => [n.full, n.version ?? '']),
+  );
 
   return (
     <div className="page-content">
@@ -128,6 +128,37 @@ export default async function HomePage() {
         )}
       </Section>
 
+      {/* Proof — the claims above, checkable. Every figure here is fetched at
+          build from a public registry; nothing is typed in by hand. */}
+      <Section id="proof" title="Proof">
+        <p className="leading-relaxed">
+          Homesty.ai is live in production at{' '}
+          <a className="link" href="https://homesty.ai" target="_blank" rel="noopener noreferrer">homesty.ai</a>.
+        </p>
+
+        <div className="mt-6">
+          <NpmTerminal versions={proof.npm} />
+          <p className="mt-2 text-[0.85rem] text-[var(--muted-foreground)]">
+            Fetched from the npm registry when this page was built, cached for an hour. Each package carries build provenance from its public repository.
+          </p>
+        </div>
+
+        <div className="mt-7">
+          <ul className="space-y-1.5 mono text-[0.82rem]">
+            {proof.ci.map((c) => (
+              <CiRow key={c.repo} c={c} />
+            ))}
+          </ul>
+        </div>
+
+        <div className="mt-7">
+          <GithubContributions />
+          <p className="mt-2 text-[0.85rem] text-[var(--muted-foreground)]">
+            Counts commits to my own repositories. It measures what I write here, not what I land upstream.
+          </p>
+        </div>
+      </Section>
+
       {/* Now */}
       <Section id="now" title="Now">
         <NowContent />
@@ -143,11 +174,6 @@ export default async function HomePage() {
             </div>
           ))}
         </dl>
-      </Section>
-
-      {/* GitHub activity (client island) */}
-      <Section id="activity" title="Activity">
-        <GithubContributions />
       </Section>
 
       {/* Contact */}
