@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HeroField } from '@/components/hero/hero-field';
 import { GithubContributions } from '@/components/ui/github-contributions';
 import { NowContent } from '@/components/now-content';
 import { ProjectLinks } from '@/components/project-links';
@@ -85,6 +86,7 @@ export default async function HomePage() {
           under reduced motion); the WebGL "Still Field" layers over it when it
           can run. The h1 is plain text, so it stays the LCP element. */}
       <section className="hero">
+        <HeroField />
         <div className="hero-inner col">
           <h1 className="text-[clamp(2.1rem,6vw,3rem)] font-bold leading-[1.05] tracking-[-0.02em]">
             Lakshyaraj Singh&nbsp;Rao
