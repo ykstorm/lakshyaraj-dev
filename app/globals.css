@@ -6,21 +6,25 @@
 
 @layer base {
   :root {
-    /* ── Light: warm paper (default) ──────────────────────────────────────── */
-    --background: #f4f1e9;        /* warm parchment, not stark white */
-    --foreground: #1b1a17;        /* ink */
-    --accent: #b45309;            /* amber-700, readable on paper */
-    --muted: #ebe7db;
-    --muted-foreground: #6c675b;
-    --border: #ddd7c8;
-    --card: #fbfaf4;
+    /* ── Light: bone paper, graphite ink, verdigris accent (default) ───────── */
+    --background: #f5f3ee;        /* bone, not stark white */
+    --foreground: #16171a;        /* graphite */
+    --accent: #1e6b5c;            /* verdigris, readable on bone */
+    --accent-strong: #15524a;     /* deeper verdigris for hover/press */
+    --muted: #ece9e2;
+    --muted-foreground: #65686b;
+    --border: #dad7cf;
+    --card: #fbfaf7;
+    --line: #c9c5bb;              /* hairline/structural strokes, hero dot plane */
+    --field-dot: #b9b5aa;         /* WebGL hero: resting dot colour */
+    --field-accent: #2e8a77;      /* WebGL hero: crest-dot accent */
 
-    /* contribution-graph scale — warm amber ramp (single-accent discipline) */
-    --cal-0: #e6e1d2;
-    --cal-1: #ecd8af;
-    --cal-2: #ddb268;
-    --cal-3: #c5831d;
-    --cal-4: #9a570b;
+    /* contribution-graph scale — verdigris ramp (single-accent discipline) */
+    --cal-0: #e6e3dc;
+    --cal-1: #c8ded7;
+    --cal-2: #8fc2b3;
+    --cal-3: #45957f;
+    --cal-4: #1e6b5c;
 
     /* --ff-sans / --ff-mono come from next/font (layout.tsx). Re-point
        Tailwind's theme tokens at the webfonts so font-sans/font-mono resolve. */
@@ -31,20 +35,24 @@
   }
 
   .dark {
-    /* ── Dark: warm charcoal (same ink + amber, not a terminal) ───────────── */
-    --background: #1a1712;
-    --foreground: #e8e3d6;
-    --accent: #e0973f;            /* amber, lifted for contrast on dark */
-    --muted: #241f17;
-    --muted-foreground: #9a9384;
-    --border: #332d22;
-    --card: #201c15;
+    /* ── Dark: graphite ground, bone ink, lifted verdigris (not a terminal) ── */
+    --background: #101114;
+    --foreground: #e7e5df;
+    --accent: #4fb39c;            /* verdigris, lifted for contrast on dark */
+    --accent-strong: #7ccbb8;     /* brighter verdigris for hover/press */
+    --muted: #17181c;
+    --muted-foreground: #9a9c9f;
+    --border: #26282d;
+    --card: #15161a;
+    --line: #2e3137;
+    --field-dot: #3a3d44;
+    --field-accent: #4fb39c;
 
-    --cal-0: #241f17;
-    --cal-1: #3d3016;
-    --cal-2: #70521c;
-    --cal-3: #a9781f;
-    --cal-4: #e0973f;
+    --cal-0: #17181c;
+    --cal-1: #1c3a34;
+    --cal-2: #255f52;
+    --cal-3: #36917b;
+    --cal-4: #4fb39c;
 
     color-scheme: dark;
   }

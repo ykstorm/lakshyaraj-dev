@@ -16,8 +16,8 @@ export default function OpengraphImage() {
           display: 'flex',
           flexDirection: 'column',
           padding: '215px 96px',
-          background: '#f4f1e9',
-          color: '#1b1a17',
+          background: '#f5f3ee',
+          color: '#16171a',
           fontFamily: 'sans-serif',
         }}
       >
@@ -26,7 +26,7 @@ export default function OpengraphImage() {
             fontSize: 72,
             fontWeight: 700,
             lineHeight: 1.05,
-            color: '#1b1a17',
+            color: '#16171a',
           }}
         >
           Lakshyaraj Singh Rao
@@ -34,8 +34,8 @@ export default function OpengraphImage() {
         <div style={{ fontSize: 36, marginTop: 28, color: '#3b382f' }}>
           Full-stack developer, backend focus
         </div>
-        <div style={{ fontSize: 28, marginTop: 44, color: '#b45309' }}>
-          Building Homesty.ai · Mumbai
+        <div style={{ fontSize: 28, marginTop: 44, color: '#1e6b5c' }}>
+          Building Homesty.ai · Mumbai / Bangalore
         </div>
       </div>
     ),
