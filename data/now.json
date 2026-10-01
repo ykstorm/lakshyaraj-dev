@@ -1,10 +1,10 @@
 {
-  "current": "Building Homesty.ai since November 2025 — a buyer-side real-estate chat on Next.js, Postgres and Prisma. So far: the landing page, the chat screen, a REST API, admin pages, login, and an audit log.",
+  "current": "Building Homesty.ai since November 2025: a buyer-side real-estate chat on Next.js, Postgres and Prisma. So far the landing page, the chat screen, a REST API, admin pages, login, and an audit log.",
   "recent": [
-    "Homesty.ai — chat screen, REST API, admin pages, and an audit log",
-    "Anvil on npm — idempotent webhook intake: verify, dedupe in Redis, hand to a BullMQ worker",
-    "Anchor — pgvector RAG that returns no answer when the match is too weak",
-    "Tripwire on npm — checks LLM output while it streams and stops it when a rule matches"
+    "Homesty.ai: chat screen, REST API, admin pages, and an audit log",
+    "Anvil on npm: idempotent webhook intake that verifies, dedupes in Redis, and hands work to a BullMQ worker",
+    "Anchor: pgvector RAG that returns no answer when the match is too weak",
+    "Tripwire on npm: checks LLM output while it streams and stops it when a rule matches"
   ],
   "open_to": [
     "a backend role, Mumbai or remote"

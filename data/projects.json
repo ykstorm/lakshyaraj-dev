@@ -2,7 +2,8 @@
   {
     "id": "homesty",
     "name": "Homesty.ai",
-    "tagline": "Buyer asks about a property, gets answers from real listings.",
+    "tagline": "A buyer asks about a property and gets answers from the real listing.",
+    "story": "Buyers ask listing agents the same five questions about every flat, and agents answer them by hand all day. I have been building Homesty since November 2025 to take that first conversation: the landing page, the chat, a REST API, admin pages, login and an audit log, on Next.js, Node, Postgres and Prisma. The chat answers from the property data, and the agent only hears from a buyer who is actually serious.",
     "description": "Buyer asks about a property, gets answers from real listings. Landing, chat, REST, admin, auth, audit log.",
     "stack": [
       "Next.js",
@@ -18,7 +19,8 @@
   {
     "id": "anvil",
     "name": "Anvil",
-    "tagline": "Idempotent webhook intake on Redis and BullMQ.",
+    "tagline": "Webhooks that run once, even when the provider sends them twice.",
+    "story": "Stripe and GitHub re-deliver webhooks, and a worker that crashes after doing the work gets the same event again, so you charge a card twice. Anvil verifies the signature over the raw body, dedupes in Redis on a hash of signature plus payload, and hands the job to a BullMQ worker with a fixed retry schedule and a dead-letter queue you replay by hand. On npm as @ykstormsorg/anvil, Redis tests run against a real Redis in CI.",
     "description": "Idempotent webhook intake: verify, dedupe in Redis, hand to a BullMQ worker, retry, dead-letter.",
     "stack": [
       "TypeScript",
@@ -33,7 +35,8 @@
   {
     "id": "anchor",
     "name": "Anchor",
-    "tagline": "pgvector RAG that returns no answer when the match is too weak.",
+    "tagline": "Retrieval that says no source instead of guessing.",
+    "story": "Most RAG demos let the model improvise when nothing in the index matches, and in real estate an improvised answer is a legal problem. Anchor runs a cosine search on pgvector and returns a null answer when the best hit falls under a floor you set per index. Ingestion upserts on a content hash so re-running the same documents never duplicates rows, and a small playground shows the decision for any query.",
     "description": "pgvector RAG that returns no answer when the match is too weak.",
     "stack": [
       "Next.js",
@@ -48,7 +51,8 @@
   {
     "id": "tripwire",
     "name": "Tripwire",
-    "tagline": "Checks LLM output while it streams and stops it when a rule matches.",
+    "tagline": "Stops an LLM response mid-stream the moment a rule matches.",
+    "story": "Moderating after the whole response is generated is too late; the user has already read it. Tripwire tests every streamed chunk against regex and structural rules and aborts the stream on a match, so the partial text never reaches the screen. It also ships as an OpenAI-compatible proxy, so a client only changes its base URL. On npm as @ykstormsorg/tripwire.",
     "description": "Checks LLM output while it streams and stops it when a rule matches. Ships an Express proxy.",
     "stack": [
       "TypeScript",
@@ -61,7 +65,8 @@
   {
     "id": "stackup",
     "name": "Stackup",
-    "tagline": "One-command local Kubernetes cluster.",
+    "tagline": "A production-shaped Kubernetes cluster on a laptop, in one command.",
+    "story": "Tutorials stop at kubectl run nginx, but canary rollouts, metrics and GitOps only make sense together. Stackup bootstraps a kind cluster and lets ArgoCD sync the rest from the repo: Argo Rollouts for canaries, Prometheus and Grafana for the numbers. A canary advances only while the success rate holds and rolls back on its own when it does not.",
     "description": "One-command local Kubernetes cluster with canary deploys and auto-rollback.",
     "stack": [
       "Docker",
@@ -75,7 +80,8 @@
   {
     "id": "goldset",
     "name": "Goldset",
-    "tagline": "Eval runner as a GitHub Action that gates merges on regression.",
+    "tagline": "A GitHub Action that blocks a merge when an AI app's answers get worse.",
+    "story": "Snapshot tests fail on every harmless rewording and nobody reads twenty output diffs carefully. Goldset scores the current output against a golden dataset with a judge model and posts the delta on the PR. On npm as @ykstormsorg/goldset.",
     "description": "Eval runner as a GitHub Action that gates merges on regression.",
     "stack": [
       "TypeScript",
@@ -88,7 +94,8 @@
   {
     "id": "quickdraw",
     "name": "Quickdraw",
-    "tagline": "CLI that benchmarks LLM streaming.",
+    "tagline": "Measures how an LLM streams on your network and your prompts.",
+    "story": "Every fast-model claim was measured in someone else's lab. Quickdraw records time to first token, tokens per second, total latency and cost for your prompts, writes CSV and JSON, and runs nightly in CI so the numbers become a trend. On npm as @ykstormsorg/quickdraw.",
     "description": "CLI that benchmarks LLM streaming.",
     "stack": [
       "TypeScript",
@@ -101,7 +108,8 @@
   {
     "id": "codecraft-ai",
     "name": "Codecraft",
-    "tagline": "In-browser IDE that boots a dev server in the tab via WebContainers.",
+    "tagline": "An IDE in the browser that boots a real dev server inside the tab.",
+    "story": "First install Node is where most people stop trying a starter. Codecraft binds Monaco and xterm to a WebContainers Node runtime, so a Vite project runs in the page and edits hot-reload in under two seconds.",
     "description": "In-browser IDE that boots a dev server in the tab via WebContainers.",
     "stack": [
       "Next.js",

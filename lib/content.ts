@@ -17,6 +17,7 @@ export interface Project {
   id: string;
   name: string;
   tagline: string;
+  story: string;
   description: string;
   stack: string[];
   demo?: string;

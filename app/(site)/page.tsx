@@ -40,36 +40,26 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-function ProjectRow({ p, version }: { p: Project; version?: string }) {
+function ProjectName({ p }: { p: Project }) {
   const href = p.demo || p.playground || p.code;
+  if (!href) return <>{p.name}</>;
   return (
-    <li className="py-4 first:pt-0">
-      <h3 className="text-[1.05rem] font-medium">
-        {href ? (
-          <a className="hover:text-[var(--accent)] transition-colors" href={href} target="_blank" rel="noopener noreferrer">{p.name}</a>
-        ) : (
-          p.name
-        )}
-      </h3>
-      <p className="mt-1 text-[var(--muted-foreground)]">{p.tagline}</p>
-      <p className="mt-1 mono text-[0.8rem] text-[var(--muted-foreground)]">{p.stack.join(', ')}</p>
-      <ProjectLinks p={p} version={version} />
-    </li>
+    <a className="hover:text-[var(--accent)] transition-colors" href={href} target="_blank" rel="noopener noreferrer">
+      {p.name}
+    </a>
   );
 }
 
-function AlsoRow({ p, version }: { p: Project; version?: string }) {
-  const href = p.demo || p.playground || p.code;
+// One row shape for every project: name, the plain one-line claim, the short
+// story, then the links. No stack line here — the stack lives on the detail page.
+function ProjectRow({ p, version, lead }: { p: Project; version?: string; lead?: boolean }) {
   return (
-    <li className="py-2">
-      <span className="font-medium">
-        {href ? (
-          <a className="hover:text-[var(--accent)] transition-colors" href={href} target="_blank" rel="noopener noreferrer">{p.name}</a>
-        ) : (
-          p.name
-        )}
-      </span>
-      <span className="text-[var(--muted-foreground)]"> — {p.tagline}</span>
+    <li className={lead ? 'py-6 first:pt-0' : 'py-5'}>
+      <h3 className={lead ? 'text-[1.15rem] font-medium' : 'text-[1.02rem] font-medium'}>
+        <ProjectName p={p} />
+      </h3>
+      <p className="mt-1 text-[var(--foreground)]">{p.tagline}</p>
+      <p className="mt-2 max-w-[60ch] text-[0.95rem] leading-relaxed text-[var(--muted-foreground)]">{p.story}</p>
       <ProjectLinks p={p} version={version} />
     </li>
   );
@@ -114,15 +104,15 @@ export default async function HomePage() {
       <Section id="projects" title="Projects">
         <ul>
           {primary.map((p) => (
-            <ProjectRow key={p.id} p={p} version={p.npm ? versions[p.npm] : undefined} />
+            <ProjectRow key={p.id} p={p} version={p.npm ? versions[p.npm] : undefined} lead />
           ))}
         </ul>
         {secondary.length > 0 && (
           <>
-            <h3 className="mt-6 mb-1 text-[var(--muted-foreground)] text-[0.95rem]">Also</h3>
+            <h3 className="mt-8 mb-1 text-[var(--muted-foreground)] text-[0.95rem]">Also</h3>
             <ul>
               {secondary.map((p) => (
-                <AlsoRow key={p.id} p={p} version={p.npm ? versions[p.npm] : undefined} />
+                <ProjectRow key={p.id} p={p} version={p.npm ? versions[p.npm] : undefined} />
               ))}
             </ul>
           </>
