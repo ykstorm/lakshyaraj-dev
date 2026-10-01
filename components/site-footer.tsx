@@ -1,28 +1,15 @@
-import Link from 'next/link';
-import { SOCIAL } from '@/lib/site';
+import { FooterWordmark } from '@/components/footer/footer-wordmark';
 
+// The footer shell. The wordmark, the mono line and the links live in the
+// client FooterWordmark (it animates the name in on scroll); this server
+// component holds the border and the copyright line below it.
 export function SiteFooter() {
   const year = new Date().getFullYear();
   return (
     <footer className="border-t border-[var(--border)] mt-24">
-      <div className="col py-10 space-y-4">
-        <div className="flex flex-wrap gap-x-5 gap-y-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
-          {SOCIAL.map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              className="hover:text-[var(--accent)] transition-colors"
-            >
-              {label}
-            </a>
-          ))}
-          <Link href="/resume" className="hover:text-[var(--accent)] transition-colors">
-            Résumé
-          </Link>
-        </div>
-        <p className="text-[0.85rem] text-[var(--muted-foreground)]">
+      <div className="col py-12">
+        <FooterWordmark />
+        <p className="mt-8 text-[0.8rem] text-[var(--muted-foreground)]">
           © {year} Lakshyaraj Singh Rao · Mumbai / Bangalore, India
         </p>
       </div>
