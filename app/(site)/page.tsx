@@ -80,25 +80,30 @@ export default async function HomePage() {
 
   return (
     <div className="page-content">
-      {/* Hero — name, the one-line thesis, the two facts, one link row. */}
-      <section className="col pt-16 pb-12">
-        <h1 className="text-[clamp(2.1rem,6vw,3rem)] font-bold leading-[1.05] tracking-[-0.02em]">
-          Lakshyaraj Singh&nbsp;Rao
-        </h1>
-        <p className="mt-5 max-w-[46ch] text-[clamp(1.1rem,2.6vw,1.35rem)] leading-snug">
-          I build backend systems that fail safely: webhooks that never run twice, retrieval that admits when it has nothing, streams that stop themselves.
-        </p>
-        <p className="mt-5 text-[1.05rem] leading-relaxed">Building Homesty.ai since November 2025.</p>
-        <p className="mt-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
-          Mumbai / Bangalore · B.Tech CS, Manipal University Jaipur, 2026.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
-          {SOCIAL.map(({ label, href }) => (
-            <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="hover:text-[var(--accent)] transition-colors">
-              {label}
-            </a>
-          ))}
-          <Link href="/resume" className="hover:text-[var(--accent)] transition-colors">Résumé (PDF)</Link>
+      {/* Hero — name, the one-line thesis, the two facts, one link row. The
+          receding dot plane is a CSS pseudo-element on .hero (renders JS-off and
+          under reduced motion); the WebGL "Still Field" layers over it when it
+          can run. The h1 is plain text, so it stays the LCP element. */}
+      <section className="hero">
+        <div className="hero-inner col">
+          <h1 className="text-[clamp(2.1rem,6vw,3rem)] font-bold leading-[1.05] tracking-[-0.02em]">
+            Lakshyaraj Singh&nbsp;Rao
+          </h1>
+          <p className="mt-5 max-w-[46ch] text-[clamp(1.1rem,2.6vw,1.35rem)] leading-snug">
+            I build backend systems that fail safely: webhooks that never run twice, retrieval that admits when it has nothing, streams that stop themselves.
+          </p>
+          <p className="mt-5 text-[1.05rem] leading-relaxed">Building Homesty.ai since November 2025.</p>
+          <p className="mt-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
+            Mumbai / Bangalore · B.Tech CS, Manipal University Jaipur, 2026.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
+            {SOCIAL.map(({ label, href }) => (
+              <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="hover:text-[var(--accent)] transition-colors">
+                {label}
+              </a>
+            ))}
+            <Link href="/resume" className="hover:text-[var(--accent)] transition-colors">Résumé (PDF)</Link>
+          </div>
         </div>
       </section>
 
