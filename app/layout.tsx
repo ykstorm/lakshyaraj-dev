@@ -19,7 +19,7 @@ const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--ff-mono', display
 
 const TITLE = 'Lakshyaraj Singh Rao — full-stack developer';
 const DESC =
-  'Full-stack developer, backend focus. Building Homesty.ai since Nov 2025. Anvil, Anchor, Tripwire and Stackup on GitHub; four packages on npm. Mumbai.';
+  'Full-stack developer, backend focus. Building Homesty.ai since November 2025: webhooks that run once, retrieval that admits when it has nothing, streams that stop themselves. Mumbai and Bangalore.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               jobTitle: 'Full-stack developer',
               email: 'mailto:raolakshyaraj@gmail.com',
               worksFor: { '@type': 'Organization', name: 'Homesty.ai', url: 'https://homesty.ai' },
-              address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'IN' },
+              address: { '@type': 'PostalAddress', addressLocality: 'Mumbai / Bangalore', addressCountry: 'IN' },
               knowsAbout: ['JavaScript', 'TypeScript', 'SQL', 'React', 'Next.js', 'Node.js', 'Express', 'PostgreSQL', 'Prisma', 'Redis', 'Docker', 'Kubernetes', 'GitHub Actions', 'Vercel'],
               sameAs: [
                 'https://github.com/ykstorm',

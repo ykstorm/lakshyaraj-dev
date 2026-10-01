@@ -80,16 +80,18 @@ export default async function HomePage() {
 
   return (
     <div className="page-content">
-      {/* Hero — name, three resume sentences, one link row. */}
+      {/* Hero — name, the one-line thesis, the two facts, one link row. */}
       <section className="col pt-16 pb-12">
         <h1 className="text-[clamp(2.1rem,6vw,3rem)] font-bold leading-[1.05] tracking-[-0.02em]">
           Lakshyaraj Singh&nbsp;Rao
         </h1>
-        <div className="mt-5 space-y-3 text-[1.05rem] leading-relaxed">
-          <p>Full-stack developer with a backend focus, based in Mumbai.</p>
-          <p>Building Homesty.ai since November 2025 — Next.js, React, Node, Postgres, Prisma, Vercel, Sentry.</p>
-          <p>B.Tech in Computer Science, Manipal University Jaipur, 2026.</p>
-        </div>
+        <p className="mt-5 max-w-[46ch] text-[clamp(1.1rem,2.6vw,1.35rem)] leading-snug">
+          I build backend systems that fail safely: webhooks that never run twice, retrieval that admits when it has nothing, streams that stop themselves.
+        </p>
+        <p className="mt-5 text-[1.05rem] leading-relaxed">Building Homesty.ai since November 2025.</p>
+        <p className="mt-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
+          Mumbai / Bangalore · B.Tech CS, Manipal University Jaipur, 2026.
+        </p>
         <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 mono text-[0.85rem] text-[var(--muted-foreground)]">
           {SOCIAL.map(({ label, href }) => (
             <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="hover:text-[var(--accent)] transition-colors">
@@ -146,7 +148,7 @@ export default async function HomePage() {
         <p className="leading-relaxed">
           Email me at{' '}
           <a className="link" href={`mailto:${EMAIL}`}>{EMAIL}</a>
-          {' '}— I read everything. You can also find me on GitHub, LinkedIn, and npm.
+          . I read everything. You can also find me on GitHub, LinkedIn, and npm.
         </p>
       </Section>
     </div>

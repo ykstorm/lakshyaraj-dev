@@ -23,7 +23,7 @@ export function SiteFooter() {
           </Link>
         </div>
         <p className="text-[0.85rem] text-[var(--muted-foreground)]">
-          © {year} Lakshyaraj Singh Rao — Mumbai, India
+          © {year} Lakshyaraj Singh Rao · Mumbai / Bangalore, India
         </p>
       </div>
     </footer>
