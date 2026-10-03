@@ -1,29 +1,29 @@
 ---
-title: "Codecraft AI"
-description: "In-browser AI IDE. Boots a real Vite + React dev server in the tab via WebContainers."
-date: "2026-05-25"
+title: "Codecraft"
+description: "An IDE in the browser that boots a real dev server inside the tab."
 ---
 
-## What it does
+## The problem
 
-Codecraft AI is an IDE that runs entirely in the browser. Monaco handles editing and xterm handles the terminal, both bound to a real Node.js runtime through WebContainers. You can open a Vite + React project and run it in a tab, no local install. The dev server boots inside the page itself, and editing a file in Monaco hot-reloads the preview in under two seconds.
+The quickest way to lose someone trying a starter project is the "first, install Node" step. Removing it changes who is willing to click in and try it.
 
-## Why this approach
+## How it works
 
-The fastest way to lose someone trying your starter is the "first install Node" step. Removing it changes who's willing to click in and poke around. Running the runtime in the browser is what makes that possible. The trade-off is that WebContainers can't do everything a real machine can, so some projects that work locally won't run here.
+Codecraft binds Monaco and xterm to a WebContainers Node runtime, so a Vite project runs in the page and edits hot-reload in seconds.
 
-## How it's built
+- Monaco is the editor. It writes to the WebContainer filesystem with debounced saves, and each save triggers a hot reload.
+- xterm is the terminal. It runs real shell commands, like `npm install`, against the same filesystem.
+- The page is served with cross-origin isolation headers (COOP and COEP), which is what lets a Node runtime exist inside a browser tab at all.
+- WebContainers cannot open real ports, so the preview goes through a service worker that routes requests to the server running in the tab.
+- A snapshot of the booted filesystem is cached in IndexedDB, so a repeat visit skips the cold install.
 
-Monaco for the editor, xterm for the terminal, and WebContainers underneath providing a Node.js runtime in the tab. Monaco is wired to the WebContainer filesystem with debounced writes, so edits land on disk and trigger a hot-reload. The xterm terminal runs real shell commands — npm install, ls, cat — against that same filesystem. The page is served with COOP/COEP cross-origin isolation, which is what unlocks SharedArrayBuffer and lets the runtime exist in the tab at all. Since WebContainers can't bind real ports, the preview is served through a service worker that intercepts requests and routes them to the in-tab server. An IndexedDB snapshot cache stores the booted filesystem so repeat visits skip the cold install and come up in under twenty seconds.
+## What it does not do
 
-## Known limitations
+- Native modules that need a compiler do not build, so packages with native addons fail.
+- Memory is capped by the browser tab, so a heavy project can run out of room.
+- It is one tab and nothing persists: close it and the running state is gone.
 
-- No real ports. Preview goes through a service worker, which a few setups don't tolerate.
-- Native modules that need node-gyp don't compile, so anything pulling in native addons fails.
-- Memory is capped by the browser tab, so a heavy project can run the tab out of room.
-- It's single-tab and ephemeral; close it and the running state is gone.
+## Links
 
-## Where it runs
-
-- GitHub: github.com/ykstorm/codecraft-ai
-- Demo: codecraft-ai-tau.vercel.app
+- Code: [github.com/ykstorm/codecraft-ai](https://github.com/ykstorm/codecraft-ai)
+- Live demo: [codecraft-ai-tau.vercel.app](https://codecraft-ai-tau.vercel.app)

@@ -14,7 +14,10 @@ export interface ContentFile {
   content: string;
 }
 
-const parseMarkdownFrontmatter = (content: string): { metadata: ContentMetadata; body: string } => {
+const parseMarkdownFrontmatter = (raw: string): { metadata: ContentMetadata; body: string } => {
+  // Normalise CRLF first: a Windows checkout would otherwise fail the match and
+  // leak the frontmatter block into the rendered page.
+  const content = raw.replace(/\r\n/g, '\n');
   const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) {
     return { metadata: {} as ContentMetadata, body: content };
@@ -59,7 +62,7 @@ export async function getContentFiles(contentType: 'projects' | 'blog'): Promise
         content: body,
       };
     })
-    .sort((a, b) => new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime());
+    .sort((a, b) => (Date.parse(b.metadata.date) || 0) - (Date.parse(a.metadata.date) || 0));
 }
 
 export async function getContentBySlug(contentType: 'projects' | 'blog', slug: string): Promise<ContentFile | null> {

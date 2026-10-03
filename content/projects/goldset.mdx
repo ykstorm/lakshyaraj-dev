@@ -1,29 +1,29 @@
 ---
 title: "Goldset"
-description: "Golden datasets + LLM-as-judge + structural assertions, as a GitHub Action."
-date: "2026-05-12"
+description: "A GitHub Action that blocks a merge when an AI app's answers get worse."
 ---
 
-## What it does
+## The problem
 
-Goldset locks an AI app's behavior so a pull request can't quietly change it. Three runners cover it: a golden-dataset check, an LLM judge that scores the current output, and structural assertions on shape. It ships as a GitHub Action, so the check runs in CI on every PR and comments the delta against the base branch. A regression blocks the merge instead of slipping through review.
+Snapshot tests assume the output never changes, and model output does, so a byte-for-byte diff fails on every harmless rewording. Reading output diffs by hand works for a handful of examples and then stops getting read carefully.
 
-## Why this approach
+## How it works
 
-Snapshot tests assume deterministic output, which LLM responses aren't, so a byte-for-byte diff fails on every harmless rewording. The alternative — a human eyeballing output diffs — works fine until you pass about twenty examples, then nobody reads them carefully. An LLM judge scoring against golden examples scales past that point without pretending the output is deterministic.
+Goldset scores the current output against a golden dataset with a judge model and posts the delta on the PR.
 
-## How it's built
+- It runs as a GitHub Action on every pull request.
+- The golden dataset is plain files in the repo, so it is versioned with the code it guards.
+- A judge model scores the app's current answers against the golden ones. The judge prompt and the pass threshold are yours to set.
+- Structural checks cover the shape of the output, separately from the judge's score.
+- The result is posted on the PR as the change against the base branch. A drop past your threshold fails the check and blocks the merge.
 
-A GitHub Action that loads your golden dataset, runs the app's current output through a judge model, and posts the delta-vs-base scores back to the PR as a comment. The judge talks to a pluggable provider — OpenAI or Anthropic — so you pick the model that scores your domain best. The judge prompt and the pass threshold are yours to configure. The dataset is plain files in the repo, so it versions alongside the code it guards.
+## What it does not do
 
-## Known limitations
+- The judge is a model, with its own bias, and it can shift when the provider updates it.
+- Each golden case is a single exchange. Multi-turn conversations are not covered yet.
+- Every case costs one judge call per run, so cost grows with the dataset.
 
-- The judge is a model, so it has its own bias and can drift between provider updates.
-- No multi-turn examples yet. Each golden case is a single exchange.
-- Cost scales linearly with the dataset; every example is a judge call per run.
-- A vague judge prompt gives noisy scores, and writing a sharp one takes iteration.
+## Links
 
-## Where it runs
-
-- GitHub: github.com/ykstorm/goldset
-- npm: @ykstormsorg/goldset
+- Code: [github.com/ykstorm/goldset](https://github.com/ykstorm/goldset)
+- npm: [@ykstormsorg/goldset](https://www.npmjs.com/package/@ykstormsorg/goldset)

@@ -1,28 +1,32 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 
-// Single light⇄dark button. The old 3-segment control (light/dark/system) was
-// wider than the mobile nav allowed, so it clipped off-screen; one icon button
-// always fits and reads unambiguously.
+// false on the server and during hydration, true afterwards: the server
+// snapshot is used while hydrating, so the first client render matches the HTML.
+const noop = () => () => {};
+const useMounted = () => useSyncExternalStore(noop, () => true, () => false);
+
+// One light/dark button. The icon depends on the visitor's saved theme, which
+// only the browser knows, so it appears after hydration. Rendering it during
+// hydration made the server and client HTML disagree.
 export function ThemeToggle() {
+  const mounted = useMounted();
   const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme !== 'light';
+  const label = mounted ? (isDark ? 'Switch to light mode' : 'Switch to dark mode') : 'Switch colour theme';
 
-  // next-themes leaves resolvedTheme undefined until it has read the client's
-  // preference, so this doubles as the hydration guard — no mount-effect needed,
-  // which avoids a setState-in-effect cascade.
-  if (!resolvedTheme) return <div className="w-8 h-8" />;
-
-  const isDark = resolvedTheme === 'dark';
   return (
     <button
+      type="button"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      title={isDark ? 'Switch to light' : 'Switch to dark'}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="grid place-items-center w-8 h-8 rounded-md border border-[var(--border)] text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-500/50 transition-colors"
+      title={label}
+      aria-label={label}
+      className="grid h-8 w-8 place-items-center rounded-md border border-border text-muted-foreground transition-colors hover:border-accent hover:text-accent"
     >
-      {isDark ? <Sun size={14} /> : <Moon size={14} />}
+      {mounted && (isDark ? <Sun size={14} aria-hidden /> : <Moon size={14} aria-hidden />)}
     </button>
   );
 }

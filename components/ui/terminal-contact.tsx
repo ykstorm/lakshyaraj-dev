@@ -1,95 +1,62 @@
 'use client';
-import { useState } from 'react';
-import { IconBrandGithub, IconBrandLinkedin, IconBrandNpm } from '@tabler/icons-react';
-import { Mail } from 'lucide-react';
 
-const PROTOCOLS = [
-  { id: 1, label: 'Email', value: 'raolakshyaraj@gmail.com', href: 'mailto:raolakshyaraj@gmail.com', icon: Mail },
-  { id: 2, label: 'LinkedIn', value: 'linkedin.com/in/lakshyaraj-singh-rao-840273152', href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', icon: IconBrandLinkedin },
-  { id: 3, label: 'GitHub', value: 'github.com/ykstorm', href: 'https://github.com/ykstorm', icon: IconBrandGithub },
-  { id: 4, label: 'npm', value: 'npmjs.com/~ykstormsorg', href: 'https://npmjs.com/~ykstormsorg', icon: IconBrandNpm },
+// Contact, as a second small terminal. Each line is a normal link; with the
+// window focused, the number keys 1 to 4 open the matching one.
+import { useState } from 'react';
+
+const CHANNELS = [
+  { key: '1', label: 'Email', value: 'raolakshyaraj@gmail.com', href: 'mailto:raolakshyaraj@gmail.com' },
+  { key: '2', label: 'LinkedIn', value: 'linkedin.com/in/lakshyaraj-singh-rao-840273152', href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152' },
+  { key: '3', label: 'GitHub', value: 'github.com/ykstorm', href: 'https://github.com/ykstorm' },
+  { key: '4', label: 'npm', value: 'npmjs.com/~ykstormsorg', href: 'https://www.npmjs.com/~ykstormsorg' },
 ];
 
 export function TerminalContact() {
-  const [selected, setSelected] = useState<number | null>(null);
+  const [opened, setOpened] = useState<string | null>(null);
 
-  function open(num: number) {
-    const p = PROTOCOLS.find((p) => p.id === num);
-    if (!p) return;
-    setSelected(num);
-    if (p.href.startsWith('mailto:')) {
-      window.location.href = p.href;
-    } else {
-      window.open(p.href, '_blank', 'noopener');
-    }
-  }
-
-  function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (['1', '2', '3', '4'].includes(e.key)) {
-      e.preventDefault();
-      open(parseInt(e.key, 10));
-    }
+  function onKey(e: React.KeyboardEvent<HTMLDivElement>) {
+    const ch = CHANNELS.find((c) => c.key === e.key);
+    if (!ch) return;
+    e.preventDefault();
+    setOpened(ch.key);
+    if (ch.href.startsWith('mailto:')) window.location.href = ch.href;
+    else window.open(ch.href, '_blank', 'noopener,noreferrer');
   }
 
   return (
-    <div className="term-window max-w-xl mx-auto text-[12.5px] sm:text-[13px] leading-relaxed">
+    <div
+      tabIndex={0}
+      onKeyDown={onKey}
+      aria-label="Contact. Press 1 to 4 to open a channel."
+      className="term-window max-w-2xl text-[12.5px] leading-relaxed sm:text-[13px]"
+    >
       <div className="term-titlebar">
-        <span className="term-dot bg-red-400/70" />
-        <span className="term-dot bg-amber-400/70" />
-        <span className="term-dot bg-emerald-400/70" />
-        <span className="ml-2 text-[10px] text-zinc-400 dark:text-zinc-600">connect — secure uplink</span>
+        <span className="term-dot" />
+        <span className="term-dot" />
+        <span className="term-dot" />
+        <span className="ml-2 text-[11px] text-muted-foreground">contact</span>
       </div>
-
-      <div className="p-5 space-y-1 text-zinc-700 dark:text-zinc-300">
+      <div className="space-y-1 p-5">
         <div className="whitespace-pre-wrap break-words">
-          <span className="text-emerald-600 dark:text-emerald-400">user@lakshyaraj</span>
-          <span className="text-zinc-400 dark:text-zinc-500">:~$</span>{' '}
-          <span className="text-amber-700 dark:text-amber-300">connect --protocol=secure --auto-link</span>
+          <span className="text-accent">lakshyaraj@portfolio:~$ </span>
+          <span className="text-foreground">contact</span>
         </div>
-        <div className="text-zinc-500 pl-4">&gt; Establishing uplink to Lakshyaraj Singh Rao…</div>
-        <div className="text-zinc-500 pl-4">&gt; Press [1-4] to open a channel:</div>
-        {PROTOCOLS.map((p) => (
-          <div key={p.id} className="pl-4 flex items-center gap-2">
-            <span className="text-amber-600 dark:text-amber-400">[{p.id}]</span>
-            <span className="text-zinc-500 dark:text-zinc-400">{p.label}:</span>
+        {CHANNELS.map((c) => (
+          <div key={c.key} className="flex flex-wrap items-baseline gap-x-3">
+            <span className="text-accent">[{c.key}]</span>
+            <span className="w-16 text-muted-foreground">{c.label}</span>
             <a
-              href={p.href}
-              target={p.href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              className={selected === p.id ? 'text-amber-600 dark:text-amber-400 underline' : 'text-amber-700/90 dark:text-zinc-300 hover:text-amber-600 dark:hover:text-amber-400'}
+              href={c.href}
+              target={c.href.startsWith('http') ? '_blank' : undefined}
+              rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              className={`break-all underline-offset-4 hover:text-accent hover:underline ${opened === c.key ? 'text-accent underline' : 'text-foreground'}`}
             >
-              {p.value}
+              {c.value}
             </a>
           </div>
         ))}
-        <div className="pl-4 flex items-center gap-2 pt-2">
-          <span className="text-emerald-600 dark:text-emerald-400">user@lakshyaraj</span>
-          <span className="text-zinc-400 dark:text-zinc-500">:~$</span>
-          <span className="text-amber-700 dark:text-amber-300">select [1-4]:</span>
-          {/* One cursor only: the block ▋ is the terminal cursor, so the input's
-              native caret is hidden (caret-transparent). Previously both showed
-              at once → two blinking cursors. */}
-          <input
-            type="text"
-            inputMode="numeric"
-            aria-label="Select a contact channel by number 1 to 4"
-            onKeyDown={handleKey}
-            autoComplete="off"
-            className="bg-transparent border-none outline-none text-amber-600 dark:text-amber-400 w-4 caret-transparent"
-          />
-          <span className="text-amber-600 dark:text-amber-400 -ml-1" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>
-        </div>
+        <div className="pt-2 text-muted-foreground">Press 1 to 4 to open one, or click it.</div>
       </div>
-
-      <noscript>
-        <div className="px-5 pb-4 pl-9 flex flex-col gap-1">
-          {PROTOCOLS.map((p) => (
-            <a key={p.id} href={p.href} className="text-amber-700 dark:text-amber-400 underline">
-              [{p.id}] {p.label}: {p.value}
-            </a>
-          ))}
-        </div>
-      </noscript>
     </div>
   );
 }

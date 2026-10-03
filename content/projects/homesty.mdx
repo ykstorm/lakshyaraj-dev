@@ -1,28 +1,29 @@
 ---
 title: "Homesty.ai"
-description: "Live commission-driven real-estate AI assistant, serving real traffic."
-date: "2026-06-01"
+description: "A buyer asks about a property and gets answers from the real listing."
 ---
 
-## What it does
+## The problem
 
-Homesty is a live real-estate AI running on Next.js 15. Buyers chat directly with a listing — asking about specs, location, and price — and the AI answers from the property data. Agents get qualified leads out the other end. The AI handles the repetitive property-spec questions so the human agent only spends time on buyers who are actually serious.
+Buyers ask listing agents the same five questions about every flat, and agents answer them by hand all day. Homesty takes that first conversation: a buyer asks about a property and gets an answer taken from the real listing.
 
-## Why this approach
+## What I build
 
-The easy version replaces the agent. This one keeps the human in the loop on purpose. The AI's job is to filter tire-kickers and field the same five questions every listing gets, not to close the deal. That's the trade-off: it's deliberately not autonomous, because in a commission business the agent relationship is the product.
+I work at Homesty.ai LLP as a software engineer, and I have been building it since November 2025. I build the side buyers see.
 
-## How it's built
+- The landing page and the chat screen where a buyer asks about a property, in Next.js and React.
+- The REST endpoints behind them, in Node.js.
+- The database schema, in PostgreSQL, queried with Prisma.
+- The admin pages the team uses to manage listings.
+- The login flow, and an audit log that records what changed and who changed it.
 
-Next.js 15 on the front, Postgres with pgvector for listing retrieval, and a mix of GPT-4o and Claude for the chat. Buyer questions hit the property data through vector search, and qualified conversations get routed to the listing's agent as a lead. Sentry and Upstash Redis sit behind it for error tracking and rate limiting.
+I release on Vercel, watch production errors in Sentry, and work in Git with pull requests and code review.
 
-## Known limitations
+## What it does not do
 
-- Coverage is Bombay and Pune listings only. Other cities aren't in the index yet.
-- RERA lookup is best-effort against a scraped index, not the live regulator API, so it can lag.
-- Voice input falls back to keyboard on Safari iOS, where the speech API isn't reliable.
-- It depends on listing data quality; a thin or stale listing gives the AI little to answer from.
+- It answers from listing data, so a thin or stale listing gives it little to work with.
+- It handles the first conversation. Visits, negotiation and the sale stay with people.
 
-## Where it runs
+## Links
 
-- Demo: homesty.ai
+- Live: [homesty.ai](https://homesty.ai)

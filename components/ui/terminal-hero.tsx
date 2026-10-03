@@ -1,150 +1,194 @@
 'use client';
 
-// Interactive hero terminal. Boots by typing a short intro sequence, then hands
-// the user a live prompt: real typed commands (help, whoami, ls, cat, open, clear…)
-// produce canned output. Clicking anywhere in the window focuses the input. Static
-// transcript lives in a <noscript> fallback (parent) for crawlers / no-JS.
-// prefers-reduced-motion skips the typewriter and lands straight on the prompt.
+// The hero terminal. It types a short intro, then takes real commands: list and
+// open projects, jump to a section with cd, and drive the world canvas behind
+// it with `world` and `seed`. Arrow keys recall earlier commands. With
+// prefers-reduced-motion the intro appears at once instead of being typed.
 import { useEffect, useRef, useState } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import { PROJECTS } from '@/lib/projects';
+import { currentWorld, sendWorldCommand } from '@/components/world/bus';
+import { parseSeed, seedToHex } from '@/components/world/random';
 
-type Line = { kind: 'cmd' | 'out' | 'sys'; text: string };
+type Line = { kind: 'cmd' | 'out' | 'note'; text: string };
 
-const PROMPT = 'lakshyaraj@dev:~$ ';
+const PROMPT = 'lakshyaraj@portfolio:~$ ';
+const SECTIONS = ['work', 'proof', 'now', 'stack', 'writing', 'contact'] as const;
 
-const BOOT: { cmd: string; out: string }[] = [
-  { cmd: 'whoami', out: 'Backend Engineer · AI Infrastructure · DevOps' },
-  { cmd: 'cat focus.txt', out: 'Anvil — idempotent webhook → BullMQ pipeline' },
-  { cmd: "echo $AVAILABILITY", out: 'open to backend / AI-infra roles' },
+const WHOAMI = ['Lakshyaraj Singh Rao. Full-stack developer, backend focus.', 'Software engineer at Homesty.ai since November 2025.'];
+const BOOT: { cmd: string; out: string[] }[] = [
+  { cmd: 'whoami', out: WHOAMI },
+  { cmd: 'cat now.txt', out: ['Building Homesty.ai. B.Tech CS at Manipal University Jaipur, 2026.'] },
 ];
-
-const PROJECTS: Record<string, string> = {
-  anchor: 'provenance-first RAG · refuses below a similarity floor → anchor-iota-ten.vercel.app',
-  tripwire: 'mid-stream LLM guardrail · aborts the stream before a bad token lands',
-  goldset: 'LLM eval as a GitHub Action · golden + judge + structural',
-  quickdraw: 'streaming benchmark CLI · TTFT, tokens/sec, $/1K',
-  stackup: 'production-shape Kubernetes locally · ArgoCD + Argo Rollouts + Grafana',
-  codecraft: 'in-browser IDE · boots a real Next.js dev server via WebContainers',
-  anvil: 'idempotent webhook → BullMQ · HMAC, backoff, dead-letter replay · on npm',
-  homesty: 'live commission-driven real-estate AI · the product the OSS came from',
-};
 
 const HELP = [
-  'available commands:',
-  '  whoami        role + focus',
-  '  ls            list projects',
-  '  cat <name>    project detail (e.g. cat anvil)',
-  '  stack         the tools I reach for',
-  '  contact       how to reach me',
-  '  open <name>   open project / resume / github',
-  '  clear         clear the screen',
+  'whoami          who I am',
+  'ls              list my projects',
+  'cat <project>   what a project does, e.g. cat anvil',
+  'open <name>     open a project, resume, github, linkedin or npm',
+  'cd <section>    jump to work, proof, now, stack, writing or contact',
+  'world           draw a new world behind this terminal',
+  'seed <hex>      redraw a world from its seed, e.g. seed 5eed1e55',
+  'stack           the tools I use',
+  'contact         how to reach me',
+  'clear           clear the screen',
 ];
 
-function run(raw: string): Line[] {
-  const input = raw.trim();
-  if (!input) return [];
-  const [cmd, ...rest] = input.split(/\s+/);
+const LINKS: Record<string, string> = {
+  resume: '/resume',
+  github: 'https://github.com/ykstorm',
+  linkedin: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152',
+  npm: 'https://www.npmjs.com/~ykstormsorg',
+  email: 'mailto:raolakshyaraj@gmail.com',
+};
+
+const shortId = (id: string) => id.replace(/-ai$/, '');
+const findProject = (name: string) => PROJECTS.find((p) => p.id === name || shortId(p.id) === name);
+
+function describeWorld(): string {
+  const w = currentWorld();
+  return w ? `world=${w.biome} seed=${seedToHex(w.seed)}` : 'The world is still loading.';
+}
+
+function shareLine(): Line[] {
+  const w = currentWorld();
+  if (!w) return [];
+  return [{ kind: 'note', text: `Link to this world: ${window.location.origin}/?seed=${seedToHex(w.seed)}` }];
+}
+
+function open(url: string): void {
+  if (url.startsWith('/')) window.location.assign(url);
+  else window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function jump(section: string): void {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const el = section === '~' ? document.body : document.getElementById(section);
+  el?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+}
+
+function run(raw: string): Line[] | 'clear' {
+  const [cmd = '', ...rest] = raw.trim().split(/\s+/);
   const arg = rest.join(' ').toLowerCase();
-  const out = (text: string): Line => ({ kind: 'out', text });
+  const out = (...text: string[]): Line[] => text.map((t) => ({ kind: 'out', text: t }));
 
   switch (cmd.toLowerCase()) {
+    case '':
+      return [];
     case 'help':
-    case '?':
-      return HELP.map(out);
+      return out(...HELP);
     case 'whoami':
-      return [out('Lakshyaraj Singh Rao — backend / AI-infra engineer. I ship AI to'), out('production, then extract the reliable parts into open source.')];
+      return out(...WHOAMI);
     case 'ls':
-    case 'projects':
-      return [out(Object.keys(PROJECTS).join('  '))];
+      return out(PROJECTS.map((p) => shortId(p.id)).join('  '));
     case 'cat': {
-      if (!arg) return [out('usage: cat <project>  — try: cat anvil')];
-      const hit = PROJECTS[arg];
-      return [hit ? out(hit) : out(`cat: ${arg}: no such project. try 'ls'`)];
+      if (!arg) return out('cat: name a project, e.g. cat anvil');
+      const p = findProject(arg);
+      return out(p ? `${p.name}: ${p.tagline}` : `cat: ${arg}: no such project. Type ls to list them.`);
+    }
+    case 'open': {
+      const p = findProject(arg);
+      const url = p ? p.demo ?? p.code : LINKS[arg];
+      if (!url) return out(`open: ${arg || '?'}: try open anvil, open resume or open github`);
+      open(url);
+      return out(`Opening ${p ? p.name : arg}.`);
+    }
+    case 'cd': {
+      const target = arg.replace(/^~\/?/, '') || '~';
+      if (target === '~' || target === '..') {
+        jump('~');
+        return [];
+      }
+      if (!(SECTIONS as readonly string[]).includes(target)) return out(`cd: no such section: ${arg}. Try ${SECTIONS.join(', ')}.`);
+      jump(target);
+      return [];
+    }
+    case 'world':
+      if (!currentWorld()) return out(describeWorld());
+      sendWorldCommand({ type: 'new' });
+      return [...out(describeWorld()), ...shareLine()];
+    case 'seed': {
+      if (!arg) return [...out(describeWorld()), ...shareLine()];
+      const seed = parseSeed(arg);
+      if (seed === null) return out('seed: expected up to 8 hex digits, e.g. seed 5eed1e55');
+      if (!currentWorld()) return out(describeWorld());
+      sendWorldCommand({ type: 'seed', seed });
+      return [...out(describeWorld()), ...shareLine()];
     }
     case 'stack':
-      return [out('TypeScript · Node · Postgres/pgvector · Redis/BullMQ'), out('Docker · Kubernetes · ArgoCD · Helm · Terraform')];
+      return out(
+        'TypeScript, JavaScript, SQL',
+        'Node.js, Express, REST APIs, PostgreSQL, Prisma, Redis, MongoDB',
+        'React, Next.js, Tailwind CSS',
+        'Git, Docker, Kubernetes, GitHub Actions, Vercel, Sentry',
+      );
     case 'contact':
-      return [out('email   raolakshyaraj@gmail.com'), out('github  github.com/ykstorm'), out('npm     npmjs.com/~ykstormsorg')];
-    case 'open': {
-      const map: Record<string, string> = {
-        resume: '/resume',
-        github: 'https://github.com/ykstorm',
-        anchor: 'https://anchor-iota-ten.vercel.app',
-        codecraft: 'https://codecraft-ai-tau.vercel.app',
-        homesty: 'https://homesty.ai',
-      };
-      const url = map[arg];
-      if (url) {
-        if (typeof window !== 'undefined') window.open(url, url.startsWith('http') ? '_blank' : '_self', 'noopener');
-        return [out(`opening ${arg}…`)];
-      }
-      return [out(`open: ${arg || '?'}: try open resume | github | anchor`)];
-    }
-    case 'sudo':
-      return [out("nice try — you don't have root here :)")];
+      return out(
+        'email     raolakshyaraj@gmail.com',
+        'github    github.com/ykstorm',
+        'linkedin  linkedin.com/in/lakshyaraj-singh-rao-840273152',
+        'npm       npmjs.com/~ykstormsorg',
+      );
     case 'clear':
-      return [{ kind: 'sys', text: '__clear__' }];
+      return 'clear';
     default:
-      return [out(`command not found: ${cmd}. type 'help'`)];
+      return out(`command not found: ${cmd}. Type help to see the commands.`);
   }
 }
 
 function Caret() {
-  return <span className="inline-block w-[0.5ch] text-amber-600 dark:text-amber-400" style={{ animation: 'caret-blink 1s step-end infinite' }}>▋</span>;
+  return (
+    <span className="inline-block w-[0.55ch] text-accent" style={{ animation: 'caret-blink 1s step-end infinite' }} aria-hidden="true">
+      ▋
+    </span>
+  );
 }
 
 export function TerminalHero() {
-  const reduce = useReducedMotion();
   const [lines, setLines] = useState<Line[]>([]);
   const [booted, setBooted] = useState(false);
   const [input, setInput] = useState('');
+  const history = useRef<string[]>([]);
+  const cursor = useRef(0);
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // boot sequence
   useEffect(() => {
     let cancelled = false;
     const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+    const note: Line = { kind: 'note', text: 'Type help to see what this terminal can do.' };
 
     async function boot() {
-      if (reduce) {
-        const transcript: Line[] = [
-          ...BOOT.flatMap((b): Line[] => [
-            { kind: 'cmd', text: b.cmd },
-            { kind: 'out', text: b.out },
-          ]),
-          { kind: 'sys', text: "type 'help' to explore" },
-        ];
-        setLines(transcript);
+      // Read once at boot: the intro either types or appears whole.
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        await Promise.resolve();
+        if (cancelled) return;
+        setLines([...BOOT.flatMap((b): Line[] => [{ kind: 'cmd', text: b.cmd }, ...b.out.map((t): Line => ({ kind: 'out', text: t }))]), note]);
         setBooted(true);
         return;
       }
+      await wait(450);
       for (const b of BOOT) {
-        if (cancelled) return;
-        // type the command char by char
         for (let i = 1; i <= b.cmd.length; i++) {
           if (cancelled) return;
-          setLines((prev) => {
-            const base = prev[prev.length - 1]?.kind === 'cmd' ? prev.slice(0, -1) : prev;
-            return [...base, { kind: 'cmd', text: b.cmd.slice(0, i) }];
-          });
-          await wait(26);
+          const typed: Line = { kind: 'cmd', text: b.cmd.slice(0, i) };
+          setLines((prev) => [...(prev[prev.length - 1]?.kind === 'cmd' ? prev.slice(0, -1) : prev), typed]);
+          await wait(34);
         }
-        await wait(160);
-        setLines((prev) => [...prev, { kind: 'out', text: b.out }]);
-        await wait(420);
+        await wait(180);
+        if (cancelled) return;
+        setLines((prev) => [...prev, ...b.out.map((t): Line => ({ kind: 'out', text: t }))]);
+        await wait(380);
       }
       if (cancelled) return;
-      setLines((prev) => [...prev, { kind: 'sys', text: "type 'help' to explore" }]);
+      setLines((prev) => [...prev, note]);
       setBooted(true);
     }
     boot();
     return () => {
       cancelled = true;
     };
-  }, [reduce]);
+  }, []);
 
-  // keep scrolled to bottom
   useEffect(() => {
     if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
   }, [lines, booted]);
@@ -153,56 +197,62 @@ export function TerminalHero() {
     e.preventDefault();
     const value = input;
     setInput('');
+    if (value.trim()) history.current.push(value);
+    cursor.current = history.current.length;
     const result = run(value);
-    if (result.some((l) => l.text === '__clear__')) {
-      setLines([]);
-      return;
-    }
-    setLines((prev) => [...prev, { kind: 'cmd', text: value }, ...result]);
+    if (result === 'clear') setLines([]);
+    else setLines((prev) => [...prev, { kind: 'cmd', text: value }, ...result]);
+  }
+
+  function recall(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+    e.preventDefault();
+    const h = history.current;
+    cursor.current = Math.max(0, Math.min(h.length, cursor.current + (e.key === 'ArrowUp' ? -1 : 1)));
+    setInput(h[cursor.current] ?? '');
   }
 
   return (
     <div
       onClick={() => inputRef.current?.focus()}
-      className="term-window w-full max-w-xl mx-auto text-left text-[12.5px] sm:text-[13px] leading-relaxed cursor-text"
+      data-no-wave
+      className="term-window w-full cursor-text text-left text-[12.5px] leading-relaxed sm:text-[13px]"
     >
       <div className="term-titlebar">
-        <span className="term-dot bg-red-400/70" />
-        <span className="term-dot bg-amber-400/70" />
-        <span className="term-dot bg-emerald-400/70" />
-        <span className="ml-2 text-[10px] text-zinc-400 dark:text-zinc-600">lakshyaraj@dev — zsh — interactive</span>
+        <span className="term-dot" />
+        <span className="term-dot" />
+        <span className="term-dot" />
+        <span className="ml-2 text-[11px] text-muted-foreground">lakshyaraj@portfolio: ~</span>
       </div>
 
-      <div ref={bodyRef} className="p-4 space-y-0.5 h-[208px] overflow-y-auto">
+      <div ref={bodyRef} role="log" aria-live="polite" aria-label="Terminal output" className="h-[214px] space-y-0.5 overflow-y-auto p-4">
         {lines.map((l, i) => {
           if (l.kind === 'cmd') {
-            const lastCmd = i === lines.length - 1 && !booted;
             return (
               <div key={i} className="whitespace-pre-wrap break-words">
-                <span className="text-emerald-600 dark:text-emerald-400">{PROMPT}</span>
-                <span className="text-amber-700 dark:text-amber-300">{l.text}</span>
-                {lastCmd && <Caret />}
+                <span className="text-accent">{PROMPT}</span>
+                <span className="text-foreground">{l.text}</span>
+                {i === lines.length - 1 && !booted && <Caret />}
               </div>
             );
           }
-          if (l.kind === 'sys') {
-            return <div key={i} className="text-zinc-400 dark:text-zinc-500 italic whitespace-pre-wrap">{l.text}</div>;
-          }
-          return <div key={i} className="text-zinc-600 dark:text-zinc-400 whitespace-pre-wrap break-words">{l.text}</div>;
+          if (l.kind === 'note') return <div key={i} className="whitespace-pre-wrap text-muted-foreground">{l.text}</div>;
+          return <div key={i} className="whitespace-pre-wrap break-words text-muted-foreground">{l.text}</div>;
         })}
 
         {booted && (
-          <form onSubmit={submit} className="flex items-center whitespace-pre-wrap">
-            <span className="text-emerald-600 dark:text-emerald-400">{PROMPT}</span>
+          <form onSubmit={submit} className="flex items-center whitespace-pre">
+            <span className="text-accent">{PROMPT}</span>
             <input
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={recall}
               spellCheck={false}
               autoCapitalize="off"
               autoComplete="off"
-              aria-label="Terminal input — type a command like help"
-              className="flex-1 bg-transparent border-none outline-none text-amber-700 dark:text-amber-300 caret-amber-500 ml-0"
+              aria-label="Terminal input. Type a command, or help."
+              className="min-w-0 flex-1 border-none bg-transparent text-foreground caret-[var(--accent)] outline-none"
             />
           </form>
         )}

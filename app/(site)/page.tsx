@@ -1,450 +1,165 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { TerminalHero } from '@/components/ui/terminal-hero';
-import { AsciiBackground } from '@/components/ui/ascii-background';
+import { Hero } from '@/components/hero';
+import { SiteFooter, SiteNav } from '@/components/site-chrome';
+import { ProofSection } from '@/components/proof';
 import { HoverEffect } from '@/components/ui/card-hover-effect';
-import { ProjectCard, type Project } from '@/components/ui/project-card';
-import { TechBadge } from '@/components/ui/tech-badge';
+import { FlagshipCard, ProjectCard } from '@/components/ui/project-card';
 import { TerminalContact } from '@/components/ui/terminal-contact';
-import { ResumeButton } from '@/components/ui/resume-button';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { GithubContributions } from '@/components/ui/github-contributions';
-import { IconBrandGithub, IconBrandLinkedin, IconBrandNpm } from '@tabler/icons-react';
-import { Mail, ExternalLink } from 'lucide-react';
-import projectsData from '@/data/projects.json';
+import { formatDate } from '@/components/subpage';
+import { getContentFiles } from '@/lib/content';
+import { getProof } from '@/lib/proof';
+import { PROJECTS } from '@/lib/projects';
 import nowData from '@/data/now.json';
 
-// ── Section wrapper ─────────────────────────────────────────────────────────
-function Section({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-  const reduceMotion = useReducedMotion();
+// Static HTML, rebuilt at most once an hour so the proof section stays current.
+export const revalidate = 3600;
+
+const RESUME_PDF = '/Lakshyaraj_Singh_Rao_Resume.pdf';
+
+// Headings are paths: the hero terminal's `cd work` lands on ~/work.
+function Section({ id, intro, children }: { id: string; intro: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="py-20 px-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          className="mb-10 flex items-center gap-4"
-          initial={reduceMotion ? false : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.4 }}
-        >
-          <h2 className="section-label m-0"><span className="caret" aria-hidden="true">❯</span>{label}</h2>
-          <motion.div
-            className="flex-1 h-px bg-[var(--border)] origin-left"
-            initial={reduceMotion ? false : { scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </motion.div>
+    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-16 px-4 py-16 sm:px-6 sm:py-24">
+      <div className="mx-auto max-w-6xl">
+        <header className="mb-10 max-w-2xl">
+          <h2 id={`${id}-title`} className="flex items-baseline">
+            <span className="path text-[1.05rem] sm:text-[1.2rem]" aria-hidden="true">
+              ~/
+            </span>
+            <span className="font-display text-[2rem] leading-none sm:text-[2.6rem]">{id}</span>
+          </h2>
+          <p className="mt-4 text-[16px] leading-relaxed text-muted-foreground">{intro}</p>
+        </header>
         {children}
       </div>
     </section>
   );
 }
 
-// ── Hero ─────────────────────────────────────────────────────────────────────
-function Hero() {
-  return (
-    <section className="relative min-h-[92vh] flex flex-col items-center justify-center px-4 text-center overflow-hidden">
-      <AsciiBackground />
-      <div className="relative z-10 space-y-6 max-w-3xl mx-auto w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-        >
-          <span className="mono text-[11px] text-amber-700 dark:text-amber-400 tracking-[0.28em] uppercase opacity-80">
-            <span className="text-amber-500 dark:text-amber-400 font-bold">❯</span> initialize
-          </span>
-        </motion.div>
-
-        {/* LCP element — rendered visible at first paint (no opacity/blur gate),
-            so it isn't held back from counting as painted. */}
-        <h1 className="font-display text-5xl sm:text-6xl md:text-[4.2rem] text-zinc-900 dark:text-white leading-[1.02]">
-          Lakshyaraj Singh&nbsp;Rao
-        </h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.32, duration: 0.5 }}
-          className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 mono tracking-tight"
-        >
-          Backend Engineer · AI Infrastructure · Full-Stack · DevOps
-        </motion.p>
-
-        {/* Dynamic terminal: client typewriter + server <noscript> fallback */}
-        <div className="pt-2">
-          <TerminalHero />
-          <noscript>
-            <div className="term-window w-full max-w-xl mx-auto p-4 text-left text-[13px] space-y-2">
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>whoami
-                <div className="text-zinc-600 dark:text-zinc-400">Backend Engineer · AI Infrastructure · DevOps</div></div>
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>cat focus.txt
-                <div className="text-zinc-600 dark:text-zinc-400">Anvil — webhook→BullMQ pipeline</div></div>
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>ls ~/projects
-                <div className="text-zinc-600 dark:text-zinc-400">anchor tripwire goldset quickdraw stackup codecraft anvil</div></div>
-              <div><span className="text-emerald-600 dark:text-emerald-400">lakshyaraj@dev:~$ </span>status
-                <div className="text-zinc-600 dark:text-zinc-400">Open to backend / AI-infra roles</div></div>
-            </div>
-          </noscript>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="flex flex-wrap gap-5 justify-center items-center pt-2"
-        >
-          {[
-            { href: 'mailto:raolakshyaraj@gmail.com', label: 'email', icon: Mail },
-            { href: 'https://github.com/ykstorm', label: 'github', icon: IconBrandGithub },
-            { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', label: 'linkedin', icon: IconBrandLinkedin },
-            { href: 'https://npmjs.com/~ykstormsorg', label: 'npm', icon: IconBrandNpm },
-            { href: '/resume', label: 'resume', icon: ExternalLink },
-          ].map(({ href, label, icon: Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 py-3 px-2 sm:py-1.5 sm:px-1 text-[12px] mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{label}</span>
-            </a>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.55, duration: 0.6 }}
-          className="pt-4"
-        >
-          <p className="text-[11px] mono text-zinc-500 dark:text-zinc-500 tracking-[0.15em]">
-            Mumbai · Remote · open to opportunities
-          </p>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── Activity (GitHub contribution graph) ──────────────────────────────────────
-function ActivitySection() {
-  return (
-    <Section id="activity" label="Commit Activity">
-      <GithubContributions />
-    </Section>
-  );
-}
-
-// ── Now / Mission Status ──────────────────────────────────────────────────────
-function NowSection() {
-  return (
-    <Section id="now" label="Mission Status">
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="telemetry-card space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400" />
-            <span className="section-label text-[10px]">Currently</span>
-          </div>
-          <p className="mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
-        </div>
-
-        <div className="telemetry-card space-y-4">
-          <span className="section-label text-[10px]">Shipped this week</span>
-          <ul className="space-y-2">
-            {nowData.shipped_this_week.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span><span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="telemetry-card space-y-4">
-          <span className="section-label text-[10px]">Next up</span>
-          <ul className="space-y-2">
-            {nowData.next_up.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span><span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="telemetry-card space-y-4">
-          <span className="section-label text-[10px]">Open to</span>
-          <ul className="space-y-2">
-            {nowData.open_to.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                <span className="text-green-600 dark:text-green-400 mt-0.5">›</span><span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="pt-2">
-            <span className="section-label text-[10px]">Location</span>
-            <p className="mono text-sm text-zinc-700 dark:text-zinc-300 mt-1">{nowData.location}</p>
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-// ── Projects ─────────────────────────────────────────────────────────────────
-function ProjectsSection() {
-  const projects = projectsData as Project[];
-  const flagship = projects.find((p) => p.flagship);
-  const others = projects.filter((p) => !p.flagship);
-
-  const items = others.map((project, i) => ({
-    id: project.id,
-    content: <ProjectCard key={project.id} project={project} index={i} />,
-  }));
-
-  return (
-    <Section id="projects" label="System Architectures">
-      {flagship && (
-        <motion.div
-          initial={{ opacity: 0, y: 18, scale: 0.99 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ type: 'spring', stiffness: 240, damping: 26, mass: 0.7 }}
-          className="mb-5"
-        >
-          <ProjectCard project={flagship} index={0} />
-        </motion.div>
-      )}
-      <HoverEffect items={items} />
-    </Section>
-  );
-}
-
-// ── Technical Arsenal ─────────────────────────────────────────────────────────
-const STACK = {
-  Languages: ['TypeScript', 'Python', 'SQL', 'Bash', 'YAML', 'Go (learning)'],
-  'Backend/Data': ['Node.js', 'Next.js 16', 'Postgres', 'pgvector', 'Prisma 7', 'Redis', 'BullMQ'],
-  'Infra/AI': ['Docker', 'Kubernetes', 'ArgoCD', 'Helm', 'Terraform', 'Ollama', 'vLLM', 'RAG'],
-};
-
-function StackSection() {
-  return (
-    <Section id="stack" label="Technical Arsenal">
-      <div className="grid md:grid-cols-3 gap-6">
-        {Object.entries(STACK).map(([category, items]) => (
-          <div key={category} className="telemetry-card space-y-4">
-            <span className="section-label text-[10px]">{category}</span>
-            <div className="flex flex-wrap gap-2">
-              {items.map((item) => (
-                <TechBadge key={item} label={item} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-// ── Shipped to npm ────────────────────────────────────────────────────────────
-const NPM_PKGS = [
-  { name: '@ykstormsorg/anvil', note: 'webhook → BullMQ pipeline · SLSA provenance', slsa: true },
-  { name: '@ykstormsorg/tripwire', note: 'mid-stream guardrail + OpenAI-compatible proxy', slsa: false },
-  { name: '@ykstormsorg/goldset', note: 'eval-runner Action + PR-comment bot', slsa: false },
-  { name: '@ykstormsorg/quickdraw', note: 'LLM streaming benchmark CLI · SLSA provenance', slsa: true },
+const STACK: { group: string; items: string[] }[] = [
+  { group: 'Languages', items: ['TypeScript', 'JavaScript', 'SQL'] },
+  { group: 'Back end', items: ['Node.js', 'Express', 'REST APIs', 'PostgreSQL', 'Prisma', 'Redis', 'MongoDB'] },
+  { group: 'Front end', items: ['React', 'Next.js', 'Tailwind CSS', 'HTML', 'CSS'] },
+  { group: 'Tools', items: ['Git', 'GitHub', 'Docker', 'Kubernetes', 'GitHub Actions', 'Vercel', 'Sentry'] },
+  { group: 'In my projects', items: ['BullMQ', 'pgvector', 'ArgoCD', 'Argo Rollouts', 'Prometheus', 'Grafana'] },
 ];
 
-function TelemetrySection() {
-  const [npmVersions, setNpmVersions] = useState<Record<string, string>>({});
+const NOW_ROWS = [
+  { label: 'Building', value: nowData.building },
+  { label: 'Studying', value: nowData.studying },
+  { label: 'Based in', value: nowData.location },
+  { label: 'Open to', value: nowData.open_to },
+];
 
-  useEffect(() => {
-    fetch('/api/npm-versions').then((r) => r.json()).then(setNpmVersions).catch(() => {});
-  }, []);
-
-  return (
-    <Section id="telemetry" label="Shipped to npm">
-      <div className="grid sm:grid-cols-2 gap-4">
-        {NPM_PKGS.map(({ name, note }) => {
-          const v = npmVersions[name];
-          return (
-            <a
-              key={name}
-              href={`https://npmjs.com/package/${name}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="telemetry-card group flex items-center justify-between gap-3 hover:border-amber-500/50"
-            >
-              <div className="min-w-0">
-                <p className="mono text-[12.5px] text-zinc-800 dark:text-zinc-200 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                  {name}
-                </p>
-                <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{note}</p>
-              </div>
-              <span className="mono text-sm text-amber-700 dark:text-amber-400 shrink-0">
-                {v && v !== 'N/A' ? `v${v}` : '…'}
-              </span>
-            </a>
-          );
-        })}
-      </div>
-      <p className="mono text-[11px] text-zinc-500 mt-4 text-center">
-        four packages live on npm · two with SLSA build provenance · every repo green in CI
-      </p>
-    </Section>
-  );
-}
-
-// ── Contact ───────────────────────────────────────────────────────────────────
-function ContactSection() {
-  return (
-    <Section id="contact" label="Establish Connection">
-      <div className="space-y-8">
-        <TerminalContact />
-        <div className="flex justify-center">
-          <ResumeButton href="/resume" />
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-// ── Navigation ────────────────────────────────────────────────────────────────
-function Nav() {
-  const links = [
-    { href: '/#now', label: 'Now' },
-    { href: '/#projects', label: 'Projects' },
-    { href: '/#stack', label: 'Stack' },
-    { href: '/#activity', label: 'Activity' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/#contact', label: 'Contact' },
-  ];
+export default async function HomePage() {
+  const [proof, posts] = await Promise.all([getProof(), getContentFiles('blog')]);
+  const flagship = PROJECTS.find((p) => p.flagship);
+  const others = PROJECTS.filter((p) => !p.flagship);
+  const year = new Date(proof.fetchedAt).getUTCFullYear();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--background)_82%,transparent)] backdrop-blur-md">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="font-display text-[15px] font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-          Lakshyaraj
-        </Link>
-        <div className="flex items-center gap-5 sm:gap-6">
-          {/* links collapse under sm so the theme toggle is always reachable on mobile */}
-          <div className="hidden sm:flex items-center gap-5 sm:gap-6">
-            {links.map(({ href, label }) => (
-              <Link
-                key={label}
-                href={href}
-                className="text-[11px] mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-          <ThemeToggle />
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-// ── Main page ─────────────────────────────────────────────────────────────────
-export default function HomePage() {
-  // Sections render unconditionally so all content (projects, copy) is present
-  // in server-rendered HTML — crawlers, link unfurls, and no-JS visitors see it.
-  // The hero terminal degrades to a <noscript> static transcript.
-  return (
-    <div className="relative min-h-screen text-zinc-800 dark:text-zinc-100">
-      {/* fixed atmosphere: grid + scanlines + drifting phosphor glow */}
-      <div className="terminal-bg" aria-hidden="true">
-        <div className="phosphor-glow" />
-      </div>
+    <div className="relative min-h-screen text-foreground">
+      <div className="atmosphere" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
+      <SiteNav />
 
-      <Nav />
-      <main className="pt-14">
+      <main>
         <Hero />
-        <NowSection />
-        <ProjectsSection />
-        <StackSection />
-        <ActivitySection />
-        <TelemetrySection />
-        <ContactSection />
-        <SiteFooter />
-      </main>
-    </div>
-  );
-}
 
-// ── Footer ─────────────────────────────────────────────────────────────────────
-const FOOTER_COLS = [
-  {
-    h: 'Explore',
-    links: [
-      { href: '/#now', l: 'Now' },
-      { href: '/#projects', l: 'Projects' },
-      { href: '/#stack', l: 'Stack' },
-      { href: '/blog', l: 'Blog' },
-    ],
-  },
-  {
-    h: 'Connect',
-    links: [
-      { href: 'https://github.com/ykstorm', l: 'GitHub' },
-      { href: 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152', l: 'LinkedIn' },
-      { href: 'https://npmjs.com/~ykstormsorg', l: 'npm' },
-      { href: 'mailto:raolakshyaraj@gmail.com', l: 'Email' },
-      { href: '/resume', l: 'Résumé' },
-    ],
-  },
-];
+        <Section id="work" intro="My job at Homesty.ai first, then projects I built on my own. Each card starts with the problem it solves.">
+          {flagship && (
+            <div className="mb-5">
+              <FlagshipCard project={flagship} />
+            </div>
+          )}
+          <HoverEffect items={others.map((p) => ({ id: p.id, content: <ProjectCard project={p} /> }))} />
+        </Section>
 
-// Clean, non-terminal footer — the hero and contact sections are already
-// terminals; a third would be redundant. This is the quiet editorial coda.
-function SiteFooter() {
-  const year = new Date().getFullYear();
-  return (
-    <footer className="border-t border-[var(--border)] mt-10">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="grid gap-8 sm:grid-cols-[1.6fr_1fr_1fr]">
-          <div>
-            <p className="font-display text-lg text-zinc-800 dark:text-zinc-100">Lakshyaraj Singh Rao</p>
-            <p className="mt-2 text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
-              The reliability layer for production AI — refusal, guardrails, eval-gating, idempotency.
-            </p>
-            <p className="mt-4 text-[11px] mono text-amber-700 dark:text-amber-400/90 tracking-wide">
-              Open to backend / AI-infra roles
-            </p>
+        <Section id="proof" intro="Read from npm and GitHub when this page was built, not typed in. If a check is failing, it shows as failing.">
+          <ProofSection proof={proof} />
+        </Section>
+
+        <Section id="now" intro="What I am doing at the moment.">
+          <dl className="divide-y divide-border border-y border-border">
+            {NOW_ROWS.map((r) => (
+              <div key={r.label} className="grid gap-1 py-5 sm:grid-cols-[10rem_1fr] sm:gap-8">
+                <dt className="mono text-[13px] text-accent">{r.label}</dt>
+                <dd className="max-w-prose leading-relaxed">{r.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mono mt-4 text-[12px] text-muted-foreground">
+            Updated {formatDate(nowData.updated_at)}.{' '}
+            <Link href="/now" className="underline underline-offset-4 hover:text-accent">
+              The now page
+            </Link>{' '}
+            has the same, on its own.
+          </p>
+        </Section>
+
+        <Section id="stack" intro="The tools I use, as listed on my resume, plus what my projects run on.">
+          <dl className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+            {STACK.map((s) => (
+              <div key={s.group}>
+                <dt className="mono text-[13px] text-accent">{s.group}</dt>
+                <dd className="mt-3">
+                  <ul className="flex flex-wrap gap-1.5">
+                    {s.items.map((item) => (
+                      <li key={item} className="mono rounded-[3px] border border-border px-2 py-1 text-[12px]">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </Section>
+
+        <Section id="writing" intro="Longer notes on how the projects work and what broke while building them.">
+          <ul className="divide-y divide-border border-y border-border">
+            {posts.map((post) => (
+              <li key={post.slug}>
+                <Link href={`/blog/${post.slug}`} className="group grid gap-2 py-6 sm:grid-cols-[1fr_auto] sm:gap-8">
+                  <span>
+                    <span className="font-display block text-xl tracking-tight transition-colors group-hover:text-accent sm:text-2xl">
+                      {post.metadata.title}
+                    </span>
+                    <span className="mt-2 block max-w-prose text-[15px] leading-relaxed text-muted-foreground">{post.metadata.description}</span>
+                  </span>
+                  <time dateTime={post.metadata.date} className="mono text-[12px] text-muted-foreground sm:pt-2">
+                    {formatDate(post.metadata.date)}
+                  </time>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        <Section id="contact" intro="Email, LinkedIn, GitHub or npm. The resume is one page.">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
+            <TerminalContact />
+            <div className="panel p-5">
+              <p className="font-display text-lg">Resume</p>
+              <p className="mt-1 text-[14px] text-muted-foreground">One page, as a PDF.</p>
+              <div className="mono mt-4 flex flex-wrap gap-3 text-[13px]">
+                <a
+                  href={RESUME_PDF}
+                  download
+                  className="rounded-[4px] bg-accent px-3 py-1.5 text-accent-ink transition-colors hover:bg-accent-strong"
+                >
+                  Download the PDF
+                </a>
+                <Link href="/resume" className="rounded-[4px] border border-border-strong px-3 py-1.5 transition-colors hover:border-accent hover:text-accent">
+                  Read it here
+                </Link>
+              </div>
+            </div>
           </div>
+        </Section>
+      </main>
 
-          {FOOTER_COLS.map((col) => (
-            <nav key={col.h} aria-label={col.h}>
-              <p className="section-label text-[10px] mb-3">{col.h}</p>
-              <ul className="space-y-2.5">
-                {col.links.map(({ href, l }) => (
-                  <li key={l}>
-                    <a
-                      href={href}
-                      target={href.startsWith('http') ? '_blank' : undefined}
-                      rel="noopener noreferrer"
-                      className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
-                    >
-                      {l}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-        </div>
-
-        <div className="mt-10 pt-5 border-t border-[var(--border)] text-[11px] text-zinc-500 dark:text-zinc-500">
-          <p>© {year} Lakshyaraj Singh Rao · Mumbai, India</p>
-        </div>
-      </div>
-    </footer>
+      <SiteFooter year={year} />
+    </div>
   );
 }

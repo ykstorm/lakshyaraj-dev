@@ -1,28 +1,27 @@
 ---
 title: "Stackup"
-description: "Production Kubernetes locally in 10 minutes. ArgoCD + Argo Rollouts + Grafana."
-date: "2026-05-02"
+description: "A production-shaped Kubernetes cluster on a laptop, in one command."
 ---
 
-## What it does
+## The problem
 
-Stackup stands up a production-shaped Kubernetes cluster on a laptop in about ten minutes. It uses kind for the cluster and layers on ArgoCD, Argo Rollouts, Prometheus, Grafana, Loki, and Tempo. Everything is wired through GitOps from the first commit, so the cluster state is whatever the repo says it is. The goal is to practice the real moving parts without a cloud bill.
+Practising real deployments usually means renting a cloud cluster you pay for every month. And canary rollouts, metrics and GitOps only make sense together: you cannot learn how a bad rollout shows up in a dashboard if the dashboard was never wired in.
 
-## Why this approach
+## How it works
 
-Most Kubernetes tutorials stop at `kubectl run nginx` and call it a day. But canary rollouts, metrics, traces, logs, and GitOps only make sense together — you can't learn how a bad rollout shows up in Grafana if you never wired Grafana in. Bundling them means you see the whole loop. The trade-off is that kind fakes some of what a real cloud cluster does, so a few lessons don't carry over unchanged.
+Stackup bootstraps a kind cluster, ArgoCD syncs the rest, Argo Rollouts canaries advance only while the success rate holds and roll back on their own.
 
-## How it's built
+- One `make` target starts a cluster on a laptop with Docker and kind.
+- ArgoCD then takes over and deploys whatever is in the Git repository, so the cluster is whatever the repo says it is.
+- A new version goes to a small share of traffic first. Prometheus watches the success rate, and the rollout only moves forward while it holds. If it drops, the rollout reverts without anyone stepping in.
+- Grafana shows the same metrics the rollout is gated on.
 
-A Makefile bootstraps a kind cluster, then ArgoCD takes over and syncs the rest from the repo: Argo Rollouts for canary deploys, Prometheus and Grafana for metrics, Loki for logs, Tempo for traces. After bootstrap, changes go through git and ArgoCD reconciles them, the same way you'd run it for real.
+## What it does not do
 
-## Known limitations
+- kind runs on one machine, so node failure and cross-node scheduling are out of scope.
+- There is no real autoscaling to practise against.
+- Volumes are local, with no cloud storage class.
 
-- kind can't do real autoscaling, so the cluster-autoscaler lessons are simulated.
-- Persistent volumes are local-only; there's no cloud storage class to practice against.
-- The ArgoCD repo URL is hard-coded, so using your own fork means editing it first.
-- It's a single-node setup, so node-failure and scheduling-across-nodes scenarios don't apply.
+## Links
 
-## Where it runs
-
-- GitHub: github.com/ykstorm/stackup
+- Code: [github.com/ykstorm/stackup](https://github.com/ykstorm/stackup)

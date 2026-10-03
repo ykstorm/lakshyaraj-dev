@@ -1,29 +1,29 @@
 ---
 title: "Quickdraw"
-description: "Benchmark LLM streaming — TTFT, TPS, $/1K tokens."
-date: "2026-05-08"
+description: "Measures how an LLM streams on your network and your prompts."
 ---
 
-## What it does
+## The problem
 
-Quickdraw is a CLI that measures how an LLM actually streams for you. It records time-to-first-token, tokens per second, total latency, and cost, then writes the results to CSV and JSON. It runs nightly in CI so the numbers track over time. The output is meant to be diffed and charted, not just read once.
+Claims that a model is fast come from someone else's network and someone else's prompts. The numbers that matter are the ones your own app will hit.
 
-## Why this approach
+## How it works
 
-Every "fast model" claim comes from a benchmark run in someone else's lab, on their network, with their prompts. I wanted the numbers from my own network and my own prompt shapes, because those are what my apps actually hit. Running it nightly turns a one-off measurement into a trend. The trade-off is that these numbers describe my setup, not a universal ranking.
+Quickdraw records time to first token, tokens per second, latency and cost for your prompts, in CI so the numbers become a trend.
 
-## How it's built
+- A command-line tool sends your prompts to a model and times the stream as it arrives.
+- Cost comes from a table of public per-token prices.
+- Results are written to CSV and JSON so they can be diffed and charted.
+- Run on a schedule in CI, each run adds a point to the history instead of being read once and forgotten.
 
-A single-process CLI that fires requests at a model, times the stream token by token, and computes the metrics from those timings. Pricing for the cost column comes from a table of public per-token rates. Results go to CSV and JSON; a CI job runs it on a schedule and keeps the history.
+## What it does not do
 
-## Known limitations
+- It sends one request at a time, so it shows nothing about behaviour under concurrent load.
+- Cold and warm starts are not separated, so a slow first call can skew a run.
+- Cost uses list prices and ignores any discount you have negotiated.
+- The numbers describe your network and prompts, not a general ranking of models.
 
-- Single requester. It doesn't simulate concurrent load, so it won't show queueing behavior.
-- Cold-start and warm-start latency aren't separated; an unlucky first call skews a run.
-- Cost assumes public list pricing and ignores any committed-use or volume discount.
-- Numbers are tied to my network and prompts, so they don't transfer cleanly to yours.
+## Links
 
-## Where it runs
-
-- GitHub: github.com/ykstorm/quickdraw
-- npm: @ykstormsorg/quickdraw
+- Code: [github.com/ykstorm/quickdraw](https://github.com/ykstorm/quickdraw)
+- npm: [@ykstormsorg/quickdraw](https://www.npmjs.com/package/@ykstormsorg/quickdraw)

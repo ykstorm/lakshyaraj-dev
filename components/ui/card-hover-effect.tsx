@@ -1,11 +1,12 @@
 'use client';
 
 // Project grid with spring-physics cards. Each card:
-//  • staggers in once on first viewport,
-//  • tilts in 3D toward the cursor via useSpring (smoothed, max ~7°) and lifts,
-//  • slides a brand-tinted highlight behind the hovered one (shared layoutId),
-//  • taps down on touch (whileTap) instead of tilting.
-// prefers-reduced-motion → no tilt, no entry motion, just the static grid.
+//  - tilts in 3D toward the cursor via useSpring (smoothed, max ~7°) and lifts,
+//  - slides an accent-tinted highlight behind the hovered one (shared layoutId),
+//  - taps down on touch (whileTap) instead of tilting.
+// Cards render visible from the first paint: no entrance animation, so the
+// grid is readable without JavaScript. prefers-reduced-motion: no tilt, no
+// tap, and the highlight appears on the hovered card without sliding there.
 import { useState } from 'react';
 import {
   AnimatePresence,
@@ -18,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 
 const SPRING = { stiffness: 150, damping: 16, mass: 0.4 };
+const HIGHLIGHT = 'pointer-events-none absolute -inset-px block rounded-[7px] bg-[var(--accent-wash)]';
 
 function TiltCard({
   index,
@@ -54,10 +56,6 @@ function TiltCard({
 
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0, y: 18, scale: 0.985 }}
-      whileInView={reduce ? undefined : { opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ type: 'spring', stiffness: 260, damping: 26, mass: 0.7, delay: Math.min(index * 0.04, 0.16) }}
       onMouseEnter={() => {
         setHovered(index);
         if (!reduce) lift.set(1);
@@ -78,17 +76,23 @@ function TiltCard({
       }
       className="relative group block h-full w-full [will-change:transform]"
     >
-      <AnimatePresence>
-        {hovered === index && (
-          <motion.span
-            className="pointer-events-none absolute -inset-px block rounded-xl bg-emerald-500/10 dark:bg-amber-500/10"
-            layoutId="card-hover-bg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { duration: 0.15 } }}
-            exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.1 } }}
-          />
-        )}
-      </AnimatePresence>
+      {reduce ? (
+        // Still path: the highlight sits on the hovered card, with no slide or fade.
+        hovered === index && <span aria-hidden className={HIGHLIGHT} />
+      ) : (
+        <AnimatePresence>
+          {hovered === index && (
+            <motion.span
+              aria-hidden
+              className={HIGHLIGHT}
+              layoutId="card-hover-bg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { duration: 0.15 } }}
+              exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.1 } }}
+            />
+          )}
+        </AnimatePresence>
+      )}
       <div className="relative z-10 h-full">{children}</div>
     </motion.div>
   );

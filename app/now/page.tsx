@@ -1,83 +1,42 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import nowData from '@/data/now.json';
+import { Subpage, formatDate } from '@/components/subpage';
 
 export const metadata: Metadata = {
-  title: 'Now — Lakshyaraj Singh Rao',
+  title: 'Now',
   description: 'What I am working on right now.',
   alternates: { canonical: '/now' },
-  openGraph: { title: 'Now — Lakshyaraj Singh Rao', description: 'What I am working on right now.', url: '/now' },
+  openGraph: { title: 'Now', description: 'What I am working on right now.', url: '/now' },
 };
 
+const ROWS: { label: string; value: string }[] = [
+  { label: 'Building', value: nowData.building },
+  { label: 'Studying', value: nowData.studying },
+  { label: 'Based in', value: nowData.location },
+  { label: 'Open to', value: nowData.open_to },
+];
+
 export default function NowPage() {
+  const updated = formatDate(nowData.updated_at);
   return (
-    <div className="min-h-screen bg-white dark:bg-[#050505] text-zinc-800 dark:text-zinc-100">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-        <Link
-          href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-        >
-          ← back
-        </Link>
+    <Subpage crumbs={[{ label: 'now' }]}>
+      <h1 className="font-display text-4xl tracking-tight sm:text-5xl">Now</h1>
+      <p className="mt-3 max-w-prose text-muted-foreground">A snapshot of what I am doing, updated when it changes.</p>
 
-        <div className="mt-8 mb-10">
-          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Now</span>
-          <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">What I&apos;m doing now</h1>
-          <p className="mt-2 text-[13px] text-zinc-500 font-mono">
-            A snapshot, not a feed. Updated when the work changes.
-          </p>
-        </div>
+      <dl className="mt-10 divide-y divide-border border-y border-border">
+        {ROWS.map((r) => (
+          <div key={r.label} className="grid gap-1 py-5 sm:grid-cols-[9rem_1fr] sm:gap-6">
+            <dt className="mono text-[13px] text-accent">{r.label}</dt>
+            <dd className="max-w-prose leading-relaxed">{r.value}</dd>
+          </div>
+        ))}
+      </dl>
 
-        <div className="space-y-6">
-          <section className="telemetry-card space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
-              <span className="section-label text-[10px]">Current focus</span>
-            </div>
-            <p className="font-mono text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">{nowData.current}</p>
-          </section>
-
-          <section className="telemetry-card space-y-3">
-            <span className="section-label text-[10px]">Just shipped</span>
-            <ul className="space-y-2">
-              {nowData.shipped_this_week.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                  <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="telemetry-card space-y-3">
-            <span className="section-label text-[10px]">Up next</span>
-            <ul className="space-y-2">
-              {nowData.next_up.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                  <span className="text-amber-600 dark:text-amber-400 mt-0.5">›</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="telemetry-card space-y-3">
-            <span className="section-label text-[10px]">Open to</span>
-            <ul className="space-y-2">
-              {nowData.open_to.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-[13px] text-zinc-600 dark:text-zinc-400">
-                  <span className="text-green-600 dark:text-green-400 mt-0.5">›</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-600 pt-2">
-            Last updated {nowData.updated_at}
-          </p>
-        </div>
-      </div>
-    </div>
+      {updated && (
+        <p className="mono mt-6 text-xs text-muted-foreground">
+          Last updated <time dateTime={nowData.updated_at}>{updated}</time>
+        </p>
+      )}
+    </Subpage>
   );
 }

@@ -1,97 +1,63 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getContentBySlug, getContentFiles } from '@/lib/content';
 import { notFound } from 'next/navigation';
-import projectsData from '@/data/projects.json';
-import type { Project } from '@/components/ui/project-card';
+import { getContentBySlug, getContentFiles } from '@/lib/content';
+import { PROJECTS, projectLinks } from '@/lib/projects';
+import { Markdown } from '@/components/markdown';
+import { Subpage } from '@/components/subpage';
 
 export async function generateStaticParams() {
   const projects = await getContentFiles('projects');
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-// Per-project metadata — otherwise every project page inherited the root
-// title/description and canonicalized to the home page (invisible to search).
+// Per-project metadata, so each page has its own title and canonical URL
+// instead of inheriting the home page's.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const project = await getContentBySlug('projects', slug);
   if (!project) return {};
-  const meta = (projectsData as Project[]).find((p) => p.id === slug);
-  const description = project.metadata.description || meta?.description;
+  const meta = PROJECTS.find((p) => p.id === slug);
+  const description = project.metadata.description || meta?.tagline;
   return {
     title: project.metadata.title,
     description,
     alternates: { canonical: `/projects/${slug}` },
-    openGraph: {
-      type: 'article',
-      title: project.metadata.title,
-      description,
-      url: `/projects/${slug}`,
-    },
+    openGraph: { type: 'article', title: project.metadata.title, description, url: `/projects/${slug}` },
   };
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getContentBySlug('projects', slug);
-
-  if (!project) {
-    notFound();
-  }
-
-  const meta = (projectsData as Project[]).find((p) => p.id === slug);
-  const live = meta?.demo || meta?.playground;
+  if (!project) notFound();
+  const meta = PROJECTS.find((p) => p.id === slug);
+  const links = meta ? projectLinks(meta) : [];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#050505] text-zinc-800 dark:text-zinc-100">
-      {/* Sticky thin top bar */}
-      <div className="sticky top-0 z-40 border-b border-zinc-200/70 dark:border-zinc-800/60 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-11 flex items-center gap-4 text-[12px] font-mono">
-          <Link href="/#projects" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-            ← Back
-          </Link>
-          <span className="text-zinc-400 dark:text-zinc-600">/</span>
-          <span className="text-zinc-700 dark:text-zinc-200 font-semibold truncate">{project.metadata.title}</span>
-          <div className="ml-auto flex items-center gap-4">
-            {live && (
-              <a href={live} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                Live
-              </a>
-            )}
-            {meta?.code && (
-              <a href={meta.code} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                Code
-              </a>
-            )}
-            {meta?.npm && (
-              <a href={`https://npmjs.com/package/${meta.npm}`} target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                npm
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <article className="space-y-6">
-          <header className="space-y-2">
-            <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Project</span>
-            <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">
-              {project.metadata.title}
-            </h1>
-            <p className="text-zinc-600 dark:text-zinc-400">{project.metadata.description}</p>
-            {project.metadata.date && (
-              <time className="block text-sm font-mono text-zinc-500">
-                {new Date(project.metadata.date).toLocaleDateString()}
-              </time>
-            )}
-          </header>
-
-          <div className="prose prose-zinc dark:prose-invert max-w-none whitespace-pre-wrap text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            {project.content}
-          </div>
-        </article>
-      </div>
-    </div>
+    <Subpage crumbs={[{ href: '/#work', label: 'work' }, { label: slug }]}>
+      <article>
+        <header className="mb-10 border-b border-border pb-8">
+          <h1 className="font-display text-4xl tracking-tight sm:text-5xl">{project.metadata.title}</h1>
+          <p className="mt-4 max-w-prose text-lg leading-snug text-accent">{project.metadata.description}</p>
+          {meta && (
+            <ul className="mt-6 flex flex-wrap gap-1.5" aria-label="Stack">
+              {meta.stack.map((s) => (
+                <li key={s} className="mono rounded-[3px] border border-border px-2 py-0.5 text-[11.5px] text-muted-foreground">{s}</li>
+              ))}
+            </ul>
+          )}
+          {links.length > 0 && (
+            <div className="mono mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px]">
+              {links.map((l) => (
+                <a key={l.kind} href={l.href} target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border-strong underline-offset-4 hover:text-accent hover:decoration-accent">
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </header>
+        <Markdown source={project.content} />
+      </article>
+    </Subpage>
   );
 }

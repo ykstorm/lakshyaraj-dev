@@ -2,66 +2,86 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 /* Fonts are loaded via next/font in app/layout.tsx (Tailwind v4's bundler drops
-   bare @import url() font links), which defines --font-sans/-mono/-display. */
+   bare @import url() font links), which defines --ff-sans/-mono/-display. */
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── Tokens ───────────────────────────────────────────────────────────────────
+   One accent: signal amber, the light on a control panel that means "held, safe".
+   Green and red appear only as pass/fail status, never as decoration.
+   Dark is the primary theme; light is the same system on bone paper. */
 @layer base {
   :root {
-    /* ── Light: engineering blueprint paper ─────────────────────────────── */
-    --background: #f4f1e9;        /* warm parchment, not stark white */
-    --foreground: #1b1a17;        /* ink */
-    --accent: #b45309;            /* rich amber-700, readable on paper */
-    --accent-2: #047857;          /* emerald-700 */
-    --muted: #ebe7db;
-    --muted-foreground: #6c675b;
-    --border: #d8d2c2;
-    --card: #fbfaf4;
-    --card-foreground: #1b1a17;
-    --grid: rgba(27, 26, 23, 0.045);
-    --glow: rgba(180, 83, 9, 0.10);
-    --scan: rgba(27, 26, 23, 0.018);
+    --background: #ecebe6;        /* bone paper, neutral rather than cream */
+    --foreground: #17181a;        /* ink */
+    --card: #f5f4f0;
+    --muted: #e2e0d9;
+    --muted-foreground: #5f5e58;  /* 5.4:1 on --background */
+    --border: #d3d0c7;
+    --border-strong: #b9b5a9;
+    --accent: #8f5306;            /* burnished amber, 5.2:1 on --background */
+    --accent-strong: #6f4004;
+    --accent-ink: #f5f4f0;        /* text on an accent fill */
+    --accent-wash: rgba(143, 83, 6, 0.08);
+    --ok: #23784f;
+    --bad: #b23b25;
+    --grid: rgba(23, 24, 26, 0.04);
+    --scan: rgba(23, 24, 26, 0.016);
+    --glow: rgba(143, 83, 6, 0.08);
 
-    /* contribution-graph scale (teal/emerald ink on paper) */
-    --cal-0: #e6e1d2;
-    --cal-1: #b8e3d6;
-    --cal-2: #6fccbb;
-    --cal-3: #1f9e96;
-    --cal-4: #0e7490;
+    /* canvas glyph colours (read by the hero canvas at runtime) */
+    --glyph: 23, 24, 26;          /* r, g, b */
+    --glyph-hot: 143, 83, 6;
 
-    /* --ff-sans / --ff-mono / --ff-display come from next/font (layout.tsx).
-       Re-point Tailwind's theme tokens at the webfonts so font-sans/font-mono
-       utilities resolve to them too (defined after the shadcn import → wins). */
+    /* commit calendar, amber on paper */
+    --cal-0: #dedbd2;
+    --cal-1: #ecd3a0;
+    --cal-2: #d9a650;
+    --cal-3: #b47a22;
+    --cal-4: #7d4805;
+
     --font-sans: var(--ff-sans);
     --font-mono: var(--ff-mono);
     font-family: var(--ff-sans), system-ui, -apple-system, sans-serif;
   }
 
   .dark {
-    /* ── Dark: phosphor terminal ────────────────────────────────────────── */
-    --background: #050706;        /* near-black, faint green cast */
-    --foreground: #d6e0d8;
-    --accent: #f5b53d;
-    --accent-2: #34d399;
-    --muted: #0e1411;
-    --muted-foreground: #6b7672;
-    --border: #1b2420;
-    --card: #090c0a;
-    --card-foreground: #e7efe9;
-    --grid: rgba(52, 211, 153, 0.055);
-    --glow: rgba(245, 181, 61, 0.12);
-    --scan: rgba(0, 0, 0, 0.22);
+    --background: #0b0c0e;        /* ink, faintly cool so the amber reads warm */
+    --foreground: #e9e6de;        /* bone */
+    --card: #111316;
+    --muted: #16181c;
+    --muted-foreground: #8f8c83;  /* 5.8:1 on --background */
+    --border: #23262c;
+    --border-strong: #353942;
+    --accent: #f2a93b;            /* signal amber, 9.8:1 on --background */
+    --accent-strong: #ffc266;
+    --accent-ink: #0b0c0e;
+    --accent-wash: rgba(242, 169, 59, 0.08);
+    --ok: #4fbf8a;
+    --bad: #f0745a;
+    --grid: rgba(233, 230, 222, 0.03);
+    --scan: rgba(0, 0, 0, 0.2);
+    --glow: rgba(242, 169, 59, 0.07);
 
-    /* contribution-graph scale (phosphor emerald on black) */
-    --cal-0: #14201a;
-    --cal-1: #143b2e;
-    --cal-2: #1c6b4f;
-    --cal-3: #25a06f;
-    --cal-4: #34d399;
+    --glyph: 233, 230, 222;
+    --glyph-hot: 242, 169, 59;
+
+    --cal-0: #17191c;
+    --cal-1: #3b2d15;
+    --cal-2: #6e4c18;
+    --cal-3: #b07621;
+    --cal-4: #f2a93b;
   }
 
   html {
     scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
 
   * {
@@ -78,33 +98,20 @@
 
   ::selection {
     background-color: var(--accent);
-    color: var(--background);
+    color: var(--accent-ink);
   }
 
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--background);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 0;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
   }
 
-  /* ── Background atmosphere keyframes ───────────────────────────────────── */
-  @keyframes glow-drift {
-    0%   { transform: translate3d(-8%, -6%, 0) scale(1); }
-    50%  { transform: translate3d(10%, 8%, 0) scale(1.15); }
-    100% { transform: translate3d(-8%, -6%, 0) scale(1); }
-  }
-  @keyframes scan-sweep {
-    0%   { transform: translateY(-120%); }
-    100% { transform: translateY(120%); }
-  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--background); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
   @keyframes caret-blink {
     0%, 49%   { opacity: 1; }
     50%, 100% { opacity: 0; }
@@ -117,126 +124,182 @@
   @media (prefers-reduced-motion: reduce) {
     .page-fade { animation: none; }
   }
-  @keyframes spotlight {
-    0%   { opacity: 0; transform: translate(-72px, -62px) scale(0.5); }
-    100% { opacity: 1; transform: translate(-50%, -40%) scale(1); }
+
+  /* Reduced motion: every CSS transition and keyframe lands on its end state at
+     once (hover colours, card scanlines and corners included). The canvas, the
+     terminal intro and the tilt cards have their own still paths in code. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
+    }
   }
 }
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+}
+
 @layer components {
-  /* ── Typographic primitives ────────────────────────────────────────────── */
-  /* Space Grotesk — geometric grotesque display voice. */
+  /* ── Type ───────────────────────────────────────────────────────────────── */
   .font-display {
     font-family: var(--ff-display);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
   .mono {
     font-family: var(--ff-mono);
   }
 
-  /* Section labels are terminal-native: mono, tracked, a caret prompt (❯) — not
-     the "// comment" cliché. */
-  .section-label {
+  /* Section headings are terminal paths: the hero terminal can `cd` to each
+     one, so the ~/name beside a heading is where that command lands. */
+  .path {
     font-family: var(--ff-mono);
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--accent) 85%, var(--foreground));
-  }
-  .section-label .caret {
+    font-size: 0.8125rem;
     color: var(--accent);
-    margin-right: 0.5em;
-    font-weight: 700;
+    letter-spacing: 0;
   }
 
-  /* ── Fixed background stack (grid + scanlines + drifting phosphor glow) ─── */
-  .terminal-bg {
+  /* ── Page atmosphere: faint grid + scanlines, fixed behind everything ──── */
+  .atmosphere {
     position: fixed;
     inset: 0;
     z-index: -10;
-    overflow: hidden;
     pointer-events: none;
     background-color: var(--background);
   }
-  .terminal-bg::before {
-    /* blueprint / phosphor grid, faded toward the page center */
+  .atmosphere::before {
     content: '';
     position: absolute;
-    inset: -2px;
+    inset: 0; /* a negative inset here made the page 2px wider than the viewport */
     background-image:
       linear-gradient(var(--grid) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 34px 34px;
-    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 18%, #000 30%, transparent 82%);
-            mask-image: radial-gradient(ellipse 90% 70% at 50% 18%, #000 30%, transparent 82%);
+    background-size: 36px 36px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
   }
-  .terminal-bg::after {
-    /* CRT scanlines, extremely subtle */
+  .atmosphere::after {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent 0 2px,
-      var(--scan) 2px 3px
-    );
-    opacity: 0.6;
+    background-image: repeating-linear-gradient(to bottom, transparent 0 2px, var(--scan) 2px 3px);
+    opacity: 0.5;
   }
-  /* film grain — fixed SVG fractal-noise overlay, very low opacity */
   .grain {
     position: fixed;
     inset: 0;
     z-index: -9;
     pointer-events: none;
-    opacity: 0.04;
+    opacity: 0.035;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 140px 140px;
   }
 
-  .phosphor-glow {
+  /* ── Hero ───────────────────────────────────────────────────────────────── */
+  /* The canvas fades in once, after the first frame is drawn. Reduced motion
+     shows it at once. */
+  .world-canvas {
+    opacity: 0;
+    transition: opacity 0.9s ease-out;
+  }
+  .world-canvas[data-ready='true'] { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .world-canvas { transition: none; }
+  }
+
+  /* Composition. Small screens: the world shows in a band between the copy and
+     the terminal (placed via [data-world-anchor]); the copy carries its own
+     scrim. Large screens: copy on the left over a dimmed world, the world at
+     full strength on the right, fading out at the bottom edge. */
+  .world-stage {
+    --world-horizon: 0.5;
+    --world-bias: 0;
+    --world-orbit-x: 0.5;
+    --world-orbit-y: 0.56;
+    --world-orbit-scale: 1;
+    -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  }
+  .text-scrim {
+    position: relative;
+    isolation: isolate;
+  }
+  .text-scrim::before {
+    content: '';
     position: absolute;
-    top: -20%;
-    left: 28%;
-    width: 60vw;
-    height: 60vw;
-    max-width: 760px;
-    max-height: 760px;
-    border-radius: 9999px;
-    background: radial-gradient(circle at center, var(--glow), transparent 68%);
-    filter: blur(40px);
-    animation: glow-drift 22s ease-in-out infinite;
+    inset: -1.5rem -1rem -2.5rem;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--background) 82%, transparent) 0%,
+      color-mix(in srgb, var(--background) 70%, transparent) 70%,
+      transparent 100%
+    );
+  }
+  @media (min-width: 1024px) {
+    .world-stage {
+      --world-horizon: 0.56;
+      --world-bias: 0.72;
+      --world-orbit-x: 0.73;
+      --world-orbit-y: 0.48;
+      --world-orbit-scale: 0.78;
+      -webkit-mask-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.26) 38%, #000 62%),
+        linear-gradient(to bottom, #000 84%, transparent 100%);
+      -webkit-mask-composite: source-in;
+              mask-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.26) 38%, #000 62%),
+        linear-gradient(to bottom, #000 84%, transparent 100%);
+              mask-composite: intersect;
+    }
+    .text-scrim::before { display: none; }
+  }
+
+  .hint-touch { display: none; }
+  @media (hover: none) {
+    .hint-fine { display: none; }
+    .hint-touch { display: inline; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .phosphor-glow { animation: none; }
+    .world-hint { display: none; }
   }
 
-  /* ── Cards ──────────────────────────────────────────────────────────────── */
-  .telemetry-card {
+  /* ── Panels ─────────────────────────────────────────────────────────────── */
+  .panel {
     position: relative;
     border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background-color: color-mix(in srgb, var(--card) 70%, transparent);
+    border-radius: 6px;
+    background-color: color-mix(in srgb, var(--card) 78%, transparent);
     backdrop-filter: blur(4px);
-    transition: border-color 0.2s ease, transform 0.2s ease;
-  }
-  .telemetry-card:hover {
-    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
   }
 
-  /* terminal window chrome shared by hero + contact */
+  /* terminal window chrome, shared by the hero and contact terminals */
   .term-window {
     font-family: var(--ff-mono);
-    border: 1px solid var(--border);
-    border-radius: 0.6rem;
-    background-color: color-mix(in srgb, var(--card) 90%, transparent);
-    backdrop-filter: blur(6px);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background-color: color-mix(in srgb, var(--card) 84%, transparent);
+    backdrop-filter: blur(10px);
     overflow: hidden;
     box-shadow:
-      0 1px 0 color-mix(in srgb, var(--accent) 12%, transparent) inset,
-      0 24px 60px -30px rgba(0, 0, 0, 0.55);
+      0 1px 0 color-mix(in srgb, var(--accent) 14%, transparent) inset,
+      0 30px 70px -36px rgba(0, 0, 0, 0.6);
   }
   .term-titlebar {
     display: flex;
@@ -246,38 +309,85 @@
     border-bottom: 1px solid var(--border);
     background-color: color-mix(in srgb, var(--muted) 70%, transparent);
   }
-  .term-dot { width: 0.6rem; height: 0.6rem; border-radius: 9999px; }
-
-  /* ── Mobile perf ──────────────────────────────────────────────────────────
-     backdrop-filter forces the browser to recomposite everything behind it
-     (incl. the canvas) every frame — brutal on touch GPUs. Drop it there and
-     make the surfaces opaque instead. */
-  @media (hover: none) and (pointer: coarse) {
-    .telemetry-card { backdrop-filter: none; background-color: var(--card); }
-    .term-window    { backdrop-filter: none; background-color: var(--card); }
-    .backdrop-blur, .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg {
-      -webkit-backdrop-filter: none !important;
-      backdrop-filter: none !important;
-    }
+  .term-dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 9999px;
+    background-color: var(--border-strong);
   }
 
-  /* contribution graph scrolls horizontally on narrow screens without an ugly bar */
-  .cal-grid {
-    scrollbar-width: none;
-  }
-  .cal-grid::-webkit-scrollbar {
-    display: none;
-    height: 0;
-  }
-
-  /* corner brackets used on project cards */
+  /* corner brackets on project cards */
   .corner {
     position: absolute;
     width: 0.7rem;
     height: 0.7rem;
-    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
-    opacity: 0.3;
+    border-color: color-mix(in srgb, var(--accent) 75%, transparent);
+    opacity: 0.25;
     transition: opacity 0.25s ease;
   }
-  .group:hover .corner { opacity: 0.85; }
+  .group:hover .corner,
+  .group:focus-within .corner { opacity: 0.9; }
+
+  /* status words in the proof tables */
+  .state-ok   { color: var(--ok); }
+  .state-bad  { color: var(--bad); }
+  .state-wait { color: var(--accent); }
+
+  /* commit calendar scrolls sideways on narrow screens without a visible bar */
+  .cal-scroll { scrollbar-width: none; }
+  .cal-scroll::-webkit-scrollbar { display: none; height: 0; }
+
+  /* ── Rendered markdown (blog posts and project pages) ──────────────────── */
+  .md { color: var(--foreground); font-size: 1rem; line-height: 1.7; }
+  .md > * + * { margin-top: 1.1em; }
+  .md h2 {
+    font-family: var(--ff-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-size: 1.4rem;
+    line-height: 1.25;
+    margin-top: 2.2em;
+  }
+  .md h3 { font-weight: 700; font-size: 1.1rem; margin-top: 1.8em; }
+  .md p, .md li { color: color-mix(in srgb, var(--foreground) 86%, var(--muted-foreground)); }
+  .md a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .md a:hover { color: var(--accent-strong); }
+  .md strong { color: var(--foreground); font-weight: 700; }
+  .md ul, .md ol { padding-left: 1.3em; }
+  .md ul { list-style: disc; }
+  .md ol { list-style: decimal; }
+  .md li + li { margin-top: 0.4em; }
+  .md li::marker { color: var(--accent); }
+  .md code {
+    font-family: var(--ff-mono);
+    font-size: 0.86em;
+    padding: 0.12em 0.36em;
+    border-radius: 4px;
+    background: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .md pre {
+    font-family: var(--ff-mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    padding: 1rem 1.1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    overflow-x: auto;
+  }
+  .md pre code { padding: 0; border: 0; background: none; font-size: inherit; }
+  .md blockquote {
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
+    color: var(--muted-foreground);
+  }
+
+  /* ── Touch GPUs: backdrop-filter recomposites the canvas every frame ──── */
+  @media (hover: none) and (pointer: coarse) {
+    .panel, .term-window {
+      backdrop-filter: none;
+      background-color: var(--card);
+    }
+  }
 }
