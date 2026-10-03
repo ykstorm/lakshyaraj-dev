@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FooterName } from '@/components/footer-name';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 // Section links use the same names the terminal's `cd` command takes.
@@ -77,7 +78,7 @@ export function SiteFooter({ year }: { year: number }) {
     <footer className="border-t border-border px-4 py-12 sm:px-6">
       <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-[1.6fr_1fr_1fr]">
         <div>
-          <p className="font-display text-lg">Lakshyaraj Singh Rao</p>
+          <FooterName />
           <p className="mt-2 max-w-xs text-[14px] leading-relaxed text-muted-foreground">
             I build backend systems that fail safely. Mumbai, open to Bangalore.
           </p>

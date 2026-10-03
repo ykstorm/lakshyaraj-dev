@@ -491,7 +491,7 @@ export class WorldEngine {
     const near = 1 - smoothstep(this.zNear, this.zNear * 5, z);
     const lit = this.facing(c, i, z);
     const p = hash2(this.gkey[i], 17);
-    const density = 0.05 + 0.1 * near + 0.24 * lit;
+    const density = 0.08 + 0.14 * near + 0.3 * lit;
     if (p >= density) return 0;
     return lit > 0.6 && p < density * 0.4 ? GL.colon : GL.dot;
   }
