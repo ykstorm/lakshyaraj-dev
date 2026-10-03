@@ -586,15 +586,17 @@ export class WorldEngine {
         const z = depth[i];
         const fog = smoothstep(zNear, Z_FAR * 0.8, z);
         const k = kind[i];
-        const strength = k === SKYLINE ? 0.95 : k === RIDGE ? 0.62 : k === CONTOUR ? 0.26 + 0.12 * (1 - fog) : 0.2;
-        const alpha = strength * (1 - 0.78 * Math.pow(fog, 0.85));
+        // Ground and contours carry the landscape, so they stay legible at rest;
+        // the far fade keeps about a third of the strength instead of a fifth.
+        const strength = k === SKYLINE ? 0.95 : k === RIDGE ? 0.78 : k === CONTOUR ? 0.44 + 0.14 * (1 - fog) : 0.34;
+        const alpha = strength * (1 - 0.62 * Math.pow(fog, 0.85));
         const x = bx[i] + ox[i];
         const y = by[i] + oy[i];
         this.shown(i, base, x, y);
         const e = energy[i];
         const hot = this.outHot || k === SKYLINE;
         ctx.globalAlpha = Math.min(1, (this.outHot ? Math.max(alpha, 0.35 + 0.6 * e) : alpha) * this.outMul);
-        const size = cellH * (0.86 - 0.3 * fog);
+        const size = cellH * (0.86 - 0.24 * fog);
         atlas.draw(ctx, this.outG, hot ? 1 : 0, x, y, size);
       }
     }
