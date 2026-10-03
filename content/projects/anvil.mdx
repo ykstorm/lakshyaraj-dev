@@ -1,0 +1,31 @@
+---
+title: "Anvil"
+description: "Webhooks that run once, even when the provider sends them twice."
+---
+
+## The problem
+
+Stripe and GitHub re-deliver webhooks, and a worker that crashes after doing the work gets the same event again, so you charge a card twice.
+
+## How it works
+
+Anvil is an Express server in TypeScript with a BullMQ worker behind it.
+
+1. **Verify.** It checks the signature over the raw request body, before anything parses it, with a constant-time compare.
+2. **Dedupe.** It keys each delivery on a hash of the signature plus the payload and remembers it in Redis, so a repeat is dropped.
+3. **Enqueue.** Each valid delivery becomes one BullMQ job, so the sender gets a reply right away and a worker does the real work in the background.
+4. **Retry, then stop.** A failing job retries on a fixed schedule, then moves to a dead-letter queue instead of retrying forever.
+5. **Replay by hand.** The dead-letter queue is never drained by the worker. Replaying a job is a separate, deliberate step, so a job that always fails cannot loop.
+
+It is packaged with Docker and published on npm. The [write-up](/blog/anvil-idempotent-webhooks) walks through each step and the bug the Redis tests caught.
+
+## What it does not do
+
+- You map each provider's signature header yourself.
+- Replay moves one job at a time.
+- BullMQ on Redis is the only queue backend.
+
+## Links
+
+- Code: [github.com/ykstorm/anvil](https://github.com/ykstorm/anvil)
+- npm: [@ykstormsorg/anvil](https://www.npmjs.com/package/@ykstormsorg/anvil)

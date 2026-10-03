@@ -8,7 +8,7 @@ const SITE = 'https://lakshyaraj-dev.vercel.app';
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  const staticRoutes: MetadataRoute.Sitemap = ['', '/now', '/uses', '/resume', '/blog'].map((p) => ({
+  const staticRoutes: MetadataRoute.Sitemap = ['', '/now', '/resume', '/blog'].map((p) => ({
     url: `${SITE}${p}`,
     lastModified: now,
     changeFrequency: 'weekly',

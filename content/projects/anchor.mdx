@@ -1,29 +1,30 @@
 ---
 title: "Anchor"
-description: "Provenance-first RAG that refuses to hallucinate."
-date: "2026-05-20"
+description: "Retrieval that says no source instead of guessing."
 ---
 
-## What it does
+## The problem
 
-Anchor is a RAG library that refuses to answer when it has no source to stand on. Every query runs a cosine-similarity search; if nothing clears the configured floor, it returns `{ answer: null, reason: "no_match" }` instead of guessing. Retrieval and storage sit on Postgres with pgvector. Ingestion is an idempotent upsert keyed on a content hash, so re-running the same documents doesn't duplicate rows.
+A search always returns its closest match, even when nothing in the data is a good answer, and a model given a weak match will answer with confidence. Most RAG demos improvise when nothing in the index matches, and in real estate an improvised answer is a legal problem.
 
-## Why this approach
+## How it works
 
-Most RAG demos quietly paper over the no-source case and let the model improvise. In real estate that improvisation is a legal problem, not a UX wrinkle. So the floor is a config value you set per index, not a heuristic the model talks itself out of. The trade-off is that a too-high floor makes Anchor look ignorant on questions it could half-answer, and tuning that number is on you.
+Anchor runs a cosine search on pgvector and returns a null answer when the best hit falls under a floor you set per index.
 
-## How it's built
+- Listings are stored as vectors in PostgreSQL with pgvector and queried through Prisma.
+- The retrieval step, in TypeScript, embeds the query, scores the best match and compares it with the floor. Above it, you get the chunks. Below it, you get `{ answer: null, reason: "no_match" }`.
+- Ingestion upserts on a hash of each chunk's content, so re-running the same documents does not duplicate rows.
+- A Next.js and React page lets you type a question and see the answer next to the listing it came from, or see the refusal.
 
-A thin TypeScript layer over pgvector: embed the query, run a similarity search, compare the top hit against the floor, and either return the chunks or return the refusal. Ingestion hashes each chunk's content and upserts on that hash. A small Next.js playground lets you watch the retrieval decision for a given query.
+The floor is a config value, not something the model can talk itself out of. The trade-off is that a floor set too high makes Anchor refuse questions it could half answer, and tuning that number is on you.
 
-## Known limitations
+## What it does not do
 
-- One cosine threshold per index. There's no per-query re-ranking or hybrid keyword pass.
-- The embedding model is locked per index. Switching models means a full re-embed.
-- Re-indexing on a schema change is a script you run by hand, not a migration.
-- The floor is a blunt instrument: it can't tell "no source" from "source exists but embeds poorly."
+- One threshold per index. There is no per-query re-ranking or keyword pass.
+- The embedding model is fixed per index. Switching models means re-embedding everything.
+- The floor cannot tell "no source" apart from "a source exists but embeds poorly".
 
-## Where it runs
+## Links
 
-- GitHub: github.com/ykstorm/anchor
-- Demo: anchor-iota-ten.vercel.app/playground
+- Code: [github.com/ykstorm/anchor](https://github.com/ykstorm/anchor)
+- Live demo: [anchor-iota-ten.vercel.app/playground](https://anchor-iota-ten.vercel.app/playground)

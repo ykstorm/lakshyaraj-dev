@@ -2,130 +2,73 @@
   {
     "id": "homesty",
     "name": "Homesty.ai",
-    "tagline": "Live commission-driven AI real-estate advisor.",
-    "description": "Production AI advisor on Next.js 16 + pgvector + GPT-4o + Claude. Solo-built. Refusal-first retrieval and mid-stream guardrails were extracted from this work into Anchor and Tripwire — same engine, both public.",
-    "stack": [
-      "Next.js 16",
-      "Postgres",
-      "pgvector",
-      "Prisma 7",
-      "GPT-4o",
-      "Claude"
-    ],
+    "tagline": "A buyer asks about a property and gets answers from the real listing.",
+    "description": "Buyers ask listing agents the same five questions about every flat, and agents answer them by hand all day. I have been building Homesty since November 2025 to take that first conversation: the landing page, the chat, a REST API, admin pages, login and an audit log, on Next.js, Node, Postgres and Prisma.",
+    "stack": ["Next.js", "React", "Node.js", "PostgreSQL", "Prisma", "Vercel", "Sentry"],
     "demo": "https://homesty.ai",
-    "flagship": true,
-    "color": "cyan"
-  },
-  {
-    "id": "anchor",
-    "name": "Anchor",
-    "tagline": "Provenance-first RAG that refuses to hallucinate.",
-    "description": "Cosine-floor retrieval returns chunks when similarity is high, refuses when it isn't. Postgres + pgvector + Next.js. Live playground available.",
-    "stack": [
-      "Next.js",
-      "Postgres",
-      "pgvector",
-      "Prisma",
-      "OpenAI"
-    ],
-    "demo": "https://anchor-iota-ten.vercel.app",
-    "playground": "https://anchor-iota-ten.vercel.app/playground",
-    "code": "https://github.com/ykstorm/anchor",
-    "color": "cyan",
-    "metric": "p50 2.6 ms retrieval @ 100k vectors · HNSW"
-  },
-  {
-    "id": "codecraft-ai",
-    "name": "Codecraft AI",
-    "tagline": "In-browser AI IDE. WebContainer-backed live coding playground.",
-    "description": "Boots a real Vite + React dev server in the browser tab via WebContainers. Editable Monaco is wired to the WebContainer filesystem with debounced writes and sub-2s hot-reload; an xterm terminal runs real shell commands; an IndexedDB snapshot cache drops repeat-visit boot under 20s. COOP/COEP cross-origin isolation is what makes SharedArrayBuffer and the in-tab runtime work.",
-    "stack": [
-      "Next.js",
-      "WebContainer",
-      "TypeScript",
-      "Monaco"
-    ],
-    "demo": "https://codecraft-ai-tau.vercel.app",
-    "code": "https://github.com/ykstorm/codecraft-ai",
-    "color": "amber",
-    "metric": "cold boot ~51 s · warm <20 s (IndexedDB cache)"
-  },
-  {
-    "id": "tripwire",
-    "name": "Tripwire",
-    "tagline": "Mid-stream LLM safety. Catch the lie before the user finishes reading it.",
-    "description": "Pattern engine watches LLM streams token-by-token, aborts on rule trip. Sub-millisecond decision latency. Ships an OpenAI-compatible sidecar proxy (POST /v1/chat/completions) that streams responses through the guard and aborts mid-stream on a trip.",
-    "stack": [
-      "TypeScript",
-      "Node",
-      "Streams"
-    ],
-    "code": "https://github.com/ykstorm/tripwire",
-    "npm": "@ykstormsorg/tripwire",
-    "color": "red",
-    "metric": "~4.7 µs per chunk · zero happy-path buffering"
-  },
-  {
-    "id": "goldset",
-    "name": "Goldset",
-    "tagline": "Golden datasets + LLM-as-judge + structural assertions, as a GitHub Action.",
-    "description": "Three eval runners (golden dataset, LLM-as-judge with a pluggable OpenAI/Anthropic provider, structural assertions), packaged as a GitHub Action that runs on every PR, posts a delta-vs-base comment, and blocks the merge on regression.",
-    "stack": [
-      "TypeScript",
-      "GitHub Actions",
-      "OpenAI"
-    ],
-    "code": "https://github.com/ykstorm/goldset",
-    "npm": "@ykstormsorg/goldset",
-    "action": "uses: ykstorm/goldset@v1.0.0",
-    "color": "green",
-    "metric": "1k structural eval cases in ~3 ms"
-  },
-  {
-    "id": "quickdraw",
-    "name": "Quickdraw",
-    "tagline": "Benchmark LLM streaming. TTFT, TPS, $/1K tokens.",
-    "description": "CLI runs prompt sets against models, captures TTFT + tokens/sec, diffs against baseline. Nightly bench wired.",
-    "stack": [
-      "TypeScript",
-      "Node",
-      "OpenAI",
-      "Anthropic"
-    ],
-    "code": "https://github.com/ykstorm/quickdraw",
-    "npm": "@ykstormsorg/quickdraw",
-    "color": "amber",
-    "metric": "Haiku live: TTFT p50 739 ms · 85.6 tok/s · CI-measured"
-  },
-  {
-    "id": "stackup",
-    "name": "Stackup",
-    "tagline": "Production Kubernetes locally in 10 minutes. ArgoCD + Argo Rollouts + Grafana.",
-    "description": "make up bootstraps a kind cluster with ArgoCD, Argo Rollouts, and Grafana/Prometheus. For learning real k8s without a cloud bill.",
-    "stack": [
-      "Kubernetes",
-      "ArgoCD",
-      "Helm",
-      "kind"
-    ],
-    "code": "https://github.com/ykstorm/stackup",
-    "color": "purple",
-    "metric": "canary CI-verified · 25→100% · real ≥0.95 Prometheus gate"
+    "flagship": true
   },
   {
     "id": "anvil",
     "name": "Anvil",
-    "tagline": "Idempotent webhook → BullMQ pipeline. HMAC-SHA256, backoff, dead-letter replay.",
-    "description": "Verify (constant-time HMAC) → dedupe → enqueue → retry [1s, 5s, 30s, 5m] → dead-letter → replay. pnpm workspace; 5 design contracts proven by tests in CI. v0.0.1.",
-    "stack": [
-      "TypeScript",
-      "Express",
-      "BullMQ",
-      "Redis",
-      "Vitest"
-    ],
+    "tagline": "Webhooks that run once, even when the provider sends them twice.",
+    "description": "Stripe and GitHub re-deliver webhooks, and a worker that crashes after doing the work gets the same event again, so you charge a card twice. Anvil verifies the signature over the raw body, dedupes in Redis on a hash of signature plus payload, and hands the job to a BullMQ worker with a fixed retry schedule and a dead-letter queue.",
+    "stack": ["TypeScript", "Node.js", "Express", "Redis", "BullMQ", "Docker"],
     "code": "https://github.com/ykstorm/anvil",
-    "color": "green",
-    "metric": "10.5k req/s ingress · 3.3 µs constant-time HMAC"
+    "npm": "@ykstormsorg/anvil"
+  },
+  {
+    "id": "anchor",
+    "name": "Anchor",
+    "tagline": "Retrieval that says no source instead of guessing.",
+    "description": "Most RAG demos improvise when nothing in the index matches, and in real estate an improvised answer is a legal problem. Anchor runs a cosine search on pgvector and returns a null answer when the best hit falls under a floor you set per index.",
+    "stack": ["TypeScript", "Next.js", "PostgreSQL", "pgvector", "Prisma"],
+    "demo": "https://anchor-iota-ten.vercel.app",
+    "playground": "https://anchor-iota-ten.vercel.app/playground",
+    "code": "https://github.com/ykstorm/anchor"
+  },
+  {
+    "id": "tripwire",
+    "name": "Tripwire",
+    "tagline": "Stops an LLM response mid-stream the moment a rule matches.",
+    "description": "Checking after the whole response is generated is too late; the user has already read it. Tripwire tests every streamed chunk and aborts the stream on a match. Ships as an OpenAI-compatible proxy.",
+    "stack": ["TypeScript", "Node.js", "Express"],
+    "code": "https://github.com/ykstorm/tripwire",
+    "npm": "@ykstormsorg/tripwire"
+  },
+  {
+    "id": "stackup",
+    "name": "Stackup",
+    "tagline": "A production-shaped Kubernetes cluster on a laptop, in one command.",
+    "description": "Canary rollouts, metrics and GitOps only make sense together. Stackup bootstraps a kind cluster, ArgoCD syncs the rest, Argo Rollouts canaries advance only while the success rate holds and roll back on their own.",
+    "stack": ["Kubernetes", "kind", "ArgoCD", "Argo Rollouts", "Prometheus", "Grafana"],
+    "code": "https://github.com/ykstorm/stackup"
+  },
+  {
+    "id": "goldset",
+    "name": "Goldset",
+    "tagline": "A GitHub Action that blocks a merge when an AI app's answers get worse.",
+    "description": "Goldset scores the current output against a golden dataset with a judge model and posts the delta on the PR.",
+    "stack": ["TypeScript", "GitHub Actions"],
+    "code": "https://github.com/ykstorm/goldset",
+    "npm": "@ykstormsorg/goldset"
+  },
+  {
+    "id": "quickdraw",
+    "name": "Quickdraw",
+    "tagline": "Measures how an LLM streams on your network and your prompts.",
+    "description": "Records time to first token, tokens per second, latency and cost for your prompts, in CI so the numbers become a trend.",
+    "stack": ["TypeScript", "Node.js", "GitHub Actions"],
+    "code": "https://github.com/ykstorm/quickdraw",
+    "npm": "@ykstormsorg/quickdraw"
+  },
+  {
+    "id": "codecraft-ai",
+    "name": "Codecraft",
+    "tagline": "An IDE in the browser that boots a real dev server inside the tab.",
+    "description": "Binds Monaco and xterm to a WebContainers Node runtime, so a Vite project runs in the page and edits hot-reload in seconds.",
+    "stack": ["TypeScript", "WebContainers", "Monaco", "xterm"],
+    "demo": "https://codecraft-ai-tau.vercel.app",
+    "code": "https://github.com/ykstorm/codecraft-ai"
   }
 ]

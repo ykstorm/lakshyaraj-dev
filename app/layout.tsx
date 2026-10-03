@@ -1,4 +1,5 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+import { THEME_COLOR } from '@/lib/theme-color'
 import { Hanken_Grotesk, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { Analytics } from '@vercel/analytics/next';
@@ -8,30 +9,25 @@ import './globals.css';
 
 // Self-hosted via next/font (no layout shift, and survives Tailwind v4's bundler,
 // which drops bare @import url() font links). Exposed as CSS variables consumed
-// in globals.css: body prose = Hanken Grotesk (warm humanist sans), terminals/
-// code/labels = JetBrains Mono, display headings = Space Grotesk (distinctive
-// geometric grotesque — character without the Geist/Inter default look).
-// Unique --ff-* names: Tailwind v4 already claims --font-sans/--font-mono as theme
-// tokens, so reusing them creates an equal-specificity tie the system font can win.
-// globals.css re-points the Tailwind tokens at these.
-// Only the weights actually rendered — body 400, headings 700 (Hanken); display
-// is locked to 600 by .font-display. Fewer static woff2 files on the LCP path.
+// in globals.css: body = Hanken Grotesk, terminals and data = JetBrains Mono,
+// headings = Space Grotesk. Unique --ff-* names because Tailwind v4 already
+// claims --font-sans/--font-mono as theme tokens; globals.css re-points those.
 const sans = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '700'], variable: '--ff-sans', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--ff-mono', display: 'swap' });
 const display = Space_Grotesk({ subsets: ['latin'], weight: ['600'], variable: '--ff-display', display: 'swap' });
 
 const SITE = 'https://lakshyaraj-dev.vercel.app';
-const TITLE = 'Lakshyaraj Singh Rao — Backend & AI-Infrastructure Engineer';
+const TITLE = 'Lakshyaraj Singh Rao, backend-focused full-stack developer';
 const DESC =
-  'I build the reliability layer for production AI — refusal, guardrails, eval-gating, idempotency. Seven open-source tools (four on npm), extracted from a live AI product.';
+  'I build backend systems that fail safely: webhooks that never run twice, retrieval that admits when it has nothing, streams that stop themselves. Building Homesty.ai since November 2025.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: { default: TITLE, template: '%s · Lakshyaraj Singh Rao' },
   description: DESC,
   keywords: [
-    'Lakshyaraj Singh Rao', 'backend engineer', 'AI infrastructure', 'DevOps',
-    'RAG', 'LLM', 'TypeScript', 'Kubernetes', 'webhook reliability', 'idempotency', 'Mumbai',
+    'Lakshyaraj Singh Rao', 'backend developer', 'full-stack developer', 'TypeScript',
+    'Node.js', 'PostgreSQL', 'webhooks', 'idempotency', 'RAG', 'Mumbai', 'Bangalore',
   ],
   authors: [{ name: 'Lakshyaraj Singh Rao', url: SITE }],
   creator: 'Lakshyaraj Singh Rao',
@@ -47,8 +43,15 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
-    description: 'The reliability layer for production AI — refusal, guardrails, eval-gating, idempotency. 7 OSS tools, 4 on npm.',
+    description: DESC,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR.dark },
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR.light },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -63,17 +66,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@type': 'Person',
               name: 'Lakshyaraj Singh Rao',
               url: SITE,
-              jobTitle: 'Backend & AI-Infrastructure Engineer',
+              jobTitle: 'Software Engineer',
               email: 'mailto:raolakshyaraj@gmail.com',
               worksFor: { '@type': 'Organization', name: 'Homesty.ai LLP', url: 'https://homesty.ai' },
+              alumniOf: { '@type': 'CollegeOrUniversity', name: 'Manipal University Jaipur' },
               address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'IN' },
-              knowsAbout: ['Backend engineering', 'AI infrastructure', 'RAG', 'LLM reliability', 'Kubernetes', 'DevOps'],
+              knowsAbout: ['TypeScript', 'Node.js', 'Next.js', 'PostgreSQL', 'Redis', 'Docker', 'Kubernetes'],
               sameAs: [
                 'https://github.com/ykstorm',
                 'https://linkedin.com/in/lakshyaraj-singh-rao-840273152',
                 'https://www.npmjs.com/~ykstormsorg',
               ],
-            }),
+            }).replace(/</g, '\\u003c'),
           }}
         />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

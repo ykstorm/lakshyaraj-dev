@@ -1,31 +1,29 @@
 ---
 title: "Tripwire"
-description: "Mid-stream LLM safety — catch the lie before the user finishes reading it."
-date: "2026-05-18"
+description: "Stops an LLM response mid-stream the moment a rule matches."
 ---
 
-## What it does
+## The problem
 
-Tripwire is a wrapper that watches an LLM's tokens as they stream and aborts the moment a rule trips. The point is to catch banned content while it's still arriving, before the reader has finished the sentence. It sits between your model call and your UI, passing tokens through until a rule says stop. When that happens, the stream is cut and the partial output never lands on screen.
+A language model sends its answer one piece at a time, so the user is already reading it while it is still being written. Checking after the whole response is generated is too late; the user has already read it.
 
-## Why this approach
+## How it works
 
-The usual answer is post-hoc moderation: generate the whole response, score it, then decide. By then the text is already rendered and the user has read it. Watching the stream means the abort happens mid-flight instead of after the fact. The trade-off is that rules run on every chunk, so they have to be cheap, which rules out calling a second model inline.
+Tripwire tests every streamed chunk and aborts the stream on a match.
 
-## How it's built
+- The streaming layer, in TypeScript on Node.js, reads each chunk as it arrives and runs a set of rules over it.
+- The rules are patterns and structural checks, not a second model, which keeps them cheap enough to run on every chunk.
+- When a rule matches, the stream is cut and the rest of the response never reaches the screen.
 
-The rules are regex and structural checks, not a classifier model. Each streamed chunk is tested as it passes through, and a match throws an abort that tears down the stream. Keeping the checks to pattern matching is what holds the per-chunk cost low enough to run inline.
+It ships as an OpenAI-compatible proxy. Point a client at its `POST /v1/chat/completions` endpoint instead of the provider's, and responses stream through the guard. An app switches to it by changing one URL.
 
-For apps that don't want to wrap their model call directly, Tripwire also ships an OpenAI-compatible sidecar proxy. Point your client at its `POST /v1/chat/completions` endpoint instead of the provider's, and it streams the response through the guard, aborting mid-stream the moment a rule trips. No SDK change beyond the base URL.
+## What it does not do
 
-## Known limitations
+- Rules are patterns, not a model, so there is no semantic check in the loop.
+- It catches text that breaks a rule, not a confident wrong answer.
+- A careless pattern can match safe text, so rules need tests of their own.
 
-- Rules are regex and structural only. There's no semantic model in the loop.
-- On long streams the per-chunk checks add roughly 8-15ms each, which accumulates.
-- It catches banned content, not hallucination. A confident wrong answer sails through.
-- Complex rules are easy to write badly; a sloppy regex can false-positive on safe text.
+## Links
 
-## Where it runs
-
-- GitHub: github.com/ykstorm/tripwire
-- npm: @ykstormsorg/tripwire
+- Code: [github.com/ykstorm/tripwire](https://github.com/ykstorm/tripwire)
+- npm: [@ykstormsorg/tripwire](https://www.npmjs.com/package/@ykstormsorg/tripwire)

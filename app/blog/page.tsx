@@ -1,59 +1,43 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getContentFiles } from '@/lib/content';
+import { Subpage, formatDate } from '@/components/subpage';
 
 export const metadata: Metadata = {
-  title: 'Writing — Lakshyaraj Singh Rao',
-  description: 'Notes on engineering, architecture, and the tools I build.',
+  title: 'Writing',
+  description: 'Notes on the systems I build and the bugs they caught.',
   alternates: { canonical: '/blog' },
-  openGraph: { title: 'Writing — Lakshyaraj Singh Rao', description: 'Notes on engineering, architecture, and the tools I build.', url: '/blog' },
+  openGraph: { title: 'Writing', description: 'Notes on the systems I build and the bugs they caught.', url: '/blog' },
 };
 
 export default async function BlogPage() {
   const posts = await getContentFiles('blog');
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#050505] text-zinc-800 dark:text-zinc-100">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-        <Link
-          href="/"
-          className="text-[12px] font-mono text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors tracking-wide"
-        >
-          ← back
-        </Link>
+    <Subpage crumbs={[{ label: 'blog' }]}>
+      <h1 className="font-display text-4xl tracking-tight sm:text-5xl">Writing</h1>
+      <p className="mt-3 max-w-prose text-muted-foreground">Notes on the systems I build and the bugs they caught.</p>
 
-        <div className="mt-8 mb-10">
-          <span className="section-label"><span className="caret" aria-hidden="true">❯</span>Writing</span>
-          <h1 className="mt-3 text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Writing</h1>
-          <p className="mt-2 text-[13px] text-zinc-500 font-mono">
-            Notes on engineering, architecture, and the tools I build.
-          </p>
-        </div>
-
-        {posts.length === 0 ? (
-          <p className="font-mono text-[13px] text-zinc-500">No posts yet.</p>
-        ) : (
-          <div className="space-y-5">
-            {posts.map((post) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="telemetry-card group block"
-              >
-                <h2 className="font-display text-xl tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                  {post.metadata.title}
-                </h2>
-                <p className="mt-2 text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">{post.metadata.description}</p>
-                {post.metadata.date && (
-                  <time className="mt-3 block text-[11px] font-mono text-zinc-500">
-                    {new Date(post.metadata.date).toLocaleDateString()}
-                  </time>
-                )}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+      {posts.length === 0 ? (
+        <p className="mono mt-10 text-sm text-muted-foreground">Nothing published yet.</p>
+      ) : (
+        <ul className="mt-10 divide-y divide-border border-y border-border">
+          {posts.map((post) => {
+            const date = formatDate(post.metadata.date);
+            return (
+              <li key={post.slug}>
+                <Link href={`/blog/${post.slug}`} className="group block py-6">
+                  <h2 className="font-display text-xl tracking-tight transition-colors group-hover:text-accent sm:text-2xl">
+                    {post.metadata.title}
+                  </h2>
+                  <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-muted-foreground">{post.metadata.description}</p>
+                  {date && <time dateTime={post.metadata.date} className="mono mt-3 block text-xs text-muted-foreground">{date}</time>}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </Subpage>
   );
 }

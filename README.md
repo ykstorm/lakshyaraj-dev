@@ -1,53 +1,92 @@
 # lakshyaraj-dev
 
-My personal site and engineering portfolio — **[lakshyaraj-dev.vercel.app](https://lakshyaraj-dev.vercel.app)**.
+My personal site and portfolio: **[lakshyaraj-dev.vercel.app](https://lakshyaraj-dev.vercel.app)**.
 
-A Next.js 16 App Router site built to feel like a terminal, not a template:
-hand-written canvas physics, spring-animated cards, an interactive shell, and a
-"shipped to npm" proof strip that pulls live package versions. Dark by default,
-fully keyboard-navigable, and respectful of `prefers-reduced-motion`.
+A Next.js 16 App Router site. The hero is a world drawn entirely in code on a
+canvas, with a working terminal in front of it. The rest of the page is plain
+server-rendered HTML: project stories, live proof from npm and GitHub, and
+contact. Dark by default, keyboard-navigable, and every animation has a
+`prefers-reduced-motion` still frame.
 
-## What's interesting in here
+## The hero world
 
-- **Interactive ASCII flow-field background** ([`ascii-background.tsx`](components/ui/ascii-background.tsx)) — a grid of monospace glyphs driven by a sum-of-sines flow field plus a tiny verlet spring system: the cursor repels nearby glyphs, which spring back with damping; clicking fires a radial shockwave. Brand-tinted, ~30fps, `pointer-events-none`. On touch / coarse-pointer devices it renders a single static frame (no rAF loop, no listeners) so phones don't pay for a physics sim.
-- **Spring-physics tilt cards** ([`card-hover-effect.tsx`](components/ui/card-hover-effect.tsx)) — project cards tilt in 3D toward the cursor via `useSpring`/`useTransform`, lift on hover, and slide a shared-`layoutId` highlight behind the hovered one. Touch falls back to `whileTap`; reduced-motion disables tilt entirely.
-- **Interactive terminal hero** ([`terminal-hero.tsx`](components/ui/terminal-hero.tsx)) — boots a typewriter intro then hands you a live prompt: `help`, `ls`, `cat <project>`, `open <name>`, `stack`, `contact`, `clear` all work. A static transcript lives in `<noscript>` for crawlers and no-JS.
-- **Live npm proof strip** — fetches the current published versions of the `@ykstormsorg/*` packages, so the site can't claim a version it didn't ship.
-- **GitHub contribution graph** ([`github-contributions.tsx`](components/ui/github-contributions.tsx)) and a terminal-styled contact block.
+[`components/world/`](components/world) draws a seeded ASCII world on Canvas 2D.
+No images, no WebGL: every glyph is computed each frame.
 
-## Built for crawlers and Core Web Vitals
+- **Seeded.** A 32-bit seed picks one of three biomes and every parameter in it
+  ([`biomes.ts`](components/world/biomes.ts)): a mountain range of ridged,
+  domain-warped noise you fly over, a sea of interfering waves, or a spiral
+  constellation linked to its nearest neighbours. The same seed always draws
+  the same world, so a world can be shared as a link: `/?seed=5eed0008`.
+- **Depth.** Terrain is rendered like a voxel-space engine
+  ([`engine.ts`](components/world/engine.ts)): each column marches front to
+  back through the heightfield, so nearer ridges hide farther ones and every
+  cell knows its depth. Cells are classified as skyline, inner ridge, contour or
+  open ground, and lines get slope-aware glyphs (`/ \ _ ^ -`). Fog and glyph
+  size fall off with distance, and the camera drifts with the cursor.
+- **Physics.** The cursor pushes glyphs through a spring field and they settle
+  back. A click sends a ring outward. Disturbed glyphs scramble, then resolve.
+- **Driven from the terminal.** The hero terminal takes `world` (a new world)
+  and `seed <hex>` (a specific one), alongside `ls`, `cat`, `open` and `cd`.
+- **Cheap.** Glyphs are pre-rendered into a sprite atlas, so a frame is a run of
+  `drawImage` calls. The physics steps at a fixed 60 Hz. The canvas is a lazy
+  client chunk (`next/dynamic`, no SSR), so the headline paints first and is the
+  LCP element. It pauses off-screen and in hidden tabs, and uses a lighter world
+  on small or touch screens.
+- **Reduced motion.** One still frame of the same world. No loop, no pointer
+  field, no waves, and the terminal intro appears at once instead of typing.
 
-- Per-route `metadata`, a generated [`sitemap.ts`](app/sitemap.ts) + [`robots.ts`](app/robots.ts), a branded OpenGraph image rendered at the edge via `next/og` ([`opengraph-image.tsx`](app/opengraph-image.tsx)), and a JSON-LD `Person` block.
-- Security headers (HSTS, frame-deny, nosniff, referrer + permissions policy) and Vercel Analytics + Speed Insights.
-- `backdrop-filter` is disabled on touch devices, where compositing the canvas every frame is the expensive part.
+Adapted techniques, credited in the source:
+[ThreeUI](https://github.com/MengTo/threeui) (MIT, Meng To) for the contour
+bands of its Topo Field and the link fade of its Particle Drift, and
+[Canvas UI](https://canvasui.dev) (MIT + Commons Clause, David Haz) for the
+ring and pointer easing of its Force Field and the scramble of its Decrypt
+Reveal. These are re-implementations written for this site, not copies of
+either library's components.
 
-## Stack
+## Live proof
 
-Next.js 16 (App Router) · TypeScript · Tailwind CSS · Framer Motion · next-themes · MDX blog · Vercel
+[`lib/proof.ts`](lib/proof.ts) fetches on the server when the page is built,
+and the page revalidates at most once an hour:
+
+- the latest published version of each `@ykstormsorg/*` package on npm,
+- check runs on the latest commit to `main` for each project repository,
+- a commit calendar summed from each of my public repositories.
+
+Nothing is typed in. When a request fails, the page prints the URL that failed
+and why, instead of a stale or invented number. GitHub allows 60
+unauthenticated requests an hour; set an optional read-only `GITHUB_TOKEN` to
+raise that limit.
 
 ## Routes
 
-`/` · `/now` · `/uses` · `/resume` · `/blog` + `/blog/[slug]` · `/projects/[slug]`
+`/` · `/now` · `/resume` · `/blog` + `/blog/[slug]` · `/projects/[slug]`
+
+Blog posts and project pages are markdown in [`content/`](content), rendered
+with `react-markdown` (raw HTML in a content file is ignored, never injected).
 
 ## Run locally
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
-npm run build    # production build
-npm run lint     # eslint, 0 warnings
+npm run dev         # http://localhost:3000
+npm run lint
+npm run type-check
+npm run build       # production build, fetches the live proof
 ```
 
 ## Structure
 
 ```
-app/            App Router routes, metadata, sitemap/robots/OG image
-components/ui/  canvas background, tilt cards, terminal, theme toggle, …
-data/           projects, "now", "uses" content
-content/blog/   MDX posts
+app/              routes, metadata, sitemap, robots, OpenGraph image
+components/world/ the hero world: biomes, engine, glyph atlas, noise, seeds
+components/       hero, proof, page chrome, markdown, terminals, cards
+content/          markdown for blog posts and project pages
+data/             project list and the "now" snapshot
+lib/              content loading, project links, live proof
 ```
 
 ---
 
-Built by **Lakshyaraj Singh Rao** — backend / AI-infrastructure engineer.
+Built by **Lakshyaraj Singh Rao**, a full-stack developer with a backend focus.
 [Portfolio](https://lakshyaraj-dev.vercel.app) · [GitHub](https://github.com/ykstorm) · [npm](https://www.npmjs.com/~ykstormsorg)
