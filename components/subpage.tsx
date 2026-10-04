@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
-export type Crumb = { href?: string; label: string };
+type Crumb = { href?: string; label: string };
 
 // Shared chrome for every page except the home page. The header is the page's
 // path written like a shell prompt, ~/blog/post-name, with each segment linked.

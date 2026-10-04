@@ -66,73 +66,80 @@ function jump(section: string): void {
   el?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
 }
 
+const out = (...text: string[]): Line[] => text.map((t) => ({ kind: 'out', text: t }));
+
+const STACK = [
+  'TypeScript, JavaScript, SQL',
+  'Node.js, Express, REST APIs, PostgreSQL, Prisma, Redis, MongoDB',
+  'React, Next.js, Tailwind CSS',
+  'Git, Docker, Kubernetes, GitHub Actions, Vercel, Sentry',
+];
+const CONTACT = [
+  'email     raolakshyaraj@gmail.com',
+  'github    github.com/ykstorm',
+  'linkedin  linkedin.com/in/lakshyaraj-singh-rao-840273152',
+  'npm       npmjs.com/~ykstormsorg',
+];
+
+function cat(arg: string): Line[] {
+  if (!arg) return out('cat: name a project, e.g. cat anvil');
+  const p = findProject(arg);
+  return out(p ? `${p.name}: ${p.tagline}` : `cat: ${arg}: no such project. Type ls to list them.`);
+}
+
+function openArg(arg: string): Line[] {
+  const p = findProject(arg);
+  const url = p ? p.demo ?? p.code : LINKS[arg];
+  if (!url) return out(`open: ${arg || '?'}: try open anvil, open resume or open github`);
+  open(url);
+  return out(`Opening ${p ? p.name : arg}.`);
+}
+
+function cd(arg: string): Line[] {
+  const target = arg.replace(/^~\/?/, '') || '~';
+  if (target === '~' || target === '..') {
+    jump('~');
+    return [];
+  }
+  if (!(SECTIONS as readonly string[]).includes(target)) return out(`cd: no such section: ${arg}. Try ${SECTIONS.join(', ')}.`);
+  jump(target);
+  return [];
+}
+
+function world(): Line[] {
+  if (!currentWorld()) return out(describeWorld());
+  sendWorldCommand({ type: 'new' });
+  return [...out(describeWorld()), ...shareLine()];
+}
+
+function seed(arg: string): Line[] {
+  if (!arg) return [...out(describeWorld()), ...shareLine()];
+  const value = parseSeed(arg);
+  if (value === null) return out('seed: expected up to 8 hex digits, e.g. seed 5eed1e55');
+  if (!currentWorld()) return out(describeWorld());
+  sendWorldCommand({ type: 'seed', seed: value });
+  return [...out(describeWorld()), ...shareLine()];
+}
+
+const COMMANDS: Record<string, (arg: string) => Line[] | 'clear'> = {
+  help: () => out(...HELP),
+  whoami: () => out(...WHOAMI),
+  ls: () => out(PROJECTS.map((p) => shortId(p.id)).join('  ')),
+  cat,
+  open: openArg,
+  cd,
+  world,
+  seed,
+  stack: () => out(...STACK),
+  contact: () => out(...CONTACT),
+  clear: () => 'clear',
+};
+
 function run(raw: string): Line[] | 'clear' {
   const [cmd = '', ...rest] = raw.trim().split(/\s+/);
-  const arg = rest.join(' ').toLowerCase();
-  const out = (...text: string[]): Line[] => text.map((t) => ({ kind: 'out', text: t }));
-
-  switch (cmd.toLowerCase()) {
-    case '':
-      return [];
-    case 'help':
-      return out(...HELP);
-    case 'whoami':
-      return out(...WHOAMI);
-    case 'ls':
-      return out(PROJECTS.map((p) => shortId(p.id)).join('  '));
-    case 'cat': {
-      if (!arg) return out('cat: name a project, e.g. cat anvil');
-      const p = findProject(arg);
-      return out(p ? `${p.name}: ${p.tagline}` : `cat: ${arg}: no such project. Type ls to list them.`);
-    }
-    case 'open': {
-      const p = findProject(arg);
-      const url = p ? p.demo ?? p.code : LINKS[arg];
-      if (!url) return out(`open: ${arg || '?'}: try open anvil, open resume or open github`);
-      open(url);
-      return out(`Opening ${p ? p.name : arg}.`);
-    }
-    case 'cd': {
-      const target = arg.replace(/^~\/?/, '') || '~';
-      if (target === '~' || target === '..') {
-        jump('~');
-        return [];
-      }
-      if (!(SECTIONS as readonly string[]).includes(target)) return out(`cd: no such section: ${arg}. Try ${SECTIONS.join(', ')}.`);
-      jump(target);
-      return [];
-    }
-    case 'world':
-      if (!currentWorld()) return out(describeWorld());
-      sendWorldCommand({ type: 'new' });
-      return [...out(describeWorld()), ...shareLine()];
-    case 'seed': {
-      if (!arg) return [...out(describeWorld()), ...shareLine()];
-      const seed = parseSeed(arg);
-      if (seed === null) return out('seed: expected up to 8 hex digits, e.g. seed 5eed1e55');
-      if (!currentWorld()) return out(describeWorld());
-      sendWorldCommand({ type: 'seed', seed });
-      return [...out(describeWorld()), ...shareLine()];
-    }
-    case 'stack':
-      return out(
-        'TypeScript, JavaScript, SQL',
-        'Node.js, Express, REST APIs, PostgreSQL, Prisma, Redis, MongoDB',
-        'React, Next.js, Tailwind CSS',
-        'Git, Docker, Kubernetes, GitHub Actions, Vercel, Sentry',
-      );
-    case 'contact':
-      return out(
-        'email     raolakshyaraj@gmail.com',
-        'github    github.com/ykstorm',
-        'linkedin  linkedin.com/in/lakshyaraj-singh-rao-840273152',
-        'npm       npmjs.com/~ykstormsorg',
-      );
-    case 'clear':
-      return 'clear';
-    default:
-      return out(`command not found: ${cmd}. Type help to see the commands.`);
-  }
+  if (!cmd) return [];
+  const handler = Object.hasOwn(COMMANDS, cmd.toLowerCase()) ? COMMANDS[cmd.toLowerCase()] : null;
+  return handler ? handler(rest.join(' ').toLowerCase()) : out(`command not found: ${cmd}. Type help to see the commands.`);
 }
 
 function Caret() {

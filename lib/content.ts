@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 
-export interface ContentMetadata {
+interface ContentMetadata {
   title: string;
   description: string;
   date: string;
   [key: string]: string;
 }
 
-export interface ContentFile {
+interface ContentFile {
   slug: string;
   metadata: ContentMetadata;
   content: string;

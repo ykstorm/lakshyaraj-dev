@@ -5,8 +5,8 @@
 // world has already been announced and currentWorld() reflects it.
 import type { Biome } from './biomes';
 
-export type WorldInfo = { seed: number; biome: Biome };
-export type WorldCommand = { type: 'new' } | { type: 'seed'; seed: number };
+type WorldInfo = { seed: number; biome: Biome };
+type WorldCommand = { type: 'new' } | { type: 'seed'; seed: number };
 
 const COMMAND = 'world:command';
 const CHANGED = 'world:changed';

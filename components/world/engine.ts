@@ -68,7 +68,7 @@ export interface Composition {
   orbitScale: number; // constellation size; below 1 keeps it clear of the copy
 }
 
-export interface EngineOptions {
+interface EngineOptions {
   reduced: boolean;
   dense: boolean;
   onWorld?: (seed: number, biome: Biome) => void;
@@ -458,22 +458,34 @@ export class WorldEngine {
     return got === k || (k === RIDGE && got === SKYLINE);
   }
 
-  // A line's glyph follows its neighbours: rising to the right is /, falling
-  // is \, level is _ (ridgeline) or - (contour), a lone summit is ^.
-  private lineGlyph(c: number, r: number, k: number): number {
+  // How a line of kind k continues on either side of cell (c, r).
+  private around(c: number, r: number, k: number) {
     const lUp = this.is(c - 1, r - 1, k);
     const lSame = this.is(c - 1, r, k);
     const lDown = this.is(c - 1, r + 1, k);
     const rUp = this.is(c + 1, r - 1, k);
     const rSame = this.is(c + 1, r, k);
     const rDown = this.is(c + 1, r + 1, k);
-    const level = k === RIDGE ? GL.under : GL.dash;
-    if (k === RIDGE && lDown && rDown && !lSame && !rSame) return GL.caret;
-    if (lDown && rUp) return GL.slash;
-    if (lUp && rDown) return GL.back;
-    if (lSame || rSame) return level;
-    if (lDown || rUp) return GL.slash;
-    if (lUp || rDown) return GL.back;
+    return {
+      through: lDown && rUp, // the line passes through, lower left to upper right
+      down: lUp && rDown, // upper left to lower right
+      level: lSame || rSame,
+      rising: lDown || rUp,
+      falling: lUp || rDown,
+      summit: lDown && rDown && !lSame && !rSame,
+    };
+  }
+
+  // A line's glyph follows its neighbours: rising to the right is /, falling
+  // is \, level is _ (ridgeline) or - (contour), a lone summit is ^.
+  private lineGlyph(c: number, r: number, k: number): number {
+    const n = this.around(c, r, k);
+    if (k === RIDGE && n.summit) return GL.caret;
+    if (n.through) return GL.slash;
+    if (n.down) return GL.back;
+    if (n.level) return k === RIDGE ? GL.under : GL.dash;
+    if (n.rising) return GL.slash;
+    if (n.falling) return GL.back;
     return k === RIDGE ? GL.caret : GL.tilde;
   }
 

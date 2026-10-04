@@ -17,7 +17,7 @@ export interface Project {
 
 export const PROJECTS = projectsData as Project[];
 
-export type ProjectLink = { kind: 'live' | 'playground' | 'code' | 'npm'; label: string; href: string };
+type ProjectLink = { kind: 'live' | 'playground' | 'code' | 'npm'; label: string; href: string };
 
 export function projectLinks(p: Project): ProjectLink[] {
   const links: ProjectLink[] = [];

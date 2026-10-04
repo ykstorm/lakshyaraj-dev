@@ -11,7 +11,7 @@ import { ValueNoise, fbm, ridged } from './noise';
 
 export type Biome = 'ridge' | 'tide' | 'orbit';
 
-export interface Star {
+interface Star {
   u: number; // 0..1 across
   v: number; // 0..1 from the top of the canvas to the horizon
   speed: number; // twinkle rate, rad/s
