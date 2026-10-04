@@ -5,7 +5,7 @@
 // instead of quietly showing a stale or invented number.
 import projectsData from '@/data/projects.json';
 
-export const OWNER = 'ykstorm';
+const OWNER = 'ykstorm';
 const REVALIDATE = 3600;
 
 type Project = { id: string; name: string; code?: string; npm?: string };
@@ -44,7 +44,7 @@ async function getJson(url: string, github: boolean): Promise<{ status: number; 
 // ── npm ──────────────────────────────────────────────────────────────────────
 export type NpmResult = { name: string; page: string } & ({ ok: true; version: string } | Failure);
 
-export async function getNpmVersions(): Promise<NpmResult[]> {
+async function getNpmVersions(): Promise<NpmResult[]> {
   const names = PROJECTS.flatMap((p) => (p.npm ? [p.npm] : []));
   return Promise.all(
     names.map(async (name): Promise<NpmResult> => {
@@ -80,7 +80,7 @@ function summarise(runs: CheckRun[]): { state: CiState; failed: number } {
   return { state: 'passing', failed: 0 };
 }
 
-export async function getCiStatuses(): Promise<CiResult[]> {
+async function getCiStatuses(): Promise<CiResult[]> {
   const repos = PROJECTS.flatMap((p) => {
     const m = p.code?.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)$/);
     return m && m[1] === OWNER ? [{ repo: m[2], name: p.name }] : [];
@@ -132,7 +132,7 @@ async function commitActivity(repo: string): Promise<ActivityWeek[] | Failure> {
   return { ok: false, url: base, reason: 'GitHub was still computing this repo’s stats' };
 }
 
-export async function getCommitCalendar(): Promise<Calendar> {
+async function getCommitCalendar(): Promise<Calendar> {
   const listUrl = `https://api.github.com/users/${OWNER}/repos?type=owner&per_page=100`;
   let repos: RepoMeta[];
   try {
