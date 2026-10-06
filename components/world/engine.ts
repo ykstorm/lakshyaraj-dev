@@ -1,44 +1,37 @@
-// The hero world: a seeded ASCII landscape you fly over, or a spiral
-// constellation, drawn entirely in code on a Canvas 2D context.
+// The hero world: a seeded ASCII mountain range you fly over, drawn entirely
+// in code on a Canvas 2D context.
 //
-// Terrain (ridge, tide) is rendered like a voxel-space engine: each screen
-// column marches front to back through the heightfield, so nearer ground hides
-// what is behind it and every character cell knows the depth it shows. Cells
-// are then classified: a ridgeline (depth jumps above it), a contour line (the
-// height band changes between neighbours), or open ground. Ridgelines and
-// contours get slope-aware glyphs (/ \ _ ^ -), a cheap CPU cousin of the
-// shape-matched glyphs in Canvas UI's Decrypt Reveal.
+// Rendering works like a voxel-space engine: each screen column marches front
+// to back through the heightfield, so nearer ground hides what is behind it
+// and every character cell knows the depth it shows. Cells are then
+// classified: a ridgeline (depth jumps above it), a contour line (the height
+// band changes between neighbours), or open ground. Ridgelines and contours
+// get slope-aware glyphs (/ \ _ ^ -).
 //
 // Interaction is a spring field in screen space: the cursor pushes glyphs and
 // they settle back; a click sends a ring that kicks them outward. The ring and
 // the pointer easing follow Canvas UI's Force Field (g = exp(-(d-r)²/2σ²)·fade²,
-// k = 1 - e^(-dt/τ)); the scramble on disturbed glyphs follows its Decrypt
-// Reveal. Canvas UI is MIT + Commons Clause, © 2026 David Haz. These are
-// adaptations of its techniques, written for this site, not its components.
-import { createWorld, type Biome, type OrbitWorld, type TerrainWorld, type World } from './biomes';
+// k = 1 - e^(-dt/τ)). Canvas UI is MIT + Commons Clause, © 2026 David Haz; this
+// is an adaptation of the technique, written for this site.
+import { createWorld, type TerrainWorld } from './biomes';
 import { hash01, hash2 } from './random';
 import { smoothstep } from './noise';
 import { GlyphAtlas } from './atlas';
 
-export const CHARS = ' .·:-=+*#%_/\\^|~ABCDEFGHKLMNPRSTUVXYZ0123456789$&<>';
+export const CHARS = ' .·:-_/\\^~+';
 const at = (ch: string) => CHARS.indexOf(ch);
 const GL = {
   dot: at('.'),
   mid: at('·'),
   colon: at(':'),
   dash: at('-'),
-  eq: at('='),
-  plus: at('+'),
-  star: at('*'),
-  hash: at('#'),
   under: at('_'),
   slash: at('/'),
   back: at('\\'),
   caret: at('^'),
   tilde: at('~'),
+  plus: at('+'),
 };
-const POOL_START = at('A');
-const POOL_LEN = CHARS.length - POOL_START;
 
 const SKY = 0;
 const GROUND = 1;
@@ -57,36 +50,36 @@ const WAVE_LIFE = 1.8; // s
 const WAVE_KICK = 6.5;
 const STEP = 1 / 60;
 
+// the first paint: cells appear outward from a point, each with a short flash
+const REVEAL_S = 1.6;
+const FLASH_S = 0.3;
+
 const FOV_TAN = Math.tan((32 * Math.PI) / 180);
 const Z_FAR = 64;
 
 export interface Composition {
   horizon: number; // 0..1 of canvas height
   bias: number; // 0..1, how much lower the terrain sits on the left
-  orbitX: number;
-  orbitY: number;
-  orbitScale: number; // constellation size; below 1 keeps it clear of the copy
 }
 
 interface EngineOptions {
   reduced: boolean;
   dense: boolean;
-  onWorld?: (seed: number, biome: Biome) => void;
 }
 
 type Wave = { x: number; y: number; t0: number };
 
 export class WorldEngine {
   private readonly ctx: CanvasRenderingContext2D;
+  private readonly world: TerrainWorld;
   private atlas: GlyphAtlas | null = null;
   private colours: string[] = ['rgb(233,230,222)', 'rgb(242,169,59)'];
   private family = 'monospace';
-  private world: World;
 
   private width = 0;
   private height = 0;
   private dpr = 1;
-  private comp: Composition = { horizon: 0.55, bias: 0, orbitX: 0.6, orbitY: 0.5, orbitScale: 1 };
+  private comp: Composition = { horizon: 0.55, bias: 0 };
 
   private t = 3.7; // start mid-motion, so the first frame is not a blank slate
   private travel = 0;
@@ -101,7 +94,7 @@ export class WorldEngine {
   private waves: Wave[] = [];
   private reveal = { t0: -100, x: 0, y: 0 };
 
-  // terrain grid
+  // grid
   private cols = 0;
   private rows = 0;
   private cellW = 12;
@@ -117,11 +110,10 @@ export class WorldEngine {
   private topY = new Float32Array(0);
   private horizonPx = 0;
 
-  // per point: grid cells for terrain, nodes for orbit
+  // per cell: rest position, spring offset, velocity, disturbance
   private n = 0;
   private bx = new Float32Array(0);
   private by = new Float32Array(0);
-  private bz = new Float32Array(0);
   private ox = new Float32Array(0);
   private oy = new Float32Array(0);
   private vx = new Float32Array(0);
@@ -144,12 +136,6 @@ export class WorldEngine {
     this.world = createWorld(seed, opts.dense);
   }
 
-  get seed(): number {
-    return this.world.seed;
-  }
-  get biome(): Biome {
-    return this.world.biome;
-  }
   get isRunning(): boolean {
     return this.running;
   }
@@ -172,19 +158,13 @@ export class WorldEngine {
     this.layout();
   }
 
-  /** Swaps in the world for `seed`, revealing it outward from `origin`. */
-  setSeed(seed: number, origin?: { x: number; y: number }): void {
-    this.world = createWorld(seed, this.opts.dense);
-    this.layout();
-    this.startReveal(origin);
-    this.opts.onWorld?.(this.world.seed, this.world.biome);
-    if (!this.running) this.renderStill();
-  }
-
-  /** First paint: reveal the opening world from the lower middle. */
+  /** First paint: the range appears outward from the lower middle. */
   intro(): void {
-    this.startReveal();
-    this.opts.onWorld?.(this.world.seed, this.world.biome);
+    if (this.opts.reduced) return;
+    const x = this.width * 0.62;
+    const y = this.height * Math.min(0.85, this.comp.horizon + 0.15);
+    this.reveal = { t0: this.t, x, y };
+    this.waves.push({ x, y, t0: this.t });
   }
 
   pointer(x: number, y: number, inside: boolean): void {
@@ -221,45 +201,30 @@ export class WorldEngine {
 
   // ── setup ──────────────────────────────────────────────────────────────────
   private layout(): void {
-    if (this.world.kind === 'terrain') {
-      this.cellW = this.width < 640 ? 10 : this.width < 1100 ? 11 : 12;
-      this.cellH = Math.round(this.cellW * 1.6);
-      this.cols = Math.ceil(this.width / this.cellW);
-      this.rows = Math.ceil(this.height / this.cellH);
-      this.n = this.cols * this.rows;
-      this.depth = new Float32Array(this.n);
-      this.hgt = new Float32Array(this.n);
-      this.kind = new Uint8Array(this.n);
-      this.glyph = new Uint8Array(this.n);
-      this.gkey = new Int32Array(this.n);
-      this.bridge = new Uint8Array(this.n);
-      this.topY = new Float32Array(this.cols);
-    } else {
-      this.n = this.world.count;
-    }
+    this.cellW = this.width < 640 ? 10 : this.width < 1100 ? 11 : 12;
+    this.cellH = Math.round(this.cellW * 1.6);
+    this.cols = Math.ceil(this.width / this.cellW);
+    this.rows = Math.ceil(this.height / this.cellH);
+    this.n = this.cols * this.rows;
+    this.depth = new Float32Array(this.n);
+    this.hgt = new Float32Array(this.n);
+    this.kind = new Uint8Array(this.n);
+    this.glyph = new Uint8Array(this.n);
+    this.gkey = new Int32Array(this.n);
+    this.bridge = new Uint8Array(this.n);
+    this.topY = new Float32Array(this.cols);
     this.bx = new Float32Array(this.n);
     this.by = new Float32Array(this.n);
-    this.bz = new Float32Array(this.n);
     this.ox = new Float32Array(this.n);
     this.oy = new Float32Array(this.n);
     this.vx = new Float32Array(this.n);
     this.vy = new Float32Array(this.n);
     this.energy = new Float32Array(this.n);
-    if (this.world.kind === 'terrain') {
-      for (let r = 0; r < this.rows; r++)
-        for (let c = 0; c < this.cols; c++) {
-          this.bx[r * this.cols + c] = (c + 0.5) * this.cellW;
-          this.by[r * this.cols + c] = (r + 0.5) * this.cellH;
-        }
-    }
-  }
-
-  private startReveal(origin?: { x: number; y: number }): void {
-    if (this.opts.reduced) return;
-    const x = origin?.x ?? this.width * Math.max(0.5, this.comp.orbitX);
-    const y = origin?.y ?? this.height * Math.min(0.85, this.comp.horizon + 0.15);
-    this.reveal = { t0: this.t, x, y };
-    this.waves.push({ x, y, t0: this.t });
+    for (let r = 0; r < this.rows; r++)
+      for (let c = 0; c < this.cols; c++) {
+        this.bx[r * this.cols + c] = (c + 0.5) * this.cellW;
+        this.by[r * this.cols + c] = (r + 0.5) * this.cellH;
+      }
   }
 
   private ensureAtlas(): GlyphAtlas {
@@ -281,7 +246,7 @@ export class WorldEngine {
 
   private advance(dt: number): void {
     this.t += dt;
-    if (this.world.kind === 'terrain') this.travel += dt * this.world.speed;
+    this.travel += dt * this.world.speed;
     const kc = 1 - Math.exp(-dt / 0.9);
     this.yaw += (this.yawTarget - this.yaw) * kc;
     this.pitch += (this.pitchTarget - this.pitch) * kc;
@@ -343,16 +308,12 @@ export class WorldEngine {
 
   // ── projection ─────────────────────────────────────────────────────────────
   private project(): void {
-    if (this.world.kind === 'terrain') {
-      this.march(this.world);
-      this.classify(this.world);
-    } else {
-      this.projectOrbit(this.world);
-    }
+    this.march();
+    this.classify();
   }
 
-  private march(w: TerrainWorld): void {
-    const { cols, rows, cellW, cellH, width: W, height: H, depth, hgt, gkey, topY } = this;
+  private march(): void {
+    const { cols, rows, cellW, cellH, width: W, height: H, depth, hgt, gkey, topY, world: w } = this;
     const horizon = H * this.comp.horizon + this.pitch * H * 0.035;
     this.horizonPx = horizon;
     const below = Math.max(40, H - horizon);
@@ -381,7 +342,7 @@ export class WorldEngine {
         const lift = (0.14 + 0.86 * smoothstep(zNear * 1.15, plainEnd, z)) * sideLift;
         const wx = ray * z + camX;
         const wz = z + this.travel;
-        const h = w.height(wx, wz, this.t);
+        const h = w.height(wx, wz);
         const sy = horizon + ((w.camHeight - h * w.relief * lift) * f) / z;
         if (sy >= yMax) continue;
         const key = Math.floor(wx * 2.2) * 7919 + Math.floor(wz * 2.2);
@@ -398,14 +359,14 @@ export class WorldEngine {
     }
   }
 
-  private band(i: number, bands: number): number {
-    return Math.floor(this.hgt[i] * bands);
+  private band(i: number): number {
+    return Math.floor(this.hgt[i] * this.world.bands);
   }
 
   // Hierarchy, strongest first: the skyline (ground with open sky above), inner
   // ridges (a big depth jump above), contours (near ground only), then a faint
   // texture on everything else so mountains read as mass against an empty sky.
-  private classify(w: TerrainWorld): void {
+  private classify(): void {
     const { cols, rows, depth, kind } = this;
     const contourDepth = this.zNear * 6;
     for (let r = 0; r < rows; r++) {
@@ -419,7 +380,7 @@ export class WorldEngine {
         const above = r > 0 ? depth[i - cols] : Infinity;
         if (above === Infinity) kind[i] = SKYLINE;
         else if (above > z * 1.75 + 0.8) kind[i] = RIDGE;
-        else if (z < contourDepth && r < rows - 1 && depth[i + cols] !== Infinity && this.band(i + cols, w.bands) !== this.band(i, w.bands))
+        else if (z < contourDepth && r < rows - 1 && depth[i + cols] !== Infinity && this.band(i + cols) !== this.band(i))
           kind[i] = CONTOUR;
         else kind[i] = GROUND;
       }
@@ -519,71 +480,43 @@ export class WorldEngine {
     return smoothstep(-0.05, 0.05, this.hgt[r] - this.hgt[l]);
   }
 
-  private projectOrbit(w: OrbitWorld): void {
-    const { width: W, height: H } = this;
-    const theta = this.t * w.spin + this.yaw * 0.5;
-    const phi = w.tilt + this.pitch * 0.18;
-    const cosT = Math.cos(theta);
-    const sinT = Math.sin(theta);
-    const cosP = Math.cos(phi);
-    const sinP = Math.sin(phi);
-    const dist = 2.7;
-    const scale = Math.min(W * 0.36, H * 0.5) * dist * this.comp.orbitScale;
-    const cx = W * this.comp.orbitX;
-    const cy = H * this.comp.orbitY;
-    const nodes = w.nodes;
-    for (let i = 0; i < w.count; i++) {
-      const x = nodes[i * 4];
-      const y = nodes[i * 4 + 1];
-      const z = nodes[i * 4 + 2];
-      const x1 = x * cosT - z * sinT;
-      const z1 = x * sinT + z * cosT;
-      const y2 = y * cosP - z1 * sinP;
-      const z2 = y * sinP + z1 * cosP;
-      const s = scale / (dist + z2);
-      this.bx[i] = cx + x1 * s;
-      this.by[i] = cy + y2 * s;
-      this.bz[i] = (z2 + 1) * 0.5; // 0 near .. 1 far
-    }
-  }
-
   // ── drawing ────────────────────────────────────────────────────────────────
   private draw(): void {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.width, this.height);
     const atlas = this.ensureAtlas();
     this.drawStars(atlas);
-    if (this.world.kind === 'terrain') this.drawTerrain(atlas);
-    else this.drawOrbit(atlas, this.world);
+    this.drawTerrain(atlas);
     ctx.globalAlpha = 1;
   }
 
   // Result of shown(), kept in fields so the per-glyph hot path allocates nothing.
-  private outG = 0;
   private outHot = false;
   private outMul = 1;
 
-  /** Picks the glyph shown at point i, honouring the reveal scramble and any disturbance. */
-  private shown(i: number, base: number, x: number, y: number): void {
+  /**
+   * How cell i shows right now: hidden until the reveal reaches it, a short
+   * accent flash as it appears, then plain, or accent while disturbed.
+   */
+  private shown(i: number, x: number, y: number): void {
+    this.outHot = false;
+    this.outMul = 1;
     const since = this.t - this.reveal.t0;
-    if (since < 1.6) {
+    if (since < REVEAL_S) {
       const reach = Math.hypot(x - this.reveal.x, y - this.reveal.y) / Math.hypot(this.width, this.height);
-      if (since < reach * 1.1 + hash01(i) * 0.35) {
-        this.outG = POOL_START + Math.floor(hash2(i, Math.floor(this.t * 14)) * POOL_LEN);
+      const appears = reach * 1.1 + hash01(i) * 0.35;
+      if (since < appears) {
+        this.outMul = 0;
+        return;
+      }
+      const age = since - appears;
+      if (age < FLASH_S) {
         this.outHot = true;
-        this.outMul = smoothstep(0, 0.25, since) * 0.7;
+        this.outMul = smoothstep(0, 0.12, age);
         return;
       }
     }
-    const e = this.energy[i];
-    this.outMul = 1;
-    if (e > 0.45) {
-      this.outG = POOL_START + Math.floor(hash2(i, Math.floor(this.t * 12)) * POOL_LEN);
-      this.outHot = true;
-      return;
-    }
-    this.outG = base;
-    this.outHot = e > 0.12;
+    this.outHot = this.energy[i] > 0.12;
   }
 
   private drawTerrain(atlas: GlyphAtlas): void {
@@ -595,6 +528,10 @@ export class WorldEngine {
         const i = r * cols + c;
         const base = glyph[i];
         if (base === 0) continue;
+        const x = bx[i] + ox[i];
+        const y = by[i] + oy[i];
+        this.shown(i, x, y);
+        if (this.outMul === 0) continue;
         const z = depth[i];
         const fog = smoothstep(zNear, Z_FAR * 0.8, z);
         const k = kind[i];
@@ -602,65 +539,24 @@ export class WorldEngine {
         // the far fade keeps about a third of the strength instead of a fifth.
         const strength = k === SKYLINE ? 0.95 : k === RIDGE ? 0.78 : k === CONTOUR ? 0.44 + 0.14 * (1 - fog) : 0.34;
         const alpha = strength * (1 - 0.62 * Math.pow(fog, 0.85));
-        const x = bx[i] + ox[i];
-        const y = by[i] + oy[i];
-        this.shown(i, base, x, y);
         const e = energy[i];
         const hot = this.outHot || k === SKYLINE;
         ctx.globalAlpha = Math.min(1, (this.outHot ? Math.max(alpha, 0.35 + 0.6 * e) : alpha) * this.outMul);
         const size = cellH * (0.86 - 0.24 * fog);
-        atlas.draw(ctx, this.outG, hot ? 1 : 0, x, y, size);
+        atlas.draw(ctx, base, hot ? 1 : 0, x, y, size);
       }
-    }
-  }
-
-  private drawOrbit(atlas: GlyphAtlas, w: OrbitWorld): void {
-    const ctx = this.ctx;
-    const { bx, by, bz, ox, oy, energy } = this;
-    // links, batched into four alpha levels so each level is one stroke
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = this.colours[0];
-    for (let level = 1; level <= 4; level++) {
-      ctx.globalAlpha = level * 0.06;
-      ctx.beginPath();
-      for (let l = 0; l < w.linkLen.length; l++) {
-        const a = w.links[l * 2];
-        const b = w.links[l * 2 + 1];
-        const depthFade = 1 - 0.75 * ((bz[a] + bz[b]) * 0.5);
-        const v = (1 - w.linkLen[l] / w.linkRadius) * depthFade;
-        if (Math.min(4, Math.max(1, Math.ceil(v * 4))) !== level || v <= 0.02) continue;
-        ctx.moveTo(bx[a] + ox[a], by[a] + oy[a]);
-        ctx.lineTo(bx[b] + ox[b], by[b] + oy[b]);
-      }
-      ctx.stroke();
-    }
-    const coreCount = Math.floor(w.count * 0.14);
-    for (let i = 0; i < w.count; i++) {
-      const mass = w.nodes[i * 4 + 3];
-      const near = 1 - bz[i];
-      const base = mass > 0.97 ? GL.hash : mass > 0.86 ? GL.star : mass > 0.55 || i < coreCount ? GL.plus : GL.mid;
-      const x = bx[i] + ox[i];
-      const y = by[i] + oy[i];
-      this.shown(i, base, x, y);
-      const alpha = (0.22 + 0.78 * near) * (i < coreCount ? 1 : 0.85);
-      ctx.globalAlpha = Math.min(1, (this.outHot ? Math.max(alpha, 0.4 + 0.6 * energy[i]) : alpha) * this.outMul);
-      atlas.draw(ctx, this.outG, this.outHot ? 1 : 0, x, y, 7 + 10 * near);
     }
   }
 
   private drawStars(atlas: GlyphAtlas): void {
     const ctx = this.ctx;
-    const terrain = this.world.kind === 'terrain';
-    const skyBottom = terrain ? this.horizonPx : this.height;
     const drift = this.yaw * 6;
     for (let i = 0; i < this.world.stars.length; i++) {
       const s = this.world.stars[i];
       const x = (((s.u * this.width - drift) % this.width) + this.width) % this.width;
-      const y = s.v * skyBottom * 0.96;
-      if (terrain) {
-        const col = Math.min(this.cols - 1, Math.max(0, Math.floor(x / this.cellW)));
-        if (y > this.topY[col] - this.cellH * 0.6) continue; // behind a ridge
-      }
+      const y = s.v * this.horizonPx * 0.96;
+      const col = Math.min(this.cols - 1, Math.max(0, Math.floor(x / this.cellW)));
+      if (y > this.topY[col] - this.cellH * 0.6) continue; // behind a ridge
       const twinkle = smoothstep(0.55, 1, Math.sin(s.speed * this.t + s.phase));
       const b = 0.25 + 0.75 * twinkle;
       ctx.globalAlpha = b * (0.75 - 0.4 * s.v);

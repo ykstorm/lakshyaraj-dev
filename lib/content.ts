@@ -40,7 +40,7 @@ const parseMarkdownFrontmatter = (raw: string): { metadata: ContentMetadata; bod
   return { metadata, body };
 };
 
-export async function getContentFiles(contentType: 'projects' | 'blog'): Promise<ContentFile[]> {
+export async function getContentFiles(contentType: 'projects'): Promise<ContentFile[]> {
   const contentDir = path.join(process.cwd(), 'content', contentType);
 
   if (!fs.existsSync(contentDir)) {
@@ -65,7 +65,7 @@ export async function getContentFiles(contentType: 'projects' | 'blog'): Promise
     .sort((a, b) => (Date.parse(b.metadata.date) || 0) - (Date.parse(a.metadata.date) || 0));
 }
 
-export async function getContentBySlug(contentType: 'projects' | 'blog', slug: string): Promise<ContentFile | null> {
+export async function getContentBySlug(contentType: 'projects', slug: string): Promise<ContentFile | null> {
   // Slug comes from a dynamic route param → untrusted. Restrict to a safe
   // charset before it ever reaches the filesystem so no crafted value can
   // escape the content dir (defense-in-depth against path traversal).

@@ -60,21 +60,6 @@ export function ridged(n: ValueNoise, x: number, y: number, octaves: number): nu
   return sum / norm;
 }
 
-/** Plain fractal noise in [0, 1]: soft rolling ground. */
-export function fbm(n: ValueNoise, x: number, y: number, octaves: number): number {
-  let sum = 0;
-  let amp = 0.5;
-  let freq = 1;
-  let norm = 0;
-  for (let o = 0; o < octaves; o++) {
-    sum += n.noise(x * freq, y * freq) * amp;
-    norm += amp;
-    amp *= 0.5;
-    freq *= 2.01;
-  }
-  return (sum / norm) * 0.5 + 0.5;
-}
-
 export function smoothstep(e0: number, e1: number, x: number): number {
   const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
   return t * t * (3 - 2 * t);

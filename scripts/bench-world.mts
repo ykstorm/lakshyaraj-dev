@@ -32,7 +32,7 @@ const W = Number(process.argv[2] ?? 1920);
 const H = Number(process.argv[3] ?? 1080);
 const comp = { horizon: 0.55, bias: 0.5, orbitX: 0.6, orbitY: 0.5, orbitScale: 1 };
 
-for (const seed of [7, 8, 9, 10, 11, 12, 13, 14]) {
+for (const seed of [7, 9, 12, 14, 0x5eed0008]) {
   const eng = new WorldEngine(fakeCanvas() as unknown as HTMLCanvasElement, seed, { reduced: false, dense: true });
   eng.resize(W, H, 2, comp);
   eng.intro();
@@ -57,6 +57,6 @@ for (const seed of [7, 8, 9, 10, 11, 12, 13, 14]) {
     paint += performance.now() - b;
   }
   console.log(
-    `seed ${seed} ${eng.biome.padEnd(7)} sim ${(sim / frames).toFixed(2)}ms  draw-js ${(paint / frames).toFixed(2)}ms  drawImage/frame ${Math.round(draws / frames)}`,
+    `seed ${seed.toString(16)} sim ${(sim / frames).toFixed(2)}ms  draw-js ${(paint / frames).toFixed(2)}ms  drawImage/frame ${Math.round(draws / frames)}`,
   );
 }

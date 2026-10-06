@@ -1,18 +1,16 @@
 'use client';
 
 // The hero terminal. It types a short intro, then takes real commands: list and
-// open projects, jump to a section with cd, and drive the world canvas behind
-// it with `world` and `seed`. Arrow keys recall earlier commands. With
-// prefers-reduced-motion the intro appears at once instead of being typed.
+// open projects, and jump to a section with cd. Arrow keys recall earlier
+// commands. With prefers-reduced-motion the intro appears at once instead of
+// being typed.
 import { useEffect, useRef, useState } from 'react';
 import { PROJECTS } from '@/lib/projects';
-import { currentWorld, sendWorldCommand } from '@/components/world/bus';
-import { parseSeed, seedToHex } from '@/components/world/random';
 
 type Line = { kind: 'cmd' | 'out' | 'note'; text: string };
 
 const PROMPT = 'lakshyaraj@portfolio:~$ ';
-const SECTIONS = ['work', 'proof', 'now', 'stack', 'writing', 'contact'] as const;
+const SECTIONS = ['work', 'proof', 'now', 'stack', 'contact'] as const;
 
 const WHOAMI = ['Lakshyaraj Singh Rao. Full-stack developer, backend focus.', 'Software engineer at Homesty.ai since November 2025.'];
 const BOOT: { cmd: string; out: string[] }[] = [
@@ -25,9 +23,7 @@ const HELP = [
   'ls              list my projects',
   'cat <project>   what a project does, e.g. cat anvil',
   'open <name>     open a project, resume, github, linkedin or npm',
-  'cd <section>    jump to work, proof, now, stack, writing or contact',
-  'world           draw a new world behind this terminal',
-  'seed <hex>      redraw a world from its seed, e.g. seed 5eed1e55',
+  'cd <section>    jump to work, proof, now, stack or contact',
   'stack           the tools I use',
   'contact         how to reach me',
   'clear           clear the screen',
@@ -43,17 +39,6 @@ const LINKS: Record<string, string> = {
 
 const shortId = (id: string) => id.replace(/-ai$/, '');
 const findProject = (name: string) => PROJECTS.find((p) => p.id === name || shortId(p.id) === name);
-
-function describeWorld(): string {
-  const w = currentWorld();
-  return w ? `world=${w.biome} seed=${seedToHex(w.seed)}` : 'The world is still loading.';
-}
-
-function shareLine(): Line[] {
-  const w = currentWorld();
-  if (!w) return [];
-  return [{ kind: 'note', text: `Link to this world: ${window.location.origin}/?seed=${seedToHex(w.seed)}` }];
-}
 
 function open(url: string): void {
   if (url.startsWith('/')) window.location.assign(url);
@@ -106,21 +91,6 @@ function cd(arg: string): Line[] {
   return [];
 }
 
-function world(): Line[] {
-  if (!currentWorld()) return out(describeWorld());
-  sendWorldCommand({ type: 'new' });
-  return [...out(describeWorld()), ...shareLine()];
-}
-
-function seed(arg: string): Line[] {
-  if (!arg) return [...out(describeWorld()), ...shareLine()];
-  const value = parseSeed(arg);
-  if (value === null) return out('seed: expected up to 8 hex digits, e.g. seed 5eed1e55');
-  if (!currentWorld()) return out(describeWorld());
-  sendWorldCommand({ type: 'seed', seed: value });
-  return [...out(describeWorld()), ...shareLine()];
-}
-
 const COMMANDS: Record<string, (arg: string) => Line[] | 'clear'> = {
   help: () => out(...HELP),
   whoami: () => out(...WHOAMI),
@@ -128,8 +98,6 @@ const COMMANDS: Record<string, (arg: string) => Line[] | 'clear'> = {
   cat,
   open: openArg,
   cd,
-  world,
-  seed,
   stack: () => out(...STACK),
   contact: () => out(...CONTACT),
   clear: () => 'clear',

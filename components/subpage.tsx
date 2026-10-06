@@ -4,7 +4,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 type Crumb = { href?: string; label: string };
 
 // Shared chrome for every page except the home page. The header is the page's
-// path written like a shell prompt, ~/blog/post-name, with each segment linked.
+// path written like a shell prompt, ~/projects/anvil, with each segment linked.
 export function Subpage({
   crumbs,
   actions,

@@ -6,7 +6,6 @@ import { HoverEffect } from '@/components/ui/card-hover-effect';
 import { FlagshipCard, ProjectCard } from '@/components/ui/project-card';
 import { TerminalContact } from '@/components/ui/terminal-contact';
 import { formatDate } from '@/components/subpage';
-import { getContentFiles } from '@/lib/content';
 import { getProof } from '@/lib/proof';
 import { PROJECTS } from '@/lib/projects';
 import nowData from '@/data/now.json';
@@ -52,7 +51,7 @@ const NOW_ROWS = [
 ];
 
 export default async function HomePage() {
-  const [proof, posts] = await Promise.all([getProof(), getContentFiles('blog')]);
+  const proof = await getProof();
   const flagship = PROJECTS.find((p) => p.flagship);
   const others = PROJECTS.filter((p) => !p.flagship);
   const year = new Date(proof.fetchedAt).getUTCFullYear();
@@ -114,26 +113,6 @@ export default async function HomePage() {
               </div>
             ))}
           </dl>
-        </Section>
-
-        <Section id="writing" intro="Longer notes on how the projects work and what broke while building them.">
-          <ul className="divide-y divide-border border-y border-border">
-            {posts.map((post) => (
-              <li key={post.slug}>
-                <Link href={`/blog/${post.slug}`} className="group grid gap-2 py-6 sm:grid-cols-[1fr_auto] sm:gap-8">
-                  <span>
-                    <span className="font-display block text-xl tracking-tight transition-colors group-hover:text-accent sm:text-2xl">
-                      {post.metadata.title}
-                    </span>
-                    <span className="mt-2 block max-w-prose text-[15px] leading-relaxed text-muted-foreground">{post.metadata.description}</span>
-                  </span>
-                  <time dateTime={post.metadata.date} className="mono text-[12px] text-muted-foreground sm:pt-2">
-                    {formatDate(post.metadata.date)}
-                  </time>
-                </Link>
-              </li>
-            ))}
-          </ul>
         </Section>
 
         <Section id="contact" intro="Email, LinkedIn, GitHub or npm. The resume is one page.">

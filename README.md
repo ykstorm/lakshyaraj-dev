@@ -10,24 +10,23 @@ contact. Dark by default, keyboard-navigable, and every animation has a
 
 ## The hero world
 
-[`components/world/`](components/world) draws a seeded ASCII world on Canvas 2D.
-No images, no WebGL: every glyph is computed each frame.
+[`components/world/`](components/world) draws an ASCII mountain range on
+Canvas 2D. No images, no WebGL: every glyph is computed each frame.
 
-- **Seeded.** A 32-bit seed picks one of three biomes and every parameter in it
-  ([`biomes.ts`](components/world/biomes.ts)): a mountain range of ridged,
-  domain-warped noise you fly over, a sea of interfering waves, or a spiral
-  constellation linked to its nearest neighbours. The same seed always draws
-  the same world, so a world can be shared as a link: `/?seed=5eed0008`.
-- **Depth.** Terrain is rendered like a voxel-space engine
+- **Seeded.** One 32-bit seed sets every parameter of the range
+  ([`biomes.ts`](components/world/biomes.ts)): ridged, domain-warped noise you
+  fly over, and the sky of stars above it. The same seed always draws the same
+  range.
+- **Depth.** The terrain is rendered like a voxel-space engine
   ([`engine.ts`](components/world/engine.ts)): each column marches front to
   back through the heightfield, so nearer ridges hide farther ones and every
   cell knows its depth. Cells are classified as skyline, inner ridge, contour or
   open ground, and lines get slope-aware glyphs (`/ \ _ ^ -`). Fog and glyph
   size fall off with distance, and the camera drifts with the cursor.
 - **Physics.** The cursor pushes glyphs through a spring field and they settle
-  back. A click sends a ring outward. Disturbed glyphs scramble, then resolve.
-- **Driven from the terminal.** The hero terminal takes `world` (a new world)
-  and `seed <hex>` (a specific one), alongside `ls`, `cat`, `open` and `cd`.
+  back. A click sends a ring outward; disturbed glyphs show in the accent
+  colour while they move.
+- **The terminal.** The hero terminal takes `ls`, `cat`, `open` and `cd`.
 - **Cheap.** Glyphs are pre-rendered into a sprite atlas, so a frame is a run of
   `drawImage` calls. The physics steps at a fixed 60 Hz. The canvas is a lazy
   client chunk (`next/dynamic`, no SSR), so the headline paints first and is the
@@ -60,10 +59,10 @@ raise that limit.
 
 ## Routes
 
-`/` · `/now` · `/resume` · `/blog` + `/blog/[slug]` · `/projects/[slug]`
+`/` · `/now` · `/resume` · `/projects/[slug]`
 
-Blog posts and project pages are markdown in [`content/`](content), rendered
-with `react-markdown` (raw HTML in a content file is ignored, never injected).
+Project pages are markdown in [`content/`](content), rendered with
+`react-markdown` (raw HTML in a content file is ignored, never injected).
 
 ## Run locally
 
@@ -79,9 +78,9 @@ npm run build       # production build, fetches the live proof
 
 ```
 app/              routes, metadata, sitemap, robots, OpenGraph image
-components/world/ the hero world: biomes, engine, glyph atlas, noise, seeds
+components/world/ the hero range: world, engine, glyph atlas, noise, seeds
 components/       hero, proof, page chrome, markdown, terminals, cards
-content/          markdown for blog posts and project pages
+content/          markdown for project pages
 data/             project list and the "now" snapshot
 lib/              content loading, project links, live proof
 ```

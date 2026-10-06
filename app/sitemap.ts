@@ -1,6 +1,4 @@
 import type { MetadataRoute } from 'next';
-import fs from 'node:fs';
-import path from 'node:path';
 import projectsData from '@/data/projects.json';
 
 const SITE = 'https://lakshyaraj-dev.vercel.app';
@@ -8,7 +6,7 @@ const SITE = 'https://lakshyaraj-dev.vercel.app';
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  const staticRoutes: MetadataRoute.Sitemap = ['', '/now', '/resume', '/blog'].map((p) => ({
+  const staticRoutes: MetadataRoute.Sitemap = ['', '/now', '/resume'].map((p) => ({
     url: `${SITE}${p}`,
     lastModified: now,
     changeFrequency: 'weekly',
@@ -22,21 +20,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  let blog: MetadataRoute.Sitemap = [];
-  try {
-    const dir = path.join(process.cwd(), 'content', 'blog');
-    blog = fs
-      .readdirSync(dir)
-      .filter((f) => f.endsWith('.mdx'))
-      .map((f) => ({
-        url: `${SITE}/blog/${f.replace(/\.mdx$/, '')}`,
-        lastModified: now,
-        changeFrequency: 'monthly',
-        priority: 0.6,
-      }));
-  } catch {
-    // no blog dir at build — skip
-  }
-
-  return [...staticRoutes, ...projects, ...blog];
+  return [...staticRoutes, ...projects];
 }

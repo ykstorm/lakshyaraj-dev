@@ -1,5 +1,4 @@
 import { WorldStage } from '@/components/world/world-stage';
-import { WorldControls } from '@/components/world/world-controls';
 import { TerminalHero } from '@/components/ui/terminal-hero';
 
 const ELSEWHERE = [
@@ -43,19 +42,12 @@ export function Hero() {
             </nav>
           </div>
 
-          {/* small screens: the band where the world shows between copy and terminal */}
+          {/* small screens: the band where the range shows between copy and terminal */}
           <div data-world-anchor aria-hidden className="h-[36svh] min-h-[220px] lg:hidden" />
-          <div className="pb-5 lg:hidden">
-            <WorldControls />
-          </div>
 
           <div className="lg:mt-10">
             <TerminalHero />
           </div>
-        </div>
-
-        <div className="hidden self-end justify-self-end lg:block">
-          <WorldControls />
         </div>
       </div>
     </section>
