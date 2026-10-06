@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 // Pragmatic CSP: next-themes injects an inline <script> to set the theme class
-// before paint, and Next/Framer inject inline styles — both need 'unsafe-inline'
+// before paint, and Next/Framer inject inline styles, and both need 'unsafe-inline'
 // (a nonce-based policy would require middleware, overkill for a static portfolio).
 // Vercel Analytics/Speed-Insights load same-origin (/_vercel/*); va.vercel-scripts.com
 // is the legacy beacon fallback. Everything else is locked to 'self'.
@@ -36,11 +36,10 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   // Trace runtime-read content into the serverless bundle. lib/content.ts reads
   // content/*.mdx via fs.readdirSync(process.cwd()/...), which Next's tracer
-  // can't detect statically — so MDX routes prerender then 404 at runtime
+  // can't detect statically, so MDX routes prerender then 404 at runtime
   // without this include.
   outputFileTracingIncludes: {
     "/projects/[slug]": ["./content/**/*"],
-    "/blog/[slug]": ["./content/**/*"],
   },
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];
