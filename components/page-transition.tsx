@@ -3,7 +3,7 @@
 // CSS-only fade+rise page transition, keyed on pathname so it replays per route.
 // Deliberately NOT framer-motion: this wraps every route in the root layout, so
 // importing framer here forced ~40-60 KB of animation JS onto pure-content pages
-// (blog, now, resume, project/blog detail) that ship no other animation.
+// (now, resume, project detail) that ship no other animation.
 // The keyframes + prefers-reduced-motion guard live in globals.css (.page-fade).
 //
 // Only navigation within the site fades. The page a visitor lands on paints at

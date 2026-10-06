@@ -19,19 +19,19 @@
     --muted-foreground: #5f5e58;  /* 5.4:1 on --background */
     --border: #d3d0c7;
     --border-strong: #b9b5a9;
-    --accent: #8f5306;            /* burnished amber, 5.2:1 on --background */
-    --accent-strong: #6f4004;
+    --accent: #9a4a10;            /* rust amber, 5.4:1 on --background */
+    --accent-strong: #73360a;
     --accent-ink: #f5f4f0;        /* text on an accent fill */
-    --accent-wash: rgba(143, 83, 6, 0.08);
+    --accent-wash: rgba(154, 74, 16, 0.08);
     --ok: #23784f;
     --bad: #b23b25;
     --grid: rgba(23, 24, 26, 0.04);
     --scan: rgba(23, 24, 26, 0.016);
-    --glow: rgba(143, 83, 6, 0.08);
+    --glow: rgba(154, 74, 16, 0.08);
 
     /* canvas glyph colours (read by the hero canvas at runtime) */
     --glyph: 23, 24, 26;          /* r, g, b */
-    --glyph-hot: 143, 83, 6;
+    --glyph-hot: 154, 74, 16;
 
     /* commit calendar, amber on paper */
     --cal-0: #dedbd2;
@@ -229,9 +229,6 @@
   .world-stage {
     --world-horizon: 0.5;
     --world-bias: 0;
-    --world-orbit-x: 0.5;
-    --world-orbit-y: 0.56;
-    --world-orbit-scale: 1;
     -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
             mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
   }
@@ -256,9 +253,6 @@
     .world-stage {
       --world-horizon: 0.56;
       --world-bias: 0.72;
-      --world-orbit-x: 0.73;
-      --world-orbit-y: 0.48;
-      --world-orbit-scale: 0.78;
       -webkit-mask-image:
         linear-gradient(to right, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.26) 38%, #000 62%),
         linear-gradient(to bottom, #000 84%, transparent 100%);
@@ -269,15 +263,6 @@
               mask-composite: intersect;
     }
     .text-scrim::before { display: none; }
-  }
-
-  .hint-touch { display: none; }
-  @media (hover: none) {
-    .hint-fine { display: none; }
-    .hint-touch { display: inline; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .world-hint { display: none; }
   }
 
   /* ── Panels ─────────────────────────────────────────────────────────────── */
@@ -297,9 +282,6 @@
     background-color: color-mix(in srgb, var(--card) 84%, transparent);
     backdrop-filter: blur(10px);
     overflow: hidden;
-    box-shadow:
-      0 1px 0 color-mix(in srgb, var(--accent) 14%, transparent) inset,
-      0 30px 70px -36px rgba(0, 0, 0, 0.6);
   }
   .term-titlebar {
     display: flex;

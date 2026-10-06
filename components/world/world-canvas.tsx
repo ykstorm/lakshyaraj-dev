@@ -7,14 +7,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { WorldEngine, type Composition } from './engine';
 import { DEFAULT_SEED } from './biomes';
-import { parseSeed, randomSeed } from './random';
-import { announceWorld, currentWorld, onWorldCommand } from './bus';
-
-// A world can be shared as a link: /?seed=5eed0001 opens that exact world.
-function seedFromUrl(): number | null {
-  const raw = new URLSearchParams(window.location.search).get('seed');
-  return raw ? parseSeed(raw) : null;
-}
 
 const REDUCED = '(prefers-reduced-motion: reduce)';
 const subscribeReduced = (cb: () => void) => {
@@ -28,30 +20,21 @@ const getReducedOnServer = () => false;
 // Clicks on these never send a wave: they belong to the control, not the world.
 const INTERACTIVE = 'a, button, input, textarea, select, label, summary, [data-no-wave]';
 
-// Where the horizon and the constellation sit. On small screens the hero marks
-// a band between its copy and the terminal with [data-world-anchor], and the
-// world is placed in that band whatever height the copy wraps to. Otherwise
-// the hero's CSS variables decide, per breakpoint.
+// Where the horizon sits. On small screens the hero marks a band between its
+// copy and the terminal with [data-world-anchor], and the range is placed in
+// that band whatever height the copy wraps to. Otherwise the hero's CSS
+// variables decide, per breakpoint.
 function composition(stage: HTMLElement): Composition {
   const cs = getComputedStyle(stage);
   const num = (name: string, fallback: number) => {
     const v = parseFloat(cs.getPropertyValue(name));
     return Number.isFinite(v) ? v : fallback;
   };
-  const comp = {
-    horizon: num('--world-horizon', 0.55),
-    bias: num('--world-bias', 0),
-    orbitX: num('--world-orbit-x', 0.6),
-    orbitY: num('--world-orbit-y', 0.5),
-    orbitScale: num('--world-orbit-scale', 1),
-  };
+  const comp = { horizon: num('--world-horizon', 0.55), bias: num('--world-bias', 0) };
   const anchor = stage.parentElement?.querySelector<HTMLElement>('[data-world-anchor]');
   const box = anchor?.getBoundingClientRect();
   const frame = stage.getBoundingClientRect();
-  if (box && box.height > 0 && frame.height > 0) {
-    comp.horizon = (box.top - frame.top + box.height * 0.3) / frame.height;
-    comp.orbitY = (box.top - frame.top + box.height * 0.5) / frame.height;
-  }
+  if (box && box.height > 0 && frame.height > 0) comp.horizon = (box.top - frame.top + box.height * 0.3) / frame.height;
   return comp;
 }
 
@@ -110,11 +93,7 @@ export default function WorldCanvas() {
       await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]);
       if (cancelled) return;
       try {
-        engine = new WorldEngine(canvas, currentWorld()?.seed ?? seedFromUrl() ?? DEFAULT_SEED, {
-          reduced,
-          dense,
-          onWorld: (seed, biome) => announceWorld({ seed, biome }),
-        });
+        engine = new WorldEngine(canvas, DEFAULT_SEED, { reduced, dense });
       } catch {
         return; // no Canvas 2D: the hero keeps its copy and simply has no world
       }
@@ -123,7 +102,6 @@ export default function WorldCanvas() {
       fit();
       if (reduced) {
         engine.renderStill();
-        announceWorld({ seed: engine.seed, biome: engine.biome });
       } else {
         engine.intro();
         run();
@@ -153,8 +131,6 @@ export default function WorldCanvas() {
       });
       mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
       cleanups.push(() => mo.disconnect());
-
-      cleanups.push(onWorldCommand((cmd) => engine?.setSeed(cmd.type === 'seed' ? cmd.seed : randomSeed())));
 
       if (reduced) return; // still view: no pointer field, no waves
       listen('scroll', () => (rect = stage.getBoundingClientRect()));

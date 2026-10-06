@@ -27,9 +27,6 @@
 - Quickdraw: measures how an LLM streams on your network and your prompts, in CI. https://github.com/ykstorm/quickdraw
 - Codecraft: an IDE in the browser that boots a real dev server inside the tab, on WebContainers. https://github.com/ykstorm/codecraft-ai
 
-## Writing
-- Anvil: the whole webhook-to-queue chain, not one link. https://lakshyaraj-dev.vercel.app/blog/anvil-idempotent-webhooks
-
 ## Skills
 TypeScript, JavaScript, SQL, React, Next.js, Tailwind CSS, Node.js, Express,
 REST APIs, PostgreSQL, Prisma, Redis, MongoDB, Git, GitHub, Docker, Kubernetes,

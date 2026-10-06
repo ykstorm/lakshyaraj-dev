@@ -7,7 +7,6 @@ const SECTIONS = [
   { href: '/#work', label: 'work', mobile: true },
   { href: '/#proof', label: 'proof', mobile: true },
   { href: '/#now', label: 'now', mobile: false },
-  { href: '/#writing', label: 'writing', mobile: false },
   { href: '/#contact', label: 'contact', mobile: true },
 ];
 
@@ -41,7 +40,6 @@ const SITE_LINKS = [
   { href: '/#work', label: 'Work' },
   { href: '/#proof', label: 'Proof' },
   { href: '/now', label: 'Now' },
-  { href: '/blog', label: 'Writing' },
   { href: '/resume', label: 'Resume' },
 ];
 const ELSEWHERE = [
