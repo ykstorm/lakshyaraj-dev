@@ -17,7 +17,7 @@ Anvil is an Express server in TypeScript with a BullMQ worker behind it.
 4. **Retry, then stop.** A failing job retries on a fixed schedule, then moves to a dead-letter queue instead of retrying forever.
 5. **Replay by hand.** The dead-letter queue is never drained by the worker. Replaying a job is a separate, deliberate step, so a job that always fails cannot loop.
 
-It is packaged with Docker and published on npm. The [write-up](/blog/anvil-idempotent-webhooks) walks through each step and the bug the Redis tests caught.
+It is packaged with Docker and published on npm.
 
 ## What it does not do
 

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Knowledge-graph scratch files, not part of the site.
+    ".ua/**",
   ]),
 ]);
 
