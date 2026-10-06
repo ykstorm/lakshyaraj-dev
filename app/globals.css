@@ -282,6 +282,10 @@
     background-color: color-mix(in srgb, var(--card) 84%, transparent);
     backdrop-filter: blur(10px);
     overflow: hidden;
+    /* a little lift off the page, so the window reads as a window */
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--accent) 14%, transparent) inset,
+      0 24px 60px -36px rgba(0, 0, 0, 0.5);
   }
   .term-titlebar {
     display: flex;
