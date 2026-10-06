@@ -1,6 +1,6 @@
 # lakshyaraj-dev
 
-My personal site and portfolio: **[lakshyaraj-dev.vercel.app](https://lakshyaraj-dev.vercel.app)**.
+My personal site and portfolio: [lakshyaraj-dev.vercel.app](https://lakshyaraj-dev.vercel.app).
 
 A Next.js 16 App Router site. The hero is a world drawn entirely in code on a
 canvas, with a working terminal in front of it. The rest of the page is plain
@@ -13,26 +13,26 @@ contact. Dark by default, keyboard-navigable, and every animation has a
 [`components/world/`](components/world) draws an ASCII mountain range on
 Canvas 2D. No images, no WebGL: every glyph is computed each frame.
 
-- **Seeded.** One 32-bit seed sets every parameter of the range
+- Seeded. One 32-bit seed sets every parameter of the range
   ([`biomes.ts`](components/world/biomes.ts)): ridged, domain-warped noise you
   fly over, and the sky of stars above it. The same seed always draws the same
   range.
-- **Depth.** The terrain is rendered like a voxel-space engine
+- Depth. The terrain is rendered like a voxel-space engine
   ([`engine.ts`](components/world/engine.ts)): each column marches front to
   back through the heightfield, so nearer ridges hide farther ones and every
   cell knows its depth. Cells are classified as skyline, inner ridge, contour or
   open ground, and lines get slope-aware glyphs (`/ \ _ ^ -`). Fog and glyph
   size fall off with distance, and the camera drifts with the cursor.
-- **Physics.** The cursor pushes glyphs through a spring field and they settle
+- Physics. The cursor pushes glyphs through a spring field and they settle
   back. A click sends a ring outward; disturbed glyphs show in the accent
   colour while they move.
-- **The terminal.** The hero terminal takes `ls`, `cat`, `open` and `cd`.
-- **Cheap.** Glyphs are pre-rendered into a sprite atlas, so a frame is a run of
+- The terminal. The hero terminal takes `ls`, `cat`, `open` and `cd`.
+- Cheap. Glyphs are pre-rendered into a sprite atlas, so a frame is a run of
   `drawImage` calls. The physics steps at a fixed 60 Hz. The canvas is a lazy
   client chunk (`next/dynamic`, no SSR), so the headline paints first and is the
   LCP element. It pauses off-screen and in hidden tabs, and uses a lighter world
   on small or touch screens.
-- **Reduced motion.** One still frame of the same world. No loop, no pointer
+- Reduced motion. One still frame of the same world. No loop, no pointer
   field, no waves, and the terminal intro appears at once instead of typing.
 
 Adapted techniques, credited in the source:
@@ -92,5 +92,5 @@ lib/              content loading, project links, live proof
 
 ---
 
-Built by **Lakshyaraj Singh Rao**, a full-stack developer with a backend focus.
+Built by Lakshyaraj Singh Rao, a full-stack developer with a backend focus.
 [Portfolio](https://lakshyaraj-dev.vercel.app) · [GitHub](https://github.com/ykstorm) · [npm](https://www.npmjs.com/~ykstormsorg)
