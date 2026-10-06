@@ -55,6 +55,7 @@ export default async function HomePage() {
   const flagship = PROJECTS.find((p) => p.flagship);
   const others = PROJECTS.filter((p) => !p.flagship);
   const year = new Date(proof.fetchedAt).getUTCFullYear();
+  const stars = new Map(proof.stars.flatMap((s) => (s.ok ? [[s.id, s.stars] as const] : [])));
 
   return (
     <div className="relative min-h-screen text-foreground">
@@ -71,7 +72,7 @@ export default async function HomePage() {
               <FlagshipCard project={flagship} />
             </div>
           )}
-          <HoverEffect items={others.map((p) => ({ id: p.id, content: <ProjectCard project={p} /> }))} />
+          <HoverEffect items={others.map((p) => ({ id: p.id, content: <ProjectCard project={p} stars={stars.get(p.id)} /> }))} />
         </Section>
 
         <Section id="proof" intro="Read from npm and GitHub when this page was built, not typed in. If a check is failing, it shows as failing.">

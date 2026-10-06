@@ -1,8 +1,8 @@
 // Live proof for the home page, fetched on the server at build time and
 // refreshed at most once an hour (ISR). Nothing here is hard-coded: versions,
-// check results and commit counts all come from npm and GitHub. When a fetch
-// fails, the result carries the exact URL that failed so the page can print it
-// instead of quietly showing a stale or invented number.
+// downloads, check results, stars and commit counts all come from npm and
+// GitHub. When a fetch fails, the result carries the exact URL that failed so
+// the page can print it instead of quietly showing a stale or invented number.
 import projectsData from '@/data/projects.json';
 
 const OWNER = 'ykstorm';
@@ -16,6 +16,10 @@ export type Failure = { ok: false; url: string; reason: string };
 // GitHub allows 60 unauthenticated requests an hour per IP. An optional
 // GITHUB_TOKEN (read-only, public repos) lifts that to 5,000; without one the
 // page still builds and any rate-limited request shows up as a printed failure.
+//
+// Requests per build without a token: two per project repository (check runs,
+// stars), one to list my repositories, and one to three per public repository
+// for the commit calendar (GitHub answers 202 while it computes the stats).
 function githubHeaders(): HeadersInit {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
@@ -31,23 +35,41 @@ function reasonOf(err: unknown): string {
   return err instanceof Error ? err.message : 'network error';
 }
 
+// GitHub signals a spent rate limit with a 403 or 429 and zero requests left.
+// Say that, and when the window resets, rather than a bare status code.
+function httpError(res: Response): Error {
+  const limited = (res.status === 403 || res.status === 429) && res.headers.get('x-ratelimit-remaining') === '0';
+  if (!limited) return new Error(`HTTP ${res.status}`);
+  const reset = Number(res.headers.get('x-ratelimit-reset'));
+  const at = reset > 0 ? `, resets at ${new Date(reset * 1000).toISOString().slice(11, 16)} UTC` : '';
+  return new Error(`HTTP ${res.status}, rate limit reached${at}`);
+}
+
 async function getJson(url: string, github: boolean): Promise<{ status: number; body: unknown }> {
   const res = await fetch(url, {
     headers: github ? githubHeaders() : undefined,
     next: { revalidate: REVALIDATE },
   });
   if (res.status === 202 || res.status === 204) return { status: res.status, body: null };
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) throw httpError(res);
   return { status: res.status, body: await res.json() };
+}
+
+const npmPackages = () => PROJECTS.flatMap((p) => (p.npm ? [p.npm] : []));
+
+function projectRepos(): { id: string; repo: string; name: string }[] {
+  return PROJECTS.flatMap((p) => {
+    const m = p.code?.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)$/);
+    return m && m[1] === OWNER ? [{ id: p.id, repo: m[2], name: p.name }] : [];
+  });
 }
 
 // ── npm ──────────────────────────────────────────────────────────────────────
 export type NpmResult = { name: string; page: string } & ({ ok: true; version: string } | Failure);
 
 async function getNpmVersions(): Promise<NpmResult[]> {
-  const names = PROJECTS.flatMap((p) => (p.npm ? [p.npm] : []));
   return Promise.all(
-    names.map(async (name): Promise<NpmResult> => {
+    npmPackages().map(async (name): Promise<NpmResult> => {
       const page = `https://www.npmjs.com/package/${name}`;
       const url = `https://registry.npmjs.org/${name}/latest`;
       try {
@@ -57,6 +79,25 @@ async function getNpmVersions(): Promise<NpmResult[]> {
         return { name, page, ok: true, version };
       } catch (err) {
         return { name, page, ok: false, url, reason: reasonOf(err) };
+      }
+    }),
+  );
+}
+
+// ── npm: downloads in the last week ──────────────────────────────────────────
+export type DownloadsResult = { name: string } & ({ ok: true; downloads: number } | Failure);
+
+async function getNpmDownloads(): Promise<DownloadsResult[]> {
+  return Promise.all(
+    npmPackages().map(async (name): Promise<DownloadsResult> => {
+      const url = `https://api.npmjs.org/downloads/point/last-week/${name}`;
+      try {
+        const { body } = await getJson(url, false);
+        const downloads = (body as { downloads?: unknown } | null)?.downloads;
+        if (typeof downloads !== 'number') return { name, ok: false, url, reason: 'no download count in response' };
+        return { name, ok: true, downloads };
+      } catch (err) {
+        return { name, ok: false, url, reason: reasonOf(err) };
       }
     }),
   );
@@ -81,12 +122,8 @@ function summarise(runs: CheckRun[]): { state: CiState; failed: number } {
 }
 
 async function getCiStatuses(): Promise<CiResult[]> {
-  const repos = PROJECTS.flatMap((p) => {
-    const m = p.code?.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)$/);
-    return m && m[1] === OWNER ? [{ repo: m[2], name: p.name }] : [];
-  });
   return Promise.all(
-    repos.map(async ({ repo, name }): Promise<CiResult> => {
+    projectRepos().map(async ({ repo, name }): Promise<CiResult> => {
       const url = `https://api.github.com/repos/${OWNER}/${repo}/commits/main/check-runs?per_page=100`;
       const fallbackPage = `https://github.com/${OWNER}/${repo}/actions`;
       try {
@@ -98,6 +135,26 @@ async function getCiStatuses(): Promise<CiResult[]> {
         return { repo, name, page, ok: true, state, total: runs.length, failed, sha };
       } catch (err) {
         return { repo, name, page: fallbackPage, ok: false, url, reason: reasonOf(err) };
+      }
+    }),
+  );
+}
+
+// ── GitHub: stars and forks of each project repository ───────────────────────
+export type StarsResult = { id: string; repo: string } & ({ ok: true; stars: number; forks: number } | Failure);
+
+async function getStars(): Promise<StarsResult[]> {
+  return Promise.all(
+    projectRepos().map(async ({ id, repo }): Promise<StarsResult> => {
+      const url = `https://api.github.com/repos/${OWNER}/${repo}`;
+      try {
+        const { body } = await getJson(url, true);
+        const counts = (body ?? {}) as { stargazers_count?: unknown; forks_count?: unknown };
+        const [stars, forks] = [counts.stargazers_count, counts.forks_count];
+        if (typeof stars !== 'number' || typeof forks !== 'number') return { id, repo, ok: false, url, reason: 'no star count in response' };
+        return { id, repo, ok: true, stars, forks };
+      } catch (err) {
+        return { id, repo, ok: false, url, reason: reasonOf(err) };
       }
     }),
   );
@@ -173,9 +230,22 @@ async function getCommitCalendar(): Promise<Calendar> {
   return { ok: true, weeks, total, repos: counted, missing };
 }
 
-export type Proof = { npm: NpmResult[]; ci: CiResult[]; calendar: Calendar; fetchedAt: number };
+export type Proof = {
+  npm: NpmResult[];
+  downloads: DownloadsResult[];
+  ci: CiResult[];
+  stars: StarsResult[];
+  calendar: Calendar;
+  fetchedAt: number;
+};
 
 export async function getProof(): Promise<Proof> {
-  const [npm, ci, calendar] = await Promise.all([getNpmVersions(), getCiStatuses(), getCommitCalendar()]);
-  return { npm, ci, calendar, fetchedAt: Date.now() };
+  const [npm, downloads, ci, stars, calendar] = await Promise.all([
+    getNpmVersions(),
+    getNpmDownloads(),
+    getCiStatuses(),
+    getStars(),
+    getCommitCalendar(),
+  ]);
+  return { npm, downloads, ci, stars, calendar, fetchedAt: Date.now() };
 }
