@@ -48,14 +48,19 @@ either library's components.
 [`lib/proof.ts`](lib/proof.ts) fetches on the server when the page is built,
 and the page revalidates at most once an hour:
 
-- the latest published version of each `@ykstormsorg/*` package on npm,
-- check runs on the latest commit to `main` for each project repository,
+- the latest published version of each `@ykstormsorg/*` package on npm, and
+  its downloads in the last week,
+- check runs on the latest commit to `main` for each project repository, and
+  its stars and forks,
 - a commit calendar summed from each of my public repositories.
 
 Nothing is typed in. When a request fails, the page prints the URL that failed
 and why, instead of a stale or invented number. GitHub allows 60
 unauthenticated requests an hour; set an optional read-only `GITHUB_TOKEN` to
-raise that limit.
+raise that limit. Without one, a build makes two GitHub requests per project
+repository, one to list my repositories, and one to three per public
+repository for the commit calendar (three when GitHub is still computing its
+stats).
 
 ## Routes
 

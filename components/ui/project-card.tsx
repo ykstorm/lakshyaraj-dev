@@ -34,19 +34,24 @@ function Stack({ items }: { items: string[] }) {
 }
 
 // External links sit above the card's stretched link, so both stay clickable.
-function Links({ project }: { project: Project }) {
+// The star count, when GitHub returned one, sits beside the Code link.
+function Links({ project, stars }: { project: Project; stars?: number }) {
   return (
     <div className="mono relative z-20 flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
       {projectLinks(project).map((l) => (
-        <a
-          key={l.kind}
-          href={l.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-muted-foreground underline decoration-border-strong underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
-        >
-          {l.label}
-        </a>
+        <span key={l.kind} className="whitespace-nowrap">
+          <a
+            href={l.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground underline decoration-border-strong underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+          >
+            {l.label}
+          </a>
+          {l.kind === 'code' && stars !== undefined && (
+            <span className="text-muted-foreground">{` (${stars} ${stars === 1 ? 'star' : 'stars'})`}</span>
+          )}
+        </span>
       ))}
     </div>
   );
@@ -96,7 +101,7 @@ export function FlagshipCard({ project }: { project: Project }) {
   );
 }
 
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({ project, stars }: { project: Project; stars?: number }) {
   return (
     <article className="group panel relative flex h-full flex-col overflow-hidden p-5 transition-colors hover:border-accent/60">
       <Chrome />
@@ -106,7 +111,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <p className="text-[14.5px] leading-relaxed text-muted-foreground">{project.description}</p>
         <div className="mt-auto space-y-3 pt-2">
           <Stack items={project.stack.slice(0, 5)} />
-          <Links project={project} />
+          <Links project={project} stars={stars} />
         </div>
       </div>
     </article>

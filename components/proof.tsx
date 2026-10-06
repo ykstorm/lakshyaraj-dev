@@ -1,7 +1,10 @@
-import type { Calendar, CalendarWeek, CiResult, CiState, Failure, NpmResult, Proof } from '@/lib/proof';
+import type { Calendar, CalendarWeek, CiResult, CiState, DownloadsResult, Failure, NpmResult, Proof, StarsResult } from '@/lib/proof';
 
 const CAPTION = 'Counts commits to my own repositories. It measures what I write here, not what I land upstream.';
 const DAY = 86400;
+
+const count = (n: number, one: string, many: string) => `${n.toLocaleString('en-US')} ${n === 1 ? one : many}`;
+const failed = <T extends { ok: boolean }>(items: T[]) => items.filter((r): r is T & Failure => !r.ok);
 
 const STATE_CLASS: Record<CiState, string> = {
   passing: 'state-ok',
@@ -35,81 +38,109 @@ function Failures({ items }: { items: Failure[] }) {
   );
 }
 
-function NpmPanel({ npm }: { npm: NpmResult[] }) {
+// A count read from npm or GitHub, or "unknown" when that fetch failed (the
+// failed URL is then listed under the table).
+function CountCell({ text }: { text: string | null }) {
+  return (
+    <td className={`whitespace-nowrap py-2 pl-3 text-right tabular-nums ${text === null ? 'state-bad' : 'text-muted-foreground'}`}>
+      {text ?? 'unknown'}
+    </td>
+  );
+}
+
+function NpmPanel({ npm, downloads }: { npm: NpmResult[]; downloads: DownloadsResult[] }) {
+  const weekly = new Map(downloads.map((d) => [d.name, d]));
   return (
     <div className="panel p-5">
       <h3 className="font-display text-lg">On npm</h3>
-      <p className="mt-1 text-[14px] text-muted-foreground">The latest published version of each package, read from the registry.</p>
+      <p className="mt-1 text-[14px] text-muted-foreground">
+        The latest published version of each package and its downloads in the last week, read from npm.
+      </p>
       <table className="mono mt-4 w-full text-[12.5px]">
         <thead className="sr-only">
           <tr>
             <th>Package</th>
             <th>Latest version</th>
+            <th>Downloads last week</th>
           </tr>
         </thead>
         <tbody>
-          {npm.map((p) => (
-            <tr key={p.name} className="border-t border-border">
-              <td className="py-2 pr-3">
-                <a href={p.page} target="_blank" rel="noopener noreferrer" className="break-all hover:text-accent">
-                  {p.name}
-                </a>
-              </td>
-              <td className={`py-2 text-right tabular-nums ${p.ok ? 'text-foreground' : 'state-bad'}`}>{p.ok ? `v${p.version}` : 'unavailable'}</td>
-            </tr>
-          ))}
+          {npm.map((p) => {
+            const d = weekly.get(p.name);
+            return (
+              <tr key={p.name} className="border-t border-border">
+                <td className="py-2 pr-3">
+                  <a href={p.page} target="_blank" rel="noopener noreferrer" className="break-all hover:text-accent">
+                    {p.name}
+                  </a>
+                </td>
+                <td className={`py-2 text-right tabular-nums ${p.ok ? 'text-foreground' : 'state-bad'}`}>{p.ok ? `v${p.version}` : 'unavailable'}</td>
+                <CountCell text={d?.ok ? count(d.downloads, 'download', 'downloads') : null} />
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-      <Failures items={npm.filter((p): p is NpmResult & Failure => !p.ok)} />
+      <Failures items={[...failed(npm), ...failed(downloads)]} />
     </div>
   );
 }
 
-function CiPanel({ ci }: { ci: CiResult[] }) {
+function GithubPanel({ ci, stars }: { ci: CiResult[]; stars: StarsResult[] }) {
+  const byRepo = new Map(stars.map((s) => [s.repo, s]));
   return (
     <div className="panel p-5">
-      <h3 className="font-display text-lg">CI on main</h3>
-      <p className="mt-1 text-[14px] text-muted-foreground">Check runs on the latest commit to each repository&apos;s main branch.</p>
+      <h3 className="font-display text-lg">On GitHub</h3>
+      <p className="mt-1 text-[14px] text-muted-foreground">
+        Check runs on the latest commit to each repository&apos;s main branch, then its stars and forks.
+      </p>
       <table className="mono mt-4 w-full text-[12.5px]">
         <thead className="sr-only">
           <tr>
             <th>Repository</th>
-            <th>Status</th>
+            <th>CI status</th>
             <th>Commit</th>
+            <th>Stars</th>
+            <th>Forks</th>
           </tr>
         </thead>
         <tbody>
-          {ci.map((r) => (
-            <tr key={r.repo} className="border-t border-border">
-              <td className="py-2 pr-3">
-                <a href={`https://github.com/ykstorm/${r.repo}`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  {r.repo}
-                </a>
-              </td>
-              {r.ok ? (
-                <>
-                  <td className={`py-2 pr-3 ${STATE_CLASS[r.state]}`}>
-                    {r.state}
-                    {r.state === 'failing' && <span className="text-muted-foreground"> ({r.failed} of {r.total})</span>}
-                  </td>
-                  <td className="py-2 text-right">
-                    {r.sha ? (
-                      <a href={r.page} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent">
-                        {r.sha.slice(0, 7)}
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground">none</span>
-                    )}
-                  </td>
-                </>
-              ) : (
-                <td colSpan={2} className="py-2 state-bad">unknown</td>
-              )}
-            </tr>
-          ))}
+          {ci.map((r) => {
+            const s = byRepo.get(r.repo);
+            return (
+              <tr key={r.repo} className="border-t border-border">
+                <td className="py-2 pr-3">
+                  <a href={`https://github.com/ykstorm/${r.repo}`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                    {r.repo}
+                  </a>
+                </td>
+                {r.ok ? (
+                  <>
+                    <td className={`py-2 pr-3 ${STATE_CLASS[r.state]}`}>
+                      {r.state}
+                      {r.state === 'failing' && <span className="text-muted-foreground"> ({r.failed} of {r.total})</span>}
+                    </td>
+                    <td className="py-2 text-right">
+                      {r.sha ? (
+                        <a href={r.page} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent">
+                          {r.sha.slice(0, 7)}
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">none</span>
+                      )}
+                    </td>
+                  </>
+                ) : (
+                  <td colSpan={2} className="py-2 state-bad">unknown</td>
+                )}
+                <CountCell text={s?.ok ? count(s.stars, 'star', 'stars') : null} />
+                <CountCell text={s?.ok ? count(s.forks, 'fork', 'forks') : null} />
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-      <Failures items={ci.filter((r): r is CiResult & Failure => !r.ok)} />
+      <Failures items={[...failed(ci), ...failed(stars)]} />
     </div>
   );
 }
@@ -200,12 +231,13 @@ export function ProofSection({ proof }: { proof: Proof }) {
   return (
     <div className="space-y-5">
       <div className="grid gap-5 lg:grid-cols-2">
-        <NpmPanel npm={proof.npm} />
-        <CiPanel ci={proof.ci} />
+        <NpmPanel npm={proof.npm} downloads={proof.downloads} />
+        <GithubPanel ci={proof.ci} stars={proof.stars} />
       </div>
       <CommitCalendar calendar={proof.calendar} fetchedAt={proof.fetchedAt} />
       <p className="mono text-[11.5px] text-muted-foreground">
-        Fetched from npm and GitHub at {stamp} UTC, and refreshed at most once an hour.
+        Versions, downloads, checks, stars, forks and commits are read from npm and GitHub when the page builds (last at {stamp}{' '}
+        UTC) and refreshed at most once an hour.
       </p>
     </div>
   );
