@@ -4,14 +4,16 @@ import { getContentBySlug, getContentFiles } from '@/lib/content';
 import { PROJECTS, projectLinks } from '@/lib/projects';
 import { Markdown } from '@/components/markdown';
 import { Subpage } from '@/components/subpage';
+import { share } from '@/lib/share';
 
 export async function generateStaticParams() {
   const projects = await getContentFiles('projects');
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-// Per-project metadata, so each page has its own title and canonical URL
-// instead of inheriting the home page's.
+// Per-project metadata, so each page has its own title, canonical URL and share
+// text instead of inheriting the home page's. The card is opengraph-image.tsx
+// next to this file.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const project = await getContentBySlug('projects', slug);
@@ -22,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: project.metadata.title,
     description,
     alternates: { canonical: `/projects/${slug}` },
-    openGraph: { type: 'article', title: project.metadata.title, description, url: `/projects/${slug}` },
+    ...share({ title: project.metadata.title, description, path: `/projects/${slug}`, type: 'article' }),
   };
 }
 
