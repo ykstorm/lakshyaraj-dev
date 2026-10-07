@@ -16,7 +16,7 @@ export const revalidate = 3600;
 const RESUME_PDF = '/Lakshyaraj_Singh_Rao_Resume.pdf';
 
 // Headings are paths: the hero terminal's `cd work` lands on ~/work.
-function Section({ id, intro, children }: { id: string; intro: string; children: React.ReactNode }) {
+function Section({ id, intro, children }: { id: string; intro?: string; children: React.ReactNode }) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-16 px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
@@ -27,7 +27,7 @@ function Section({ id, intro, children }: { id: string; intro: string; children:
             </span>
             <span className="font-display text-[2rem] leading-none sm:text-[2.6rem]">{id}</span>
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-muted-foreground">{intro}</p>
+          {intro && <p className="mt-4 text-[16px] leading-relaxed text-muted-foreground">{intro}</p>}
         </header>
         {children}
       </div>
@@ -66,7 +66,7 @@ export default async function HomePage() {
       <main>
         <Hero />
 
-        <Section id="work" intro="My job at Homesty.ai first, then projects I built on my own. Each card starts with the problem it solves.">
+        <Section id="work">
           {flagship && (
             <div className="mb-5">
               <FlagshipCard project={flagship} />
@@ -75,29 +75,11 @@ export default async function HomePage() {
           <HoverEffect items={others.map((p) => ({ id: p.id, content: <ProjectCard project={p} stars={stars.get(p.id)} /> }))} />
         </Section>
 
-        <Section id="proof" intro="Read from npm and GitHub when this page was built, not typed in. If a check is failing, it shows as failing.">
+        <Section id="proof">
           <ProofSection proof={proof} />
         </Section>
 
-        <Section id="now" intro="What I am doing at the moment.">
-          <dl className="divide-y divide-border border-y border-border">
-            {NOW_ROWS.map((r) => (
-              <div key={r.label} className="grid gap-1 py-5 sm:grid-cols-[10rem_1fr] sm:gap-8">
-                <dt className="mono text-[13px] text-accent">{r.label}</dt>
-                <dd className="max-w-prose leading-relaxed">{r.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mono mt-4 text-[12px] text-muted-foreground">
-            Updated {formatDate(nowData.updated_at)}.{' '}
-            <Link href="/now" className="underline underline-offset-4 hover:text-accent">
-              The now page
-            </Link>{' '}
-            has the same, on its own.
-          </p>
-        </Section>
-
-        <Section id="stack" intro="The tools I use, as listed on my resume, plus what my projects run on.">
+        <Section id="stack">
           <dl className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
             {STACK.map((s) => (
               <div key={s.group}>
@@ -116,7 +98,25 @@ export default async function HomePage() {
           </dl>
         </Section>
 
-        <Section id="contact" intro="Email, LinkedIn, GitHub or npm. The resume is one page.">
+        <Section id="now">
+          <dl className="divide-y divide-border border-y border-border">
+            {NOW_ROWS.map((r) => (
+              <div key={r.label} className="grid gap-1 py-5 sm:grid-cols-[10rem_1fr] sm:gap-8">
+                <dt className="mono text-[13px] text-accent">{r.label}</dt>
+                <dd className="max-w-prose leading-relaxed">{r.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mono mt-4 text-[12px] text-muted-foreground">
+            Updated {formatDate(nowData.updated_at)}.{' '}
+            <Link href="/now" className="underline underline-offset-4 hover:text-accent">
+              The now page
+            </Link>{' '}
+            has the same, on its own.
+          </p>
+        </Section>
+
+        <Section id="contact">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
             <TerminalContact />
             <div className="panel p-5">
