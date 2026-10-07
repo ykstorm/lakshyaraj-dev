@@ -3,7 +3,7 @@
 // third of the way up. An unsettled letter shows one of the glyphs the hero
 // range is drawn in, so the name settles out of the same characters. Kept apart
 // from the component so it can be tested without React.
-import { CHARS } from './world/engine';
+import { CHARS } from './world/chars';
 import { hash01, hash2 } from './world/random';
 
 export const NAME = 'Lakshyaraj Singh Rao';

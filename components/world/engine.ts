@@ -17,8 +17,8 @@ import { createWorld, type TerrainWorld } from './biomes';
 import { hash01, hash2 } from './random';
 import { smoothstep } from './noise';
 import { GlyphAtlas } from './atlas';
+import { CHARS } from './chars';
 
-export const CHARS = ' .·:-_/\\^~+';
 const at = (ch: string) => CHARS.indexOf(ch);
 const GL = {
   dot: at('.'),
