@@ -56,6 +56,10 @@ const FLASH_S = 0.3;
 
 const FOV_TAN = Math.tan((32 * Math.PI) / 180);
 const Z_FAR = 64;
+// Depths each column samples, near to far. The same on every screen: the
+// samples decide where the ridge line falls, so fewer steps on light screens
+// would draw a different range from the same seed.
+const MARCH_STEPS = 96;
 
 export interface Composition {
   horizon: number; // 0..1 of canvas height
@@ -70,6 +74,8 @@ interface EngineOptions {
 type Wave = { x: number; y: number; t0: number };
 
 export class WorldEngine {
+  private readonly canvas: HTMLCanvasElement;
+  private readonly opts: EngineOptions;
   private readonly ctx: CanvasRenderingContext2D;
   private readonly world: TerrainWorld;
   private atlas: GlyphAtlas | null = null;
@@ -125,11 +131,11 @@ export class WorldEngine {
   private acc = 0;
   private running = false;
 
-  constructor(
-    private readonly canvas: HTMLCanvasElement,
-    seed: number,
-    private readonly opts: EngineOptions,
-  ) {
+  // Plain fields rather than constructor parameter properties, so Node's type
+  // stripping can load this file for the tests.
+  constructor(canvas: HTMLCanvasElement, seed: number, opts: EngineOptions) {
+    this.canvas = canvas;
+    this.opts = opts;
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Canvas 2D is not available');
     this.ctx = ctx;
@@ -322,9 +328,8 @@ export class WorldEngine {
     const zNear = (w.camHeight * f) / below;
     if (Math.abs(zNear - this.zNear) > 1e-3 || this.steps.length === 0) {
       this.zNear = zNear;
-      const K = this.opts.dense ? 96 : 64;
-      this.steps = new Float32Array(K);
-      for (let k = 0; k < K; k++) this.steps[k] = zNear * Math.pow(Z_FAR / zNear, k / (K - 1));
+      this.steps = new Float32Array(MARCH_STEPS);
+      for (let k = 0; k < MARCH_STEPS; k++) this.steps[k] = zNear * Math.pow(Z_FAR / zNear, k / (MARCH_STEPS - 1));
     }
     const camX = this.yaw * 2.4 + Math.sin(this.t * 0.07) * 1.6;
     const plainEnd = zNear * 3.6;

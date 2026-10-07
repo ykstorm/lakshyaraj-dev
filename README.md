@@ -76,6 +76,7 @@ npm install
 npm run dev         # http://localhost:3000
 npm run lint
 npm run type-check
+npm test            # node --test on the pure modules, Node 22.18 or later
 npm run build       # production build, fetches the live proof
 ```
 
