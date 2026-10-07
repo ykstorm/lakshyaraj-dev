@@ -16,7 +16,7 @@ Canvas 2D. No images, no WebGL: every glyph is computed each frame.
 - Seeded. One 32-bit seed sets every parameter of the range
   ([`biomes.ts`](components/world/biomes.ts)): ridged, domain-warped noise you
   fly over, and the sky of stars above it. The same seed always draws the same
-  range.
+  range, on every screen; a small or touch screen only shows fewer stars.
 - Depth. The terrain is rendered like a voxel-space engine
   ([`engine.ts`](components/world/engine.ts)): each column marches front to
   back through the heightfield, so nearer ridges hide farther ones and every
@@ -26,22 +26,25 @@ Canvas 2D. No images, no WebGL: every glyph is computed each frame.
 - Physics. The cursor pushes glyphs through a spring field and they settle
   back. A click sends a ring outward; disturbed glyphs show in the accent
   colour while they move.
-- The terminal. The hero terminal takes `ls`, `cat`, `open` and `cd`.
+- The terminal. The hero terminal takes nine commands: `help`, `whoami`, `ls`,
+  `cat`, `open`, `cd`, `stack`, `contact` and `clear`.
 - Cheap. Glyphs are pre-rendered into a sprite atlas, so a frame is a run of
-  `drawImage` calls. The physics steps at a fixed 60 Hz. The canvas is a lazy
-  client chunk (`next/dynamic`, no SSR), so the headline paints first and is the
-  LCP element. It pauses off-screen and in hidden tabs, and uses a lighter world
-  on small or touch screens.
+  `drawImage` calls. The physics steps at a fixed 60 Hz. The canvas and its
+  engine are a lazy client chunk (`next/dynamic`, no SSR), so the hero's text
+  paints first as server HTML. A Lighthouse mobile run picked the pitch
+  paragraph as the LCP element, not the headline, because its text box is the
+  larger of the two (at 412 px wide, about 41,000 px² against 22,000). The world
+  pauses off-screen and in hidden tabs, and small or touch screens get fewer
+  stars at a lower pixel ratio.
 - Reduced motion. One still frame of the same world. No loop, no pointer
   field, no waves, and the terminal intro appears at once instead of typing.
 
 Adapted techniques, credited in the source:
 [ThreeUI](https://github.com/MengTo/threeui) (MIT, Meng To) for the contour
-bands of its Topo Field and the link fade of its Particle Drift, and
-[Canvas UI](https://canvasui.dev) (MIT + Commons Clause, David Haz) for the
-ring and pointer easing of its Force Field and the scramble of its Decrypt
-Reveal. These are re-implementations written for this site, not copies of
-either library's components.
+bands of its Topo Field, and [Canvas UI](https://canvasui.dev) (MIT + Commons
+Clause, David Haz) for the ring and pointer easing of its Force Field. These are
+re-implementations written for this site, not copies of either library's
+components.
 
 ## Live proof
 
@@ -67,7 +70,7 @@ stats).
 `/` · `/now` · `/resume` · `/projects/[slug]`
 
 Project pages are markdown in [`content/`](content), rendered with
-`react-markdown` (raw HTML in a content file is ignored, never injected).
+`react-markdown` (raw HTML in a content file is escaped, never injected).
 
 ## Run locally
 
@@ -88,7 +91,8 @@ components/world/ the hero range: world, engine, glyph atlas, noise, seeds
 components/       hero, proof, page chrome, markdown, terminals, cards
 content/          markdown for project pages
 data/             project list and the "now" snapshot
-lib/              content loading, project links, live proof
+lib/              content loading, project links, live proof, share cards
+tests/            node --test checks for the world, the footer name, share text
 ```
 
 ---

@@ -19,7 +19,7 @@
     --muted-foreground: #5f5e58;  /* 5.4:1 on --background */
     --border: #d3d0c7;
     --border-strong: #b9b5a9;
-    --accent: #9a4a10;            /* rust amber, 5.4:1 on --background */
+    --accent: #9a4a10;            /* rust amber, 5.2:1 on --background */
     --accent-strong: #73360a;
     --accent-ink: #f5f4f0;        /* text on an accent fill */
     --accent-wash: rgba(154, 74, 16, 0.08);
@@ -323,7 +323,7 @@
   .cal-scroll { scrollbar-width: none; }
   .cal-scroll::-webkit-scrollbar { display: none; height: 0; }
 
-  /* ── Rendered markdown (blog posts and project pages) ──────────────────── */
+  /* ── Rendered markdown (project pages) ─────────────────────────────────── */
   .md { color: var(--foreground); font-size: 1rem; line-height: 1.7; }
   .md > * + * { margin-top: 1.1em; }
   .md h2 {

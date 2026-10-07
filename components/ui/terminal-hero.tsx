@@ -10,7 +10,7 @@ import { PROJECTS } from '@/lib/projects';
 type Line = { kind: 'cmd' | 'out' | 'note'; text: string };
 
 const PROMPT = 'lakshyaraj@portfolio:~$ ';
-const SECTIONS = ['work', 'proof', 'now', 'stack', 'contact'] as const;
+const SECTIONS = ['work', 'proof', 'stack', 'now', 'contact'] as const;
 
 const WHOAMI = ['Lakshyaraj Singh Rao. Full-stack developer, backend focus.', 'Software engineer at Homesty.ai since November 2025.'];
 const BOOT: { cmd: string; out: string[] }[] = [
@@ -23,7 +23,7 @@ const HELP = [
   'ls              list my projects',
   'cat <project>   what a project does, e.g. cat anvil',
   'open <name>     open a project, resume, github, linkedin or npm',
-  'cd <section>    jump to work, proof, now, stack or contact',
+  'cd <section>    jump to work, proof, stack, now or contact',
   'stack           the tools I use',
   'contact         how to reach me',
   'clear           clear the screen',

@@ -4,7 +4,6 @@ import path from 'path';
 interface ContentMetadata {
   title: string;
   description: string;
-  date: string;
   [key: string]: string;
 }
 
@@ -61,8 +60,7 @@ export async function getContentFiles(contentType: 'projects'): Promise<ContentF
         metadata,
         content: body,
       };
-    })
-    .sort((a, b) => (Date.parse(b.metadata.date) || 0) - (Date.parse(a.metadata.date) || 0));
+    });
 }
 
 export async function getContentBySlug(contentType: 'projects', slug: string): Promise<ContentFile | null> {
