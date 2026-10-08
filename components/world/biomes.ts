@@ -36,11 +36,17 @@ function makeStars(rand: Rand, count: number): Star[] {
   }));
 }
 
-/** Builds the world for a seed. `dense` is false on small or touch screens. */
+/**
+ * Builds the world for a seed. `dense` is false on small or touch screens and
+ * only thins the sky: the terrain comes from the seed alone.
+ */
 export function createWorld(seed: number, dense: boolean): TerrainWorld {
   const rand = mulberry32(seed);
   rand(); // the first draw once picked a biome; kept so the seed draws the same range
-  const stars = makeStars(rand, dense ? 150 : 70);
+  // Every screen draws all 150 stars, so the terrain below always starts from
+  // the same point in the sequence; a light screen shows only the first 70.
+  const sky = makeStars(rand, 150);
+  const stars = dense ? sky : sky.slice(0, 70);
   const n = new ValueNoise(rand);
   const freq = 0.085 + rand() * 0.05;
   const warp = 0.5 + rand() * 0.9;

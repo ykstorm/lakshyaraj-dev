@@ -11,7 +11,7 @@ updates:
         dependency-type: "production"
       development-dependencies:
         dependency-type: "development"
-  # keep GitHub Actions pinned + current (supply-chain hygiene)
+  # keep GitHub Actions current; the workflows use major-version tags, not hashes
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

@@ -16,7 +16,7 @@ export const revalidate = 3600;
 const RESUME_PDF = '/Lakshyaraj_Singh_Rao_Resume.pdf';
 
 // Headings are paths: the hero terminal's `cd work` lands on ~/work.
-function Section({ id, intro, children }: { id: string; intro?: string; children: React.ReactNode }) {
+function Section({ id, children }: { id: string; children: React.ReactNode }) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-16 px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
@@ -27,7 +27,6 @@ function Section({ id, intro, children }: { id: string; intro?: string; children
             </span>
             <span className="font-display text-[2rem] leading-none sm:text-[2.6rem]">{id}</span>
           </h2>
-          {intro && <p className="mt-4 text-[16px] leading-relaxed text-muted-foreground">{intro}</p>}
         </header>
         {children}
       </div>

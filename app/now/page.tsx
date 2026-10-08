@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import nowData from '@/data/now.json';
 import { Subpage, formatDate } from '@/components/subpage';
+import { HOME_CARD, share } from '@/lib/share';
+
+const DESCRIPTION = 'What I am working on right now.';
 
 export const metadata: Metadata = {
   title: 'Now',
-  description: 'What I am working on right now.',
+  description: DESCRIPTION,
   alternates: { canonical: '/now' },
-  openGraph: { title: 'Now', description: 'What I am working on right now.', url: '/now' },
+  ...share({ title: 'Now', description: DESCRIPTION, path: '/now', image: HOME_CARD }),
 };
 
 const ROWS: { label: string; value: string }[] = [

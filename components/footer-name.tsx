@@ -1,25 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { CHARS } from './world/engine';
-import { hash01, hash2 } from './world/random';
+import { NAME, glyphAt } from './footer-glyphs';
 
-// The site opens with a world scrambling into place and closes with the name
-// doing the same, except this one is scrubbed by scroll instead of time: each
-// character settles as the footer rises into view, and scrolling back up
-// unsettles it again. The scrub idea follows oil-motion (MIT, oil-oil), which
-// drives frame sequences from scroll position; here the frames are glyphs.
-const NAME = 'Lakshyaraj Singh Rao';
-const POOL = CHARS.slice(CHARS.indexOf('A'));
-const FRAMES = 48; // scroll positions that change the unsettled glyphs
-
-function glyphAt(i: number, p: number): string {
-  const ch = NAME[i];
-  if (ch === ' ') return ch;
-  const settleAt = (i / NAME.length) * 0.8 + hash01(i) * 0.2;
-  if (p >= settleAt) return ch;
-  return POOL[Math.floor(hash2(i, Math.floor(p * FRAMES)) * POOL.length)];
-}
+// The site opens with a range drawn in glyphs and closes with the name settling
+// out of the same glyphs, scrubbed by scroll: each character settles as the
+// footer rises into view, and scrolling back up unsettles it again. The scrub
+// idea follows oil-motion (MIT, oil-oil), which drives frame sequences from
+// scroll position; here the frames are glyphs.
 
 export function FooterName() {
   const ref = useRef<HTMLSpanElement>(null);

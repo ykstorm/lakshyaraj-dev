@@ -1,10 +1,10 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-// Renders post and project bodies. Before this, the raw markdown source was
-// printed as pre-wrapped text, so readers saw literal `##` and `**`.
-// react-markdown builds React elements and ignores raw HTML by default, so no
-// HTML from a content file is ever injected into the page.
+// Renders project bodies. Before this, the raw markdown source was printed as
+// pre-wrapped text, so readers saw literal `##` and `**`. react-markdown builds
+// React elements and escapes raw HTML by default, so HTML in a content file
+// shows as text and is never injected into the page.
 export function Markdown({ source }: { source: string }) {
   return (
     <div className="md">

@@ -172,8 +172,10 @@ type ActivityWeek = { week: number; days: number[] };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// The stats endpoint answers 202 while GitHub computes it. A 202 is a 2xx, so it
-// would be cached under the same URL; each retry uses a distinct query string.
+// The stats endpoint answers 202 while GitHub computes it. Next's data cache
+// stores only 200 responses, so a 202 is never cached, but within one render
+// Next also reuses the response of an identical request; each retry uses a
+// distinct query string so it really asks GitHub again.
 async function commitActivity(repo: string): Promise<ActivityWeek[] | Failure> {
   const base = `https://api.github.com/repos/${OWNER}/${repo}/stats/commit_activity`;
   for (let attempt = 1; attempt <= 3; attempt++) {

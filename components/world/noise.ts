@@ -1,6 +1,6 @@
-// Seeded 2D value noise with a quintic fade, plus the two fractal sums the
-// terrain biomes use. Value noise is enough here: it is sampled on a coarse
-// glyph grid, where its lattice artefacts are below one character.
+// Seeded 2D value noise with a quintic fade, plus the ridged fractal sum the
+// terrain uses. Value noise is enough here: it is sampled on a coarse glyph
+// grid, where its lattice artefacts are below one character.
 import type { Rand } from './random';
 
 export class ValueNoise {

@@ -17,8 +17,8 @@ import { createWorld, type TerrainWorld } from './biomes';
 import { hash01, hash2 } from './random';
 import { smoothstep } from './noise';
 import { GlyphAtlas } from './atlas';
+import { CHARS } from './chars';
 
-export const CHARS = ' .·:-_/\\^~+';
 const at = (ch: string) => CHARS.indexOf(ch);
 const GL = {
   dot: at('.'),
@@ -56,6 +56,10 @@ const FLASH_S = 0.3;
 
 const FOV_TAN = Math.tan((32 * Math.PI) / 180);
 const Z_FAR = 64;
+// Depths each column samples, near to far. The same on every screen: the
+// samples decide where the ridge line falls, so fewer steps on light screens
+// would draw a different range from the same seed.
+const MARCH_STEPS = 96;
 
 export interface Composition {
   horizon: number; // 0..1 of canvas height
@@ -70,6 +74,8 @@ interface EngineOptions {
 type Wave = { x: number; y: number; t0: number };
 
 export class WorldEngine {
+  private readonly canvas: HTMLCanvasElement;
+  private readonly opts: EngineOptions;
   private readonly ctx: CanvasRenderingContext2D;
   private readonly world: TerrainWorld;
   private atlas: GlyphAtlas | null = null;
@@ -125,11 +131,11 @@ export class WorldEngine {
   private acc = 0;
   private running = false;
 
-  constructor(
-    private readonly canvas: HTMLCanvasElement,
-    seed: number,
-    private readonly opts: EngineOptions,
-  ) {
+  // Plain fields rather than constructor parameter properties, so Node's type
+  // stripping can load this file for the tests.
+  constructor(canvas: HTMLCanvasElement, seed: number, opts: EngineOptions) {
+    this.canvas = canvas;
+    this.opts = opts;
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Canvas 2D is not available');
     this.ctx = ctx;
@@ -310,53 +316,63 @@ export class WorldEngine {
   private project(): void {
     this.march();
     this.classify();
+    this.pickGlyphs();
   }
 
   private march(): void {
-    const { cols, rows, cellW, cellH, width: W, height: H, depth, hgt, gkey, topY, world: w } = this;
+    const { cols, height: H, depth, world: w } = this;
     const horizon = H * this.comp.horizon + this.pitch * H * 0.035;
     this.horizonPx = horizon;
     const below = Math.max(40, H - horizon);
     const f = below / FOV_TAN;
     // the bottom edge of the canvas sees the ground at this depth
     const zNear = (w.camHeight * f) / below;
-    if (Math.abs(zNear - this.zNear) > 1e-3 || this.steps.length === 0) {
-      this.zNear = zNear;
-      const K = this.opts.dense ? 96 : 64;
-      this.steps = new Float32Array(K);
-      for (let k = 0; k < K; k++) this.steps[k] = zNear * Math.pow(Z_FAR / zNear, k / (K - 1));
-    }
+    if (Math.abs(zNear - this.zNear) > 1e-3 || this.steps.length === 0) this.stepTable(zNear);
     const camX = this.yaw * 2.4 + Math.sin(this.t * 0.07) * 1.6;
-    const plainEnd = zNear * 3.6;
     depth.fill(Infinity);
-    for (let c = 0; c < cols; c++) {
-      const u = (c + 0.5) / cols;
-      // Wide screens put the copy in the left half, so the ground stays low
-      // there and rises to full height only past it. bias is 0 on small screens.
-      const sideLift = 1 - this.comp.bias * (1 - smoothstep(0.34, 0.78, u));
-      const ray = ((c + 0.5) * cellW - W / 2) / f;
-      let row = rows - 1;
-      let yMax = H + cellH;
-      for (let k = 0; k < this.steps.length && row >= 0; k++) {
-        const z = this.steps[k];
-        const lift = (0.14 + 0.86 * smoothstep(zNear * 1.15, plainEnd, z)) * sideLift;
-        const wx = ray * z + camX;
-        const wz = z + this.travel;
-        const h = w.height(wx, wz);
-        const sy = horizon + ((w.camHeight - h * w.relief * lift) * f) / z;
-        if (sy >= yMax) continue;
-        const key = Math.floor(wx * 2.2) * 7919 + Math.floor(wz * 2.2);
-        while (row >= 0 && (row + 0.5) * cellH >= sy) {
-          const i = row * cols + c;
-          depth[i] = z;
-          hgt[i] = h;
-          gkey[i] = key;
-          row--;
-        }
-        yMax = sy;
+    for (let c = 0; c < cols; c++) this.marchColumn(c, horizon, f, zNear, camX);
+  }
+
+  // Depths spaced geometrically from zNear out to Z_FAR: perspective shrinks
+  // far ground, so near steps are fine and far ones coarse.
+  private stepTable(zNear: number): void {
+    this.zNear = zNear;
+    this.steps = new Float32Array(MARCH_STEPS);
+    for (let k = 0; k < MARCH_STEPS; k++) this.steps[k] = zNear * Math.pow(Z_FAR / zNear, k / (MARCH_STEPS - 1));
+  }
+
+  // One ray, near to far: each sample that rises above the highest row filled
+  // so far fills the rows up to it with its depth, height and world key; a
+  // sample at or below that row is behind nearer ground.
+  private marchColumn(c: number, horizon: number, f: number, zNear: number, camX: number): void {
+    const { cols, rows, cellW, cellH, width: W, height: H, depth, hgt, gkey, steps, world: w } = this;
+    const plainEnd = zNear * 3.6;
+    const u = (c + 0.5) / cols;
+    // Wide screens put the copy in the left half, so the ground stays low
+    // there and rises to full height only past it. bias is 0 on small screens.
+    const sideLift = 1 - this.comp.bias * (1 - smoothstep(0.34, 0.78, u));
+    const ray = ((c + 0.5) * cellW - W / 2) / f;
+    let row = rows - 1;
+    let yMax = H + cellH;
+    for (let k = 0; k < steps.length && row >= 0; k++) {
+      const z = steps[k];
+      const lift = (0.14 + 0.86 * smoothstep(zNear * 1.15, plainEnd, z)) * sideLift;
+      const wx = ray * z + camX;
+      const wz = z + this.travel;
+      const h = w.height(wx, wz);
+      const sy = horizon + ((w.camHeight - h * w.relief * lift) * f) / z;
+      if (sy >= yMax) continue;
+      const key = Math.floor(wx * 2.2) * 7919 + Math.floor(wz * 2.2);
+      while (row >= 0 && (row + 0.5) * cellH >= sy) {
+        const i = row * cols + c;
+        depth[i] = z;
+        hgt[i] = h;
+        gkey[i] = key;
+        row--;
       }
-      topY[c] = (row + 1) * cellH;
+      yMax = sy;
     }
+    this.topY[c] = (row + 1) * cellH;
   }
 
   private band(i: number): number {
@@ -372,21 +388,26 @@ export class WorldEngine {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const i = r * cols + c;
-        const z = depth[i];
-        if (z === Infinity) {
-          kind[i] = SKY;
-          continue;
-        }
-        const above = r > 0 ? depth[i - cols] : Infinity;
-        if (above === Infinity) kind[i] = SKYLINE;
-        else if (above > z * 1.75 + 0.8) kind[i] = RIDGE;
-        else if (z < contourDepth && r < rows - 1 && depth[i + cols] !== Infinity && this.band(i + cols) !== this.band(i))
-          kind[i] = CONTOUR;
-        else kind[i] = GROUND;
+        kind[i] = depth[i] === Infinity ? SKY : this.groundKind(i, r, contourDepth);
       }
     }
     this.bridgeSkyline();
-    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) this.glyph[r * cols + c] = this.pickGlyph(c, r);
+  }
+
+  /** The kind of cell i in row r, which shows ground. */
+  private groundKind(i: number, r: number, contourDepth: number): number {
+    const { cols, rows, depth } = this;
+    const z = depth[i];
+    const above = r > 0 ? depth[i - cols] : Infinity;
+    if (above === Infinity) return SKYLINE;
+    if (above > z * 1.75 + 0.8) return RIDGE;
+    if (z < contourDepth && r < rows - 1 && depth[i + cols] !== Infinity && this.band(i + cols) !== this.band(i)) return CONTOUR;
+    return GROUND;
+  }
+
+  private pickGlyphs(): void {
+    const { cols, rows, glyph } = this;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) glyph[r * cols + c] = this.pickGlyph(c, r);
   }
 
   // On a steep slope the skyline jumps several rows between neighbouring
@@ -490,9 +511,13 @@ export class WorldEngine {
     ctx.globalAlpha = 1;
   }
 
-  // Result of shown(), kept in fields so the per-glyph hot path allocates nothing.
+  // Results of shown() and styled(), kept in fields so the per-glyph hot path
+  // allocates nothing.
   private outHot = false;
   private outMul = 1;
+  private outAlpha = 1;
+  private outColour = 0;
+  private outSize = 0;
 
   /**
    * How cell i shows right now: hidden until the reveal reaches it, a short
@@ -519,10 +544,26 @@ export class WorldEngine {
     this.outHot = this.energy[i] > 0.12;
   }
 
+  /**
+   * Opacity, colour and size of cell i, after shown(): fog fades and shrinks it
+   * with depth, its kind sets its strength, and the skyline, a flash or a
+   * disturbance turn it to the accent.
+   */
+  private styled(i: number): void {
+    const fog = smoothstep(this.zNear, Z_FAR * 0.8, this.depth[i]);
+    const k = this.kind[i];
+    // Ground and contours carry the landscape, so they stay legible at rest;
+    // the far fade keeps about a third of the strength instead of a fifth.
+    const strength = k === SKYLINE ? 0.95 : k === RIDGE ? 0.78 : k === CONTOUR ? 0.44 + 0.14 * (1 - fog) : 0.34;
+    const alpha = strength * (1 - 0.62 * Math.pow(fog, 0.85));
+    this.outAlpha = Math.min(1, (this.outHot ? Math.max(alpha, 0.35 + 0.6 * this.energy[i]) : alpha) * this.outMul);
+    this.outColour = this.outHot || k === SKYLINE ? 1 : 0;
+    this.outSize = this.cellH * (0.86 - 0.24 * fog);
+  }
+
   private drawTerrain(atlas: GlyphAtlas): void {
     const ctx = this.ctx;
-    const { cols, rows, depth, kind, glyph, bx, by, ox, oy, energy, cellH } = this;
-    const zNear = this.zNear;
+    const { cols, rows, glyph, bx, by, ox, oy } = this;
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const i = r * cols + c;
@@ -532,18 +573,9 @@ export class WorldEngine {
         const y = by[i] + oy[i];
         this.shown(i, x, y);
         if (this.outMul === 0) continue;
-        const z = depth[i];
-        const fog = smoothstep(zNear, Z_FAR * 0.8, z);
-        const k = kind[i];
-        // Ground and contours carry the landscape, so they stay legible at rest;
-        // the far fade keeps about a third of the strength instead of a fifth.
-        const strength = k === SKYLINE ? 0.95 : k === RIDGE ? 0.78 : k === CONTOUR ? 0.44 + 0.14 * (1 - fog) : 0.34;
-        const alpha = strength * (1 - 0.62 * Math.pow(fog, 0.85));
-        const e = energy[i];
-        const hot = this.outHot || k === SKYLINE;
-        ctx.globalAlpha = Math.min(1, (this.outHot ? Math.max(alpha, 0.35 + 0.6 * e) : alpha) * this.outMul);
-        const size = cellH * (0.86 - 0.24 * fog);
-        atlas.draw(ctx, base, hot ? 1 : 0, x, y, size);
+        this.styled(i);
+        ctx.globalAlpha = this.outAlpha;
+        atlas.draw(ctx, base, this.outColour, x, y, this.outSize);
       }
     }
   }

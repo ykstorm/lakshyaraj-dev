@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
 import { Subpage } from '@/components/subpage';
+import { HOME_CARD, share } from '@/lib/share';
+
+const DESCRIPTION = 'Resume of Lakshyaraj Singh Rao, full-stack developer with a backend focus.';
 
 export const metadata: Metadata = {
   title: 'Resume',
-  description: 'Resume of Lakshyaraj Singh Rao, full-stack developer with a backend focus.',
+  description: DESCRIPTION,
   alternates: { canonical: '/resume' },
-  openGraph: { title: 'Resume', description: 'Resume of Lakshyaraj Singh Rao, full-stack developer with a backend focus.', url: '/resume' },
+  ...share({ title: 'Resume', description: DESCRIPTION, path: '/resume', image: HOME_CARD }),
 };
 
 const PDF = '/Lakshyaraj_Singh_Rao_Resume.pdf';

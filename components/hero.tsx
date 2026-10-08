@@ -9,9 +9,10 @@ const ELSEWHERE = [
   { href: '/resume', label: 'Resume' },
 ];
 
-// The headline is server-rendered text with no entrance animation, so it is
-// the first thing painted and the LCP element. The world canvas and the
-// terminal hydrate after it as client islands.
+// The headline and the pitch are server-rendered text with no entrance
+// animation, so they are the first things painted; the pitch's text box is the
+// larger, so it is the LCP element. The world canvas and the terminal hydrate
+// after them as client islands.
 export function Hero() {
   return (
     <section aria-labelledby="hero-name" className="relative isolate overflow-hidden">

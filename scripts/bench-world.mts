@@ -1,6 +1,7 @@
 // CPU cost of one hero-world frame, outside the browser. Canvas calls are
 // counted, not executed, so the number is the JS side only: raymarch,
-// classify, physics, glyph selection. Run: npx tsx scripts/bench-world.mts
+// classify, physics, glyph selection. Run with Node 22.18 or later:
+// node --import ./tests/resolve-ts.mjs scripts/bench-world.mts [width] [height]
 import { performance } from 'node:perf_hooks';
 
 let draws = 0;
@@ -30,7 +31,7 @@ const { WorldEngine } = await import('../components/world/engine');
 
 const W = Number(process.argv[2] ?? 1920);
 const H = Number(process.argv[3] ?? 1080);
-const comp = { horizon: 0.55, bias: 0.5, orbitX: 0.6, orbitY: 0.5, orbitScale: 1 };
+const comp = { horizon: 0.55, bias: 0.5 };
 
 for (const seed of [7, 9, 12, 14, 0x5eed0008]) {
   const eng = new WorldEngine(fakeCanvas() as unknown as HTMLCanvasElement, seed, { reduced: false, dense: true });
