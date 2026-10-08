@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { THEME_COLOR } from '@/lib/theme-color'
+import { alternatesFor } from '@/lib/alternates';
 import { Hanken_Grotesk, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { Analytics } from '@vercel/analytics/next';
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Lakshyaraj Singh Rao', url: SITE }],
   creator: 'Lakshyaraj Singh Rao',
   icons: { icon: '/favicon.ico' },
-  alternates: { canonical: '/' },
+  alternates: alternatesFor('/'),
   openGraph: {
     type: 'website',
     url: SITE,

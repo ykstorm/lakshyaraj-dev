@@ -5,6 +5,7 @@ import { PROJECTS, projectLinks } from '@/lib/projects';
 import { Markdown } from '@/components/markdown';
 import { Subpage } from '@/components/subpage';
 import { share } from '@/lib/share';
+import { alternatesFor } from '@/lib/alternates';
 
 export async function generateStaticParams() {
   const projects = await getContentFiles('projects');
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: project.metadata.title,
     description,
-    alternates: { canonical: `/projects/${slug}` },
+    alternates: alternatesFor(`/projects/${slug}`),
     ...share({ title: project.metadata.title, description, path: `/projects/${slug}`, type: 'article' }),
   };
 }
