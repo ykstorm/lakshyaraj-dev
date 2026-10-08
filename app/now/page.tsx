@@ -2,13 +2,14 @@ import type { Metadata } from 'next';
 import nowData from '@/data/now.json';
 import { Subpage, formatDate } from '@/components/subpage';
 import { HOME_CARD, share } from '@/lib/share';
+import { alternatesFor } from '@/lib/alternates';
 
 const DESCRIPTION = 'What I am working on right now.';
 
 export const metadata: Metadata = {
   title: 'Now',
   description: DESCRIPTION,
-  alternates: { canonical: '/now' },
+  alternates: alternatesFor('/now'),
   ...share({ title: 'Now', description: DESCRIPTION, path: '/now', image: HOME_CARD }),
 };
 

@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import { Subpage } from '@/components/subpage';
 import { HOME_CARD, share } from '@/lib/share';
+import { alternatesFor } from '@/lib/alternates';
 
 const DESCRIPTION = 'Resume of Lakshyaraj Singh Rao, full-stack developer with a backend focus.';
 
 export const metadata: Metadata = {
   title: 'Resume',
   description: DESCRIPTION,
-  alternates: { canonical: '/resume' },
+  alternates: alternatesFor('/resume'),
   ...share({ title: 'Resume', description: DESCRIPTION, path: '/resume', image: HOME_CARD }),
 };
 
